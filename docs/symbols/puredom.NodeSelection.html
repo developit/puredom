@@ -1,0 +1,3907 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		<title>puredom.NodeSelection | JsDoc Reference</title>
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+		<meta name="mobileoptimized" content="1" />
+	
+		<link rel="stylesheet" href="../css/all.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<!--
+		<link rel="stylesheet" href="../css/handheld.css" media="only screen and (max-width: 660px)" />
+		<link rel="stylesheet" href="../css/handheld.css" media="handheld" />
+		<link rel="stylesheet" href="../css/screen.css" media="screen and (min-width: 661px)" />
+		-->
+		
+		<script src="../javascript/puredom.light.js"></script>
+		<script src="../javascript/mobile-scroll.js"></script>
+		<script src="../javascript/all.js"></script>
+		<!--[if lt IE 9]>
+			<script src="../javascript/html5.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+<div class="index">
+	<div class="menu">
+		<div class="indexLinks">
+			<a href="../index.html">Classes</a>
+			<a href="../files.html">Files</a>
+		</div>
+	
+		<h2 class="heading1">Classes</h2>
+		
+		<input type="text" name="classFilter" class="classFilter" id="ClassFilter" placeholder="Filter"></input>
+		
+		<nav>
+			<ul class="classList" id="ClassList">
+				
+					<li><a href="../symbols/_global_.html">_global_</a></li>
+				
+					<li><a href="../symbols/puredom.html">puredom</a></li>
+				
+					<li><a href="../symbols/puredom.Cache.html">puredom<span class='break'> </span>.<span class='break'> </span>Cache</a></li>
+				
+					<li><a href="../symbols/puredom.cookies.html">puredom<span class='break'> </span>.<span class='break'> </span>cookies</a></li>
+				
+					<li><a href="../symbols/puredom.date.html">puredom<span class='break'> </span>.<span class='break'> </span>date</a></li>
+				
+					<li><a href="../symbols/puredom.DOMEvent.html">puredom<span class='break'> </span>.<span class='break'> </span>DOMEvent</a></li>
+				
+					<li><a href="../symbols/puredom.EventEmitter.html">puredom<span class='break'> </span>.<span class='break'> </span>EventEmitter</a></li>
+				
+					<li><a href="../symbols/puredom.i18n.html">puredom<span class='break'> </span>.<span class='break'> </span>i18n</a></li>
+				
+					<li><a href="../symbols/puredom.json.html">puredom<span class='break'> </span>.<span class='break'> </span>json</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.cookie.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>cookie</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.none.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>none</a></li>
+				
+					<li><a href="../symbols/puredom.net.html">puredom<span class='break'> </span>.<span class='break'> </span>net</a></li>
+				
+					<li><a href="../symbols/puredom.net.HttpRequest.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>HttpRequest</a></li>
+				
+					<li><a href="../symbols/puredom.NodeSelection.html">puredom<span class='break'> </span>.<span class='break'> </span>NodeSelection</a></li>
+				
+					<li><a href="../symbols/puredom.querystring.html">puredom<span class='break'> </span>.<span class='break'> </span>querystring</a></li>
+				
+					<li><a href="../symbols/puredom.selectorEngine.html">puredom<span class='break'> </span>.<span class='break'> </span>selectorEngine</a></li>
+				
+					<li><a href="../symbols/puredom.text.html">puredom<span class='break'> </span>.<span class='break'> </span>text</a></li>
+				
+					<li><a href="../symbols/puredom.xml.html">puredom<span class='break'> </span>.<span class='break'> </span>xml</a></li>
+				
+			</ul>
+		</nav>
+	</div>
+	<div class="fineprint" style="clear:both">
+		&copy;2013<br />
+		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
+		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
+		Generated on: 2013-1-25 23:20
+	</div>
+</div>
+
+<div class="index indexStatic"></div>
+
+<div class="content">
+	<div class="innerContent">
+		<h1 class="classTitle">
+			
+			Class <span>puredom.NodeSelection</span>
+		</h1>
+		
+		<div class="intro">
+			<p class="description summary">
+				Represents a collection of DOM Elements. <br />
+	Methods that work with DOM elements generally return an instance of this.
+			</p>
+				
+			
+				<ul class="summary">
+					
+					
+					
+						<li>Defined in: &lt;/Users/developit/Sites/puredom/framework_full/puredom.js&gt;</li>
+					
+						
+				</ul>
+			
+		</div>
+		
+		
+			<div class="props">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class puredom.NodeSelection.">
+					<caption class="sectionTitle">Class Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Constructor Attributes</th>
+							<th scope="col">Constructor Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription" >
+								<div class="fixedFont">
+									<b><a href="../symbols/puredom.NodeSelection.html#constructor">puredom.NodeSelection</a></b>(nodes)
+								</div>
+								<div class="description">Creates a new selection containing the elements of <code>nodes</code>.</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+		
+		
+			
+			
+				<div class="props">
+					<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class puredom.NodeSelection.">
+						<caption class="sectionTitle">Field Summary</caption>
+						
+						<thead>
+							<tr>
+								<th scope="col">Field Attributes</th>
+								<th scope="col">Field Name and Description</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							
+								<tr>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+										<b><a href="../symbols/puredom.NodeSelection.html#animateCSS">animateCSS</a></b>
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+		
+<!--
+#### METHODS SUMMARY
+-->
+		
+			
+			
+			<div class="props">
+				<h2 class="sectionTitle">Method Summary</h2>
+				
+				
+					<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class puredom.NodeSelection.">
+						<thead>
+							<tr>
+								<th scope="col">Method Attributes</th>
+								<th scope="col">Method Name and Description</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							
+							
+								<tr
+									 class='item0'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#addEvent">addEvent</a></b>(eventType, handler, useCapture)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item1'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#animate">animate</a></b>(animator, duration, easing, callback)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item2'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#appendChild">appendChild</a></b>(child)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item3'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#attr">attr</a></b>(key, value, returnValue)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item4'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#blur">blur</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item5'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#children">children</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item6'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#classify">classify</a></b>(className)
+										</div>
+										<div class="description">Add a CSS class to the selection.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item7'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#clone">clone</a></b>(deep, newParent)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item8'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#count">count</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item9'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#css">css</a></b>(css, options, callback)
+										</div>
+										<div class="description">Apply CSS to elements.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item10'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#declassify">declassify</a></b>(className)
+										</div>
+										<div class="description">Remove a CSS class to the selection.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item11'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#describe">describe</a></b>()
+										</div>
+										<div class="description">Get an Array of String representations of each element in the selection.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item12'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#destroy">destroy</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item13'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#disable">disable</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item14'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#each">each</a></b>(iterator)
+										</div>
+										<div class="description">Call an iterator function on each element in the selection, wrapping each in a new <a href="../symbols/puredom.NodeSelection.html">puredom.NodeSelection</a>.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item15'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#enable">enable</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item16'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#enabled">enabled</a></b>(newValue)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item17'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#exists">exists</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item18'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#fadeIn">fadeIn</a></b>(tween, callback)
+										</div>
+										<div class="description">This function tries quite hard to guess what particular fade effect is needed.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item19'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#fadeOut">fadeOut</a></b>(tween, callback, andIgnore)
+										</div>
+										<div class="description">The opposite function for fadeIn(), also makes several guesses about the desired effect.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item20'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#fireEvent">fireEvent</a></b>(type, e)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item21'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#first">first</a></b>(n)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item22'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#firstChild">firstChild</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item23'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#focus">focus</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item24'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#getResult">getResult</a></b>(reverseIndex)
+										</div>
+										<div class="description">Get the result of the previous operation.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item25'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#getStyle">getStyle</a></b>(prop, returnValue)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item26'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#hasClass">hasClass</a></b>(className, ifAny)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item27'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#height">height</a></b>(height, options)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item28'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#hide">hide</a></b>(andIgnore)
+										</div>
+										<div class="description">Hide elements.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item29'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#html">html</a></b>(content, asText)
+										</div>
+										<div class="description">Set the HTML contents of elements.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item30'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#index">index</a></b>(i, n)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item31'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#insertBefore">insertBefore</a></b>(child, before)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item32'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#insertInto">insertInto</a></b>(what)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item33'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#last">last</a></b>(n)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item34'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#lastChild">lastChild</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item35'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#localize">localize</a></b>()
+										</div>
+										<div class="description">Localize the selection.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item36'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#next">next</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item37'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#nodeName">nodeName</a></b>()
+										</div>
+										<div class="description">Get the <strong>lower-case</code> nodeName of an element.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item38'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#nthChild">nthChild</a></b>(n)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item39'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#on">on</a></b>()
+										</div>
+										<div class="description">Alias of puredom.NodeSelect#addEvent</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item40'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#parent">parent</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item41'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#position">position</a></b>(x, y, tween, units)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item42'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#prev">prev</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item43'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#previous">previous</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item44'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#prop">prop</a></b>(key, value, returnValue)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item45'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#query">query</a></b>(search, options)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item46'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#remove">remove</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item47'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#removeEvent">removeEvent</a></b>(eventType, handler, useCapture)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item48'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#scrollLeft">scrollLeft</a></b>(value)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item49'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#scrollTop">scrollTop</a></b>(value)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item50'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#selectAll">selectAll</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item51'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#selection">selection</a></b>(start, end)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item52'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#setOpacity">setOpacity</a></b>(opacity)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item53'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#show">show</a></b>()
+										</div>
+										<div class="description">Show elements.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item54'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#siblings">siblings</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item55'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#submit">submit</a></b>()
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item56'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#sumOf">sumOf</a></b>(method)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item57'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#template">template</a></b>(templateFields)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item58'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#text">text</a></b>(text)
+										</div>
+										<div class="description">Get or set the textual content of elements.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item59'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#toString">toString</a></b>()
+										</div>
+										<div class="description">Get a String representation of the selection's current contents.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item60'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#uuid">uuid</a></b>()
+										</div>
+										<div class="description">Get a globally unique identifier for an element.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item61'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#value">value</a></b>(newValue, options)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item62'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#wait">wait</a></b>(millis, callback)
+										</div>
+										<div class="description">Call a function on the selection in the future.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item63'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#width">width</a></b>(width, options)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item64'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#x">x</a></b>(absolute, mark)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item65'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.NodeSelection.html#y">y</a></b>(absolute)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+						</tbody>
+					</table>
+				
+			
+				
+			</div>
+		
+		
+<!--
+#### EVENTS SUMMARY
+-->
+		
+<!--
+#### CONSTRUCTOR DETAILS
+-->
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle" id="constructor">
+						Class Detail
+					</h2>
+					
+					<div class="fixedFont">
+						<b>puredom.NodeSelection</b>(nodes)
+					</div>
+					
+					<div class="description">
+						Creates a new selection containing the elements of <code>nodes</code>. <br />
+	This class is not generally instantiated directly - instead, use the puredom() 
+	function to query for elements or wrap an Array of elements with a selection.
+						
+					</div>
+					
+					
+				
+					
+						<dl class="detailList params">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span>  <b>nodes</b>
+									
+								</dt>
+								<dd>An array of raw DOM nodes to wrap in a selection.</dd>
+							
+						</dl>
+					
+					
+					
+				</div>
+			</div>
+		
+<!--
+#### FIELD DETAILS
+-->
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle">
+						Field Detail
+					</h2>
+					
+					
+						<div class="fixedFont heading nomultiline" id="animateCSS">
+							<span class='lighter methodModifier'>
+							
+							</span>
+							
+							
+							
+							<b>animateCSS</b>							
+						</div>
+						
+						<div class="description">
+							
+							
+							
+							
+						</div>
+						
+						
+							
+						
+						
+					
+				</div>
+			</div>
+		
+<!--
+#### METHOD DETAILS
+-->		
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle">
+						Method Detail
+					</h2>
+					
+					<ul class="methodDetail" id="MethodDetail">
+						
+						
+							<li 
+								 class='item0'
+							>
+								<div class="fixedFont heading nomultiline" id="addEvent">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>addEvent</b>(eventType, handler, useCapture)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>eventType</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>handler</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>useCapture</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item1'
+							>
+								<div class="fixedFont heading nomultiline" id="animate">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>animate</b>(animator, duration, easing, callback)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>animator</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>duration</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>easing</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>callback</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item2'
+							>
+								<div class="fixedFont heading nomultiline" id="appendChild">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>appendChild</b>(child)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>child</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item3'
+							>
+								<div class="fixedFont heading nomultiline" id="attr">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>attr</b>(key, value, returnValue)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>key</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>value</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>returnValue</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item4'
+							>
+								<div class="fixedFont heading nomultiline" id="blur">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>blur</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item5'
+							>
+								<div class="fixedFont heading nomultiline" id="children">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>children</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item6'
+							>
+								<div class="fixedFont heading nomultiline" id="classify">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>classify</b>(className)
+								</div>
+								
+								<div class="description">
+									Add a CSS class to the selection. <br />
+	Pass an Array and/or multiple arguments to add multiple classes.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>className</b>
+												
+											</dt>
+											<dd>A CSS class to add.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item7'
+							>
+								<div class="fixedFont heading nomultiline" id="clone">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>clone</b>(deep, newParent)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>deep</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>newParent</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item8'
+							>
+								<div class="fixedFont heading nomultiline" id="count">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>count</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item9'
+							>
+								<div class="fixedFont heading nomultiline" id="css">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>css</b>(css, options, callback)
+								</div>
+								
+								<div class="description">
+									Apply CSS to elements.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String|Object}</span> <b>css</b>
+												
+											</dt>
+											<dd>CSS to apply to the elements in the selection. Either a CSS-string, or an Object where the keys are CSS properties and the values are the corresponding values to apply.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Object}</span> <b>options</b>
+												<i>Optional</i>
+											</dt>
+											<dd>Options</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Number|String}</span> <b>options.tween</b>
+												<i>Optional</i>
+											</dt>
+											<dd>Animate the application of the given CSS styles. Numeric values are treated as durations, String values must be a comma-separated value of the format: "duration,easing-method".</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>options.callback</b>
+												<i>Optional</i>
+											</dt>
+											<dd>A function to call once the styles have been applied. If tweening/animating, gets called once the animation has completed.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
+												
+											</dt>
+											<dd>Same as <code>options.callback</code>, takes precidence when used.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item10'
+							>
+								<div class="fixedFont heading nomultiline" id="declassify">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>declassify</b>(className)
+								</div>
+								
+								<div class="description">
+									Remove a CSS class to the selection. <br />
+	Pass an Array and/or multiple arguments to remove multiple classes.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>className</b>
+												
+											</dt>
+											<dd>A CSS class to remove.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item11'
+							>
+								<div class="fixedFont heading nomultiline" id="describe">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>describe</b>()
+								</div>
+								
+								<div class="description">
+									Get an Array of String representations of each element in the selection. <br />
+	For a more logging-friendly option, see <a href="../symbols/puredom.NodeSelection.html#describe">puredom.NodeSelection#describe</a>.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item12'
+							>
+								<div class="fixedFont heading nomultiline" id="destroy">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>destroy</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item13'
+							>
+								<div class="fixedFont heading nomultiline" id="disable">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>disable</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item14'
+							>
+								<div class="fixedFont heading nomultiline" id="each">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>each</b>(iterator)
+								</div>
+								
+								<div class="description">
+									Call an iterator function on each element in the selection, wrapping each in a new <a href="../symbols/puredom.NodeSelection.html">puredom.NodeSelection</a>.<br />
+	<strong>Note:</strong> Return <code>false</code> from within <code>iterator</code> to break out of the loop.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>iterator</b>
+												
+											</dt>
+											<dd>Gets passed <code>(element, index)</code> for each element in the selection. The value of <code>this</code> is the selection itself.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item15'
+							>
+								<div class="fixedFont heading nomultiline" id="enable">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>enable</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item16'
+							>
+								<div class="fixedFont heading nomultiline" id="enabled">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>enabled</b>(newValue)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>newValue</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item17'
+							>
+								<div class="fixedFont heading nomultiline" id="exists">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>exists</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item18'
+							>
+								<div class="fixedFont heading nomultiline" id="fadeIn">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>fadeIn</b>(tween, callback)
+								</div>
+								
+								<div class="description">
+									This function tries quite hard to guess what particular fade effect is needed. <br />
+	If the element that is already semi-transparent, it fades from the current opacity. <br />
+	If the element that is hidden but not explicitly transparent, it fades from opacity=0 (hidden). <br />
+	If the element is already 100% opaque (non-transparent), no animation is performed, and the callback is fired after a very small delay (to enforce async). <br />
+	Arguments are interchangeable for backward compatibility reasons.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Number|String}</span> <b>tween</b>
+												
+											</dt>
+											<dd>A tween value. Can be a <code>{Number} duration</code>, or <code>{String} "duration,easing-method"</code>.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
+												<i>Optional</i>
+											</dt>
+											<dd>A function to call once the fade has completed. Gets passed the selection.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item19'
+							>
+								<div class="fixedFont heading nomultiline" id="fadeOut">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>fadeOut</b>(tween, callback, andIgnore)
+								</div>
+								
+								<div class="description">
+									The opposite function for fadeIn(), also makes several guesses about the desired effect.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>tween</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>callback</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>andIgnore</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item20'
+							>
+								<div class="fixedFont heading nomultiline" id="fireEvent">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>fireEvent</b>(type, e)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>type</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>e</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item21'
+							>
+								<div class="fixedFont heading nomultiline" id="first">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>first</b>(n)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>n</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item22'
+							>
+								<div class="fixedFont heading nomultiline" id="firstChild">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>firstChild</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item23'
+							>
+								<div class="fixedFont heading nomultiline" id="focus">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>focus</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item24'
+							>
+								<div class="fixedFont heading nomultiline" id="getResult">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{Any}</span>
+									
+									<b>getResult</b>(reverseIndex)
+								</div>
+								
+								<div class="description">
+									Get the result of the previous operation. <br />
+	Many puredom methods return the selection they were called on rather than a standard return value.
+	This method gets the equivalent return value of the most recent selection method call.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Number}</span> <b>reverseIndex</b>
+												<i>Optional, Default: 0</i>
+											</dt>
+											<dd>Optionally get an older return value. This value is a 0-based offset.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{Any}</span> returnValue, or <code>undefined</code> if no value was returned.</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item25'
+							>
+								<div class="fixedFont heading nomultiline" id="getStyle">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>getStyle</b>(prop, returnValue)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>prop</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>returnValue</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item26'
+							>
+								<div class="fixedFont heading nomultiline" id="hasClass">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>hasClass</b>(className, ifAny)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>className</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>ifAny</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item27'
+							>
+								<div class="fixedFont heading nomultiline" id="height">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>height</b>(height, options)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>height</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>options</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item28'
+							>
+								<div class="fixedFont heading nomultiline" id="hide">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>hide</b>(andIgnore)
+								</div>
+								
+								<div class="description">
+									Hide elements.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Boolean}</span> <b>andIgnore</b>
+												<i>Optional, Default: true</i>
+											</dt>
+											<dd>If <code>false</code>, triggers "visibility:hidden" CSS, instead of "display:none".</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item29'
+							>
+								<div class="fixedFont heading nomultiline" id="html">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{String}</span>
+									
+									<b>html</b>(content, asText)
+								</div>
+								
+								<div class="description">
+									Set the HTML contents of elements.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>content</b>
+												<i>Optional</i>
+											</dt>
+											<dd>If set, updates the content of the elements. If not set, returns the HTML content of the first element.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Boolean}</span> <b>asText</b>
+												<i>Optional, Default: auto</i>
+											</dt>
+											<dd>If <code>true</code>, content will be treated as textual, if <code>false</code> content will be treated as HTML. Defaults to auto-detection of HTML.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{String}</span> text		The HTML or textual contents of the first element in the selection, or the selection itself if <code>html</code> was not set.</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item30'
+							>
+								<div class="fixedFont heading nomultiline" id="index">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>index</b>(i, n)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>i</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>n</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item31'
+							>
+								<div class="fixedFont heading nomultiline" id="insertBefore">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>insertBefore</b>(child, before)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>child</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>before</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item32'
+							>
+								<div class="fixedFont heading nomultiline" id="insertInto">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>insertInto</b>(what)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>what</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item33'
+							>
+								<div class="fixedFont heading nomultiline" id="last">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>last</b>(n)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>n</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item34'
+							>
+								<div class="fixedFont heading nomultiline" id="lastChild">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>lastChild</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item35'
+							>
+								<div class="fixedFont heading nomultiline" id="localize">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>localize</b>()
+								</div>
+								
+								<div class="description">
+									Localize the selection.
+									
+									
+										<br />
+										<i>Defined in: </i> &lt;/Users/developit/Sites/puredom/framework_full/puredom-i18n.js&gt;.
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item36'
+							>
+								<div class="fixedFont heading nomultiline" id="next">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>next</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item37'
+							>
+								<div class="fixedFont heading nomultiline" id="nodeName">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{String}</span>
+									
+									<b>nodeName</b>()
+								</div>
+								
+								<div class="description">
+									Get the <strong>lower-case</code> nodeName of an element.<br />
+	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em> <br />
+	<strong>Note:</strong> In puredom, the <code>window</code> Object is given a nodeName of "#window".
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{String}</span> nodeName</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item38'
+							>
+								<div class="fixedFont heading nomultiline" id="nthChild">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>nthChild</b>(n)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>n</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item39'
+							>
+								<div class="fixedFont heading nomultiline" id="on">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>on</b>()
+								</div>
+								
+								<div class="description">
+									Alias of puredom.NodeSelect#addEvent
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item40'
+							>
+								<div class="fixedFont heading nomultiline" id="parent">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>parent</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item41'
+							>
+								<div class="fixedFont heading nomultiline" id="position">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>position</b>(x, y, tween, units)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>x</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>y</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>tween</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>units</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item42'
+							>
+								<div class="fixedFont heading nomultiline" id="prev">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>prev</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item43'
+							>
+								<div class="fixedFont heading nomultiline" id="previous">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>previous</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item44'
+							>
+								<div class="fixedFont heading nomultiline" id="prop">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>prop</b>(key, value, returnValue)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>key</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>value</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>returnValue</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item45'
+							>
+								<div class="fixedFont heading nomultiline" id="query">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>query</b>(search, options)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>search</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>options</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item46'
+							>
+								<div class="fixedFont heading nomultiline" id="remove">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>remove</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item47'
+							>
+								<div class="fixedFont heading nomultiline" id="removeEvent">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>removeEvent</b>(eventType, handler, useCapture)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>eventType</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>handler</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>useCapture</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item48'
+							>
+								<div class="fixedFont heading nomultiline" id="scrollLeft">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>scrollLeft</b>(value)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>value</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item49'
+							>
+								<div class="fixedFont heading nomultiline" id="scrollTop">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>scrollTop</b>(value)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>value</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item50'
+							>
+								<div class="fixedFont heading nomultiline" id="selectAll">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>selectAll</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item51'
+							>
+								<div class="fixedFont heading nomultiline" id="selection">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>selection</b>(start, end)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>start</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>end</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item52'
+							>
+								<div class="fixedFont heading nomultiline" id="setOpacity">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>setOpacity</b>(opacity)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>opacity</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item53'
+							>
+								<div class="fixedFont heading nomultiline" id="show">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>show</b>()
+								</div>
+								
+								<div class="description">
+									Show elements.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item54'
+							>
+								<div class="fixedFont heading nomultiline" id="siblings">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>siblings</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item55'
+							>
+								<div class="fixedFont heading nomultiline" id="submit">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>submit</b>()
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item56'
+							>
+								<div class="fixedFont heading nomultiline" id="sumOf">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>sumOf</b>(method)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>method</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item57'
+							>
+								<div class="fixedFont heading nomultiline" id="template">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>template</b>(templateFields)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>templateFields</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item58'
+							>
+								<div class="fixedFont heading nomultiline" id="text">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{String}</span>
+									
+									<b>text</b>(text)
+								</div>
+								
+								<div class="description">
+									Get or set the textual content of elements. Omit <code>text</code> to retrieve the textual value instead of setting it.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>text</b>
+												<i>Optional</i>
+											</dt>
+											<dd>If set, replaces the textual content of elements.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{String}</span> text		The textual contents of the first element in the selection, or the selection itself if <code>text</code> was not set.</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item59'
+							>
+								<div class="fixedFont heading nomultiline" id="toString">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>toString</b>()
+								</div>
+								
+								<div class="description">
+									Get a String representation of the selection's current contents. <br />
+	For the raw Array description, see <a href="../symbols/puredom.NodeSelection.html#describe">puredom.NodeSelection#describe</a>.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item60'
+							>
+								<div class="fixedFont heading nomultiline" id="uuid">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{String}</span>
+									
+									<b>uuid</b>()
+								</div>
+								
+								<div class="description">
+									Get a globally unique identifier for an element. <br />
+	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em>
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{String}</span> uuid</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item61'
+							>
+								<div class="fixedFont heading nomultiline" id="value">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>value</b>(newValue, options)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>newValue</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>options</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item62'
+							>
+								<div class="fixedFont heading nomultiline" id="wait">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{this}</span>
+									
+									<b>wait</b>(millis, callback)
+								</div>
+								
+								<div class="description">
+									Call a function on the selection in the future.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Number}</span> <b>millis</b>
+												
+											</dt>
+											<dd>The number of milliseconds to wait before calling <code>callback</code>.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
+												
+											</dt>
+											<dd>The function to call in <code>millis</code> milliseconds. Gets called on the selection, so the value of <code>this</code> is the selection itself.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{this}</span> </dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item63'
+							>
+								<div class="fixedFont heading nomultiline" id="width">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>width</b>(width, options)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>width</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>options</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item64'
+							>
+								<div class="fixedFont heading nomultiline" id="x">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>x</b>(absolute, mark)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>absolute</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>mark</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item65'
+							>
+								<div class="fixedFont heading nomultiline" id="y">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>y</b>(absolute)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>absolute</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								
+							</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+		
+<!--
+#### EVENT DETAILS
+-->		
+		
+	</div>
+</div>
+		<script>window.puredom && window.puredom.init();</script>
+	</body>
+</html>
+

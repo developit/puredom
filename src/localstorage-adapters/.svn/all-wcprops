@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/speakerfile-frontend/!svn/ver/355/trunk/public/js/framework/localstorage-adapters
+END
+webkitsqlite-adapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/speakerfile-frontend/!svn/ver/2/trunk/public/js/framework/localstorage-adapters/webkitsqlite-adapter.js
+END
+userdata-adapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/speakerfile-frontend/!svn/ver/355/trunk/public/js/framework/localstorage-adapters/userdata-adapter.js
+END
+cookie-adapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/speakerfile-frontend/!svn/ver/2/trunk/public/js/framework/localstorage-adapters/cookie-adapter.js
+END
+localstorage-adapter.js
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/speakerfile-frontend/!svn/ver/355/trunk/public/js/framework/localstorage-adapters/localstorage-adapter.js
+END

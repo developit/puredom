@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		<title>puredom.Cache | JsDoc Reference</title>
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+		<meta name="mobileoptimized" content="1" />
+	
+		<link rel="stylesheet" href="../css/all.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<!--
+		<link rel="stylesheet" href="../css/handheld.css" media="only screen and (max-width: 660px)" />
+		<link rel="stylesheet" href="../css/handheld.css" media="handheld" />
+		<link rel="stylesheet" href="../css/screen.css" media="screen and (min-width: 661px)" />
+		-->
+		
+		<script src="../javascript/puredom.light.js"></script>
+		<script src="../javascript/mobile-scroll.js"></script>
+		<script src="../javascript/all.js"></script>
+		<!--[if lt IE 9]>
+			<script src="../javascript/html5.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+<div class="index">
+	<div class="menu">
+		<div class="indexLinks">
+			<a href="../index.html">Classes</a>
+			<a href="../files.html">Files</a>
+		</div>
+	
+		<h2 class="heading1">Classes</h2>
+		
+		<input type="text" name="classFilter" class="classFilter" id="ClassFilter" placeholder="Filter"></input>
+		
+		<nav>
+			<ul class="classList" id="ClassList">
+				
+					<li><a href="../symbols/_global_.html">_global_</a></li>
+				
+					<li><a href="../symbols/puredom.html">puredom</a></li>
+				
+					<li><a href="../symbols/puredom.Cache.html">puredom<span class='break'> </span>.<span class='break'> </span>Cache</a></li>
+				
+					<li><a href="../symbols/puredom.cookies.html">puredom<span class='break'> </span>.<span class='break'> </span>cookies</a></li>
+				
+					<li><a href="../symbols/puredom.date.html">puredom<span class='break'> </span>.<span class='break'> </span>date</a></li>
+				
+					<li><a href="../symbols/puredom.DOMEvent.html">puredom<span class='break'> </span>.<span class='break'> </span>DOMEvent</a></li>
+				
+					<li><a href="../symbols/puredom.EventEmitter.html">puredom<span class='break'> </span>.<span class='break'> </span>EventEmitter</a></li>
+				
+					<li><a href="../symbols/puredom.i18n.html">puredom<span class='break'> </span>.<span class='break'> </span>i18n</a></li>
+				
+					<li><a href="../symbols/puredom.json.html">puredom<span class='break'> </span>.<span class='break'> </span>json</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.cookie.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>cookie</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.none.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>none</a></li>
+				
+					<li><a href="../symbols/puredom.net.html">puredom<span class='break'> </span>.<span class='break'> </span>net</a></li>
+				
+					<li><a href="../symbols/puredom.net.HttpRequest.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>HttpRequest</a></li>
+				
+					<li><a href="../symbols/puredom.NodeSelection.html">puredom<span class='break'> </span>.<span class='break'> </span>NodeSelection</a></li>
+				
+					<li><a href="../symbols/puredom.querystring.html">puredom<span class='break'> </span>.<span class='break'> </span>querystring</a></li>
+				
+					<li><a href="../symbols/puredom.selectorEngine.html">puredom<span class='break'> </span>.<span class='break'> </span>selectorEngine</a></li>
+				
+					<li><a href="../symbols/puredom.text.html">puredom<span class='break'> </span>.<span class='break'> </span>text</a></li>
+				
+					<li><a href="../symbols/puredom.xml.html">puredom<span class='break'> </span>.<span class='break'> </span>xml</a></li>
+				
+			</ul>
+		</nav>
+	</div>
+	<div class="fineprint" style="clear:both">
+		&copy;2013<br />
+		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
+		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
+		Generated on: 2013-1-25 23:20
+	</div>
+</div>
+
+<div class="index indexStatic"></div>
+
+<div class="content">
+	<div class="innerContent">
+		<h1 class="classTitle">
+			
+			Class <span>puredom.Cache</span>
+		</h1>
+		
+		<div class="intro">
+			<p class="description summary">
+				In-memeory cache class with a twist! <br />
+	Set and get work like a normal cache.
+	Creates a new Cache instance.
+			</p>
+				
+			
+				<ul class="summary">
+					
+					
+					
+						<li>Defined in: &lt;/Users/developit/Sites/puredom/framework_full/puredom-utils.js&gt;</li>
+					
+						
+				</ul>
+			
+		</div>
+		
+		
+			<div class="props">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class puredom.Cache.">
+					<caption class="sectionTitle">Class Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Constructor Attributes</th>
+							<th scope="col">Constructor Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription" >
+								<div class="fixedFont">
+									<b><a href="../symbols/puredom.Cache.html#constructor">puredom.Cache</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+		
+		
+			
+			
+				<div class="props">
+					<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class puredom.Cache.">
+						<caption class="sectionTitle">Field Summary</caption>
+						
+						<thead>
+							<tr>
+								<th scope="col">Field Attributes</th>
+								<th scope="col">Field Name and Description</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							
+								<tr>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+										<b><a href="../symbols/puredom.Cache.html#defaultType">defaultType</a></b>
+										</div>
+										<div class="description">The default *type* used for namespacing keys is "_default"</div>
+									</td>
+								</tr>
+							
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+		
+<!--
+#### METHODS SUMMARY
+-->
+		
+			
+			
+			<div class="props">
+				<h2 class="sectionTitle">Method Summary</h2>
+				
+				
+					<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class puredom.Cache.">
+						<thead>
+							<tr>
+								<th scope="col">Method Attributes</th>
+								<th scope="col">Method Name and Description</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							
+							
+								<tr
+									 class='item0'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.Cache.html#each">each</a></b>(iterator)
+										</div>
+										<div class="description">Iterate over all the cache entries.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item1'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.Cache.html#get">get</a></b>(type, id, callback)
+										</div>
+										<div class="description">Get a cached value with optional type.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item2'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.Cache.html#proxySet">proxySet</a></b>(type, id, callback, paramIndex)
+										</div>
+										<div class="description">Proxy a callback function for automatically caching asynchronous responses.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item3'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.Cache.html#purge">purge</a></b>()
+										</div>
+										<div class="description">Purge all entries from the cache</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item4'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont"><b><a href="../symbols/puredom.Cache.html#set">set</a></b>(type, id, value)
+										</div>
+										<div class="description">Get a cached value with optional type.</div>
+									</td>
+								</tr>
+							
+						</tbody>
+					</table>
+				
+			
+				
+			</div>
+		
+		
+<!--
+#### EVENTS SUMMARY
+-->
+		
+<!--
+#### CONSTRUCTOR DETAILS
+-->
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle" id="constructor">
+						Class Detail
+					</h2>
+					
+					<div class="fixedFont">
+						<b>puredom.Cache</b>()
+					</div>
+					
+					<div class="description">
+						
+						
+					</div>
+					
+					
+				
+					
+					
+					
+				</div>
+			</div>
+		
+<!--
+#### FIELD DETAILS
+-->
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle">
+						Field Detail
+					</h2>
+					
+					
+						<div class="fixedFont heading nomultiline" id="defaultType">
+							<span class='lighter methodModifier'>
+							
+							</span>
+							
+							
+							
+							<b>defaultType</b>							
+						</div>
+						
+						<div class="description">
+							The default *type* used for namespacing keys is "_default"
+							
+							
+							
+						</div>
+						
+						
+							
+						
+						
+					
+				</div>
+			</div>
+		
+<!--
+#### METHOD DETAILS
+-->		
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle">
+						Method Detail
+					</h2>
+					
+					<ul class="methodDetail" id="MethodDetail">
+						
+						
+							<li 
+								 class='item0'
+							>
+								<div class="fixedFont heading nomultiline" id="each">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>each</b>(iterator)
+								</div>
+								
+								<div class="description">
+									Iterate over all the cache entries.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>iterator</b>
+												
+											</dt>
+											<dd>Gets passed each entry.</dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item1'
+							>
+								<div class="fixedFont heading nomultiline" id="get">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>get</b>(type, id, callback)
+								</div>
+								
+								<div class="description">
+									Get a cached value with optional type.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>type</b>
+												<i>Optional</i>
+											</dt>
+											<dd>A type prefix.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String|Number}</span> <b>id</b>
+												
+											</dt>
+											<dd>The cache entry ID</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
+												
+											</dt>
+											<dd>A callback, gets passed the cached value once retrieved.</dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item2'
+							>
+								<div class="fixedFont heading nomultiline" id="proxySet">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{Function}</span>
+									
+									<b>proxySet</b>(type, id, callback, paramIndex)
+								</div>
+								
+								<div class="description">
+									Proxy a callback function for automatically caching asynchronous responses.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>type</b>
+												<i>Optional</i>
+											</dt>
+											<dd>A type prefix.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String|Number}</span> <b>id</b>
+												
+											</dt>
+											<dd>The cache entry ID</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
+												
+											</dt>
+											<dd>The callback function to inject c</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Number}</span> <b>paramIndex</b>
+												
+											</dt>
+											<dd>Which callback parameter to cache (0-based).</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{Function}</span> The proxied callback function, with the cache set injected.</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item3'
+							>
+								<div class="fixedFont heading nomultiline" id="purge">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>purge</b>()
+								</div>
+								
+								<div class="description">
+									Purge all entries from the cache
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item4'
+							>
+								<div class="fixedFont heading nomultiline" id="set">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>set</b>(type, id, value)
+								</div>
+								
+								<div class="description">
+									Get a cached value with optional type.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>type</b>
+												<i>Optional</i>
+											</dt>
+											<dd>A type prefix.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String|Number}</span> <b>id</b>
+												
+											</dt>
+											<dd>The cache entry ID</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>value</b>
+												
+											</dt>
+											<dd>Any value to cache.</dd>
+										
+									</dl>
+								
+								
+								
+								
+							</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+		
+<!--
+#### EVENT DETAILS
+-->		
+		
+	</div>
+</div>
+		<script>window.puredom && window.puredom.init();</script>
+	</body>
+</html>
+

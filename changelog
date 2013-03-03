@@ -1,0 +1,6 @@
+Version 1.1.5 (Feb 26th 2013)
+- Accommodate null callback option for .css() [was throwing in Firefox]
+
+Version 1.1.4 (Feb 25th 2013)
+- Feature:  .css() now accepts CSS strings.  sel.css('left:5px','fast');
+- Bugfix:  CSS animation of -vendor-transform is correctly turned off after completion.

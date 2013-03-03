@@ -1,0 +1,41 @@
+tinydom.LocalStorage.addAdapter('cookie', {
+	
+	/** @public The default cookie ID to use for database storage */
+	defaultName : 'db',
+	
+	/** @public This adapter is an absolute fallback, so its rating is 0. */
+	rating : 0,
+	
+	/** @public Test if this adapter will work in the current environment */
+	test : function(storage) {
+		if (tinydom.cookies && tinydom.cookies.get && ('cookie' in document)) {
+			return true;
+		}
+		return false;
+	},
+	
+	/** @public Load the persisted DB */
+	load : function(storage, callback) {
+		var jsonStr = tinydom.cookies.get(storage.id || this.defaultName),
+			obj;
+		if (jsonStr) {
+			obj = tinydom.json(jsonStr);
+		}
+		if (callback) {
+			callback(obj);
+		}
+		return obj;
+	},
+	
+	/** @public Save the DB to cookies */
+	save : function(storage, data, callback) {
+		tinydom.cookies.set(
+			storage.id || this.defaultName,
+			tinydom.json(data)
+		);
+		if (callback) {
+			callback(true);
+		}
+	}
+	
+});
