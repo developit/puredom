@@ -8,7 +8,7 @@ puredom
 
 What is Puredom?
 ================
-puredom is a fast, chainable, exstensible JavaScript library for web applications. 
+puredom is a fast, chainable, exstensible JavaScript library for web applications.
 
 In plain english, it makes building developing rich apps using JavaScript, HTML and CSS much easier.
 
@@ -34,7 +34,7 @@ puredom provides a plugin API for extending the core selection object, and for e
 
 Example NodeSelection Plugin
 ----------------------------
-Selector Engine plugins extend the CSS selector syntax with new functionality.
+Selector Engine plugins extend the CSS selector syntax with new functionality.  
 ```JavaScript
 // Add a new :log() filter
 puredom.addNodeSelectionPlugin(
@@ -52,7 +52,7 @@ puredom(".foo").someFunctionName();	// call your plugin method
 
 Example Selector Engine Plugin
 ------------------------------
-Selector Engine plugins extend the CSS selector syntax with new functionality.
+Selector Engine plugins extend the CSS selector syntax with new functionality.  
 ```JavaScript
 // Add a new :log() filter
 puredom.selectorEngine.addSelectorFilter(
@@ -93,8 +93,7 @@ puredom Light
 
 puredom Full
 ------------
-*Everything from the light version, plus:*
-
+*Everything from the light version, plus:*  
 >	- ControllerManager (work with controllers in an MVC configuration)
 >	- RouteManager (Manage controllers based on URL patterns)
 >	- ViewManager (Register, store, load and template HTML, or JSON views)
@@ -109,6 +108,34 @@ puredom Full
 
 ---
 
+Building
+========
+Puredom is built using Grunt.
+>	Both the full and light versions are built at the same time, as light is just a subset of the full library.
+
+**Install Grunt:**
+```bash
+# install grunt
+npm install grunt
+# install the CLI globally
+sudo npm install -g grunt-cli
+# get uglify()
+npm install grunt-contrib-uglify
+# get concat()
+npm install grunt-contrib-concat
+```
+
+**Build the library:**
+> One command to build everything.  
+> Runs grunt, then compresses the output.  
+> Grunt details are in the config, Gruntfile.js
+```bash
+./build.sh
+```
+
+
+---
+
 License
 =======
 **puredom is released under a BSD-3-Clause License.**
@@ -116,18 +143,14 @@ License
 >	Copyright (c) Socialseek Inc. All rights reserved.
 >	
 >	Redistribution and use in source and binary forms, with or without modification, 
->	are permitted provided that the following conditions are met:
->	
+>	are permitted provided that the following conditions are met:  
 >	*	Redistributions of source code must retain the above copyright notice, 
->		this list of conditions and the following disclaimer.
->	
+>		this list of conditions and the following disclaimer.  
 >	*	Redistributions in binary form must reproduce the above copyright notice, 
 >		this list of conditions and the following disclaimer in the documentation 
->		and/or other materials provided with the distribution.
->	
+>		and/or other materials provided with the distribution.  
 >	*	Neither the name of Socialseek Inc. nor the names of its contributors may be used to endorse 
->		or promote products derived from this software without specific prior written permission.
->	
+>		or promote products derived from this software without specific prior written permission.  
 >	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS 
 >	OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
 >	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER 
@@ -142,11 +165,9 @@ License
 
 Changelog
 =========
-**Version 1.1.5** *(Feb 26th 2013)*
-
+**Version 1.1.5** *(Feb 26th 2013)*  
 - Accommodate null callback option for .css() [was throwing in Firefox]
 
-**Version 1.1.4** *(Feb 25th 2013)*
-
+**Version 1.1.4** *(Feb 25th 2013)*  
 - Feature: .css() now accepts CSS strings. sel.css('left:5px','fast');
 - Bugfix: CSS animation of -vendor-transform is correctly turned off after completion.
