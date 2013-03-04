@@ -165,7 +165,7 @@ License
 
 Changelog
 =========
-**Version 1.1.6** *(Feb 26th 2013)*  
+**Version 1.1.6** *(Mar 3rd 2013)*  
 - Make puredom.DOMEvent an actual class. Instance it and pass it to fireEvent for better insight into handler responses.
 
 **Version 1.1.5** *(Feb 26th 2013)*  
