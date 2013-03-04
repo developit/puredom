@@ -3429,7 +3429,7 @@ window._previousPureDom = window.puredom;
 	/**	Alias of {@see puredom.DOMEvent#cancel}, provided only for compatibility with other notable DOM libraries.
 	 *	@function
 	 */
-	self.DOMEvent.prototype.event.stop = self.DOMEvent.prototype.cancel;
+	self.DOMEvent.prototype.stop = self.DOMEvent.prototype.cancel;
 	
 	/**	@deprecated 
 	 *	@private
