@@ -38,11 +38,11 @@ Selector Engine plugins extend the CSS selector syntax with new functionality.
 ```JavaScript
 // Add a new :log() filter
 puredom.addNodeSelectionPlugin(
-    "someFunctionName",				// gets pinned to every selection
-    function(args){
-        // <this> is the NodeSelection
-        // arguments passed to the function are passed on to your plugin
-    }
+	"someFunctionName",				// gets pinned to every selection
+	function(args){
+		// <this> is the NodeSelection
+		// arguments passed to the function are passed on to your plugin
+	}
 );
 
 // Use it
@@ -56,12 +56,12 @@ Selector Engine plugins extend the CSS selector syntax with new functionality.
 ```JavaScript
 // Add a new :log() filter
 puredom.selectorEngine.addSelectorFilter(
-    /^\:log\(\)/gim,		// regex to match your rule (similar to a route)
-    function(matches, nodes, config){
-        console.log(nodes);
+	/^\:log\(\)/gim,		// regex to match your rule (similar to a route)
+	function(matches, nodes, config){
+		console.log(nodes);
 		// Returning an Array here overwrites the selection.
 		// To mutate the selection, operate directly on <nodes>.
-    }
+	}
 );
 
 // Use it
