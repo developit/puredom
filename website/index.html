@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>puredom | JavaScript Library</title>
+		<link type="text/css" rel="stylesheet" href="/style.css" />
+	</head>
+	<body>
+		
+		<h1>puredom</h1>
+		<h4>Current version: <strong data-tpl-id="version">...</strong></h4>
+		
+		
+		<div class="section">
+			<h2>What is Puredom?</h2>
+			<p>puredom is a fast, chainable, exstensible JavaScript library for web applications. In plain english, it makes building developing rich apps using JavaScript, HTML and CSS much easier.</p>
+		</div>
+		
+		<div class="section">
+			<h2>Documentation</h2>
+			<p>For a list of functions you can call on a <abbr title="puredom.NodeSelection">puredom selection</abbr> see <a href="/selector-functions.html">the selector function list</a> (<a href="/selector-functions.pdf">or PDF</a>).</p>
+			<p>For class docs, check out the <a href="/docs/">full puredom documentation</a>. Please note some puredom features are not yet available in the documentation.</p>
+		</div>
+		
+		<div class="section">
+			<h2>Plugins</h2>
+			<p>puredom supports plugins for extending the core selection object.</p>
+			<p>Check out the <a href="/plugins/">available plugins</a> or the <a href="#aww">plugin documentation</a>.</p>
+		</div>
+		
+		<div class="section">
+			<h2>Download</h2>
+			<div>
+				<h3>puredom Light:</h3>
+				<ul>
+					<li><strong>Puredom Core</strong> <em>(selector engine, filters, events, all built-in selection functions)</em></li>
+					<li><strong>EventEmitter</strong> <em>(add eventing to objects and classes)</em></li>
+					<li><strong>Cache</strong> <em>(persistence with adapters)</em></li>
+					<li><strong>net</strong> <em>(http/ajax/jsonp)</em></li>
+					<li><strong>date</strong> <em>(parse & format)</em></li>
+					<li><strong>Utils:</strong></li>
+					<ul>
+						<li>json</li>
+						<li>xml</li>
+						<li>text</li>
+						<li>querystring</li>
+						<li>cookies</li>
+					</ul>
+				</ul>
+				<p>Download: <a href="/download/1.1.4/puredom.light.zip">Puredom Light</a> (compressed)</p>
+			</div>
+			
+			<div>
+				<h3>puredom Full:</h3>
+				<ul>
+					<li>All of the light version</li>
+					<li><strong>ControllerManager</strong> <em>(work with controllers in an MVC configuration)</em></li>
+					<li><strong>RouteManager</strong> <em>(Manage controllers based on URL patterns)</em></li>
+					<li><strong>ViewManager</strong> <em>(Register, store, load and template HTML, or JSON views)</em></li>
+					<li><strong>FormHandler</strong> <em>(Manage form population, submission and error handling)</em></li>
+					<li><strong>i18n</strong> <em>(Internationalization &amp; localization)</em></li>
+					<li><strong>NativeAPI</strong> <em>(Dynamically create models for APIs using a simple JSON structure)</em></li>
+					<li><strong>Notifier</strong> <em>(Show stylized notifications within the browser window)</em></li>
+					<li><strong>TestSuite</strong> <em>(Run &amp; automate asyncronous tests)</em></li>
+				</ul>
+				<p>Download: <a href="/download/1.1.4/puredom.zip">Puredom Full</a> (compressed)</p>
+			</div>
+		</div>
+		
+		<div class="section">
+			<h2>License</h2>
+			<p>puredom is released under a <a href="license.html">BSD-3-Clause License</a>.</p>
+		</div>
+		
+		<div class="section">
+			<h2>Changelog</h2>
+			<p id="changelog" data-tpl-id="changelog|nl2br"></p>
+		</div>
+		
+		<script src="/download/latest/puredom.light.js"></script>
+		<script>
+			puredom.net.get('/changelog', function(success, body) {
+				var version = body && (/Version (\d+\.\d+\.\d+)/gi).exec(body)[1];
+				puredom(document.body).template({
+					version : version,
+					changelog : body || 'Changelog failed to load.'
+				});
+			});
+		</script>
+	</body>
+</html>

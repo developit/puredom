@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>PureDOM Functions</title>
+		<style type="text/css">
+			 .line {
+			 	margin: 0;
+			 	padding: 0;
+			 }
+			 .func {
+			 	margin: 0;
+			 	padding: 0;
+			 	color: rgb(170, 170, 170);
+			 	font-size: 18px;
+			 }
+			 .dot {
+			 	color: rgb(204, 204, 204);
+			 	font-style: italic;
+			 }
+			 .name {
+			 	color: rgb(102, 136, 170);
+			 	font-weight: bold;
+			 }
+			 .params {
+			 	color: rgb(136, 170, 102);
+			 }
+		</style>
+	</head>
+	<body>
+
+<h1><span class="Apple-style-span" style="font-weight: normal; font-size: medium; "><div class="line"><pre class="func"><span class="dot">.</span><span class="name">getResult</span>(<span class="params">reverseIndex</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">pushResult</span>(<span class="params">result</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">each</span>(<span class="params">action</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">wait</span>(<span class="params">millis, callback</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">nodeName</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">uuid</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">html</span>(<span class="params">content, asText</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">css</span>(<span class="params">css, options</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">show</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">hide</span>(<span class="params">andIgnore</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">fadeIn</span>(<span class="params">tween, callback</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">fadeOut</span>(<span class="params">tween, callback, andIgnore</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">animateCSS</span>(<span class="params">css</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">animate</span>(<span class="params">animator, duration, easing, callback</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">classify</span>(<span class="params">className</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">declassify</span>(<span class="params">className</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">hasClass</span>(<span class="params">className, ifAny</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">setOpacity</span>(<span class="params">opacity</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">sumOf</span>(<span class="params">method</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">height</span>(<span class="params">height, options</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">width</span>(<span class="params">width, options</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">x</span>(<span class="params">absolute, mark</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">y</span>(<span class="params">absolute</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">position</span>(<span class="params">x, y, tween, units</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">scrollLeft</span>(<span class="params">value</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">scrollTop</span>(<span class="params">value</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">focus</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">blur</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">selectAll</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">getStyle</span>(<span class="params">prop, returnValue</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">value</span>(<span class="params">newValue, options</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">attr</span>(<span class="params">key, value, returnValue</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">prop</span>(<span class="params">key, value, returnValue</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">enable</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">disable</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">enabled</span>(<span class="params">newValue</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">addEvent</span>(<span class="params">eventType, handler, useCapture</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">removeEvent</span>(<span class="params">eventType, handler, useCapture</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">fireEvent</span>(<span class="params">type, e</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">appendChild</span>(<span class="params">child</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">insertBefore</span>(<span class="params">child, before</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">insertInto</span>(<span class="params">what</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">remove</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">destroy</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">query</span>(<span class="params">search, options</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">clone</span>(<span class="params">deep, newParent</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">count</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">exists</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">next</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">prev</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">previous</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">firstChild</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">lastChild</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">nthChild</span>(<span class="params">n</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">first</span>(<span class="params">n</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">last</span>(<span class="params">n</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">index</span>(<span class="params">i, n</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">siblings</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">parent</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">children</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">submit</span>(<span class="params"></span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">selection</span>(<span class="params">start, end</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">template</span>(<span class="params">templateFields</span>)</pre></div>
+<div class="line"><pre class="func"><span class="dot">.</span><span class="name">on</span>(<span class="params">eventType, handler, useCapture</span>)</pre></div>
+</span></h1>
+
+	</body>
+</html>
