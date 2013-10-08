@@ -1,7 +1,7 @@
 
 puredom
 =======
-*Current version:* **1.1.6**
+*Current version:* **1.1.7**
 
 
 ---
@@ -117,12 +117,19 @@ Puredom is built using Grunt.
 ```bash
 # install grunt
 npm install grunt
+
 # install the CLI globally
 sudo npm install -g grunt-cli
+
 # get uglify()
 npm install grunt-contrib-uglify
+
 # get concat()
 npm install grunt-contrib-concat
+
+# get jshint
+sudo npm install -g jshint
+npm install grunt-contrib-jshint
 ```
 
 **Build the library:**
@@ -165,6 +172,9 @@ License
 
 Changelog
 =========
+**Version 1.1.7** *(Oct 8th 2013)*  
+- Lint, build & website fixes.
+
 **Version 1.1.6** *(Mar 3rd 2013)*  
 - Make puredom.DOMEvent an actual class. Instance it and pass it to fireEvent for better insight into handler responses.
 
