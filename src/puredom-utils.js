@@ -82,7 +82,7 @@ window.puredom = window.puredom || {};
 			 */
 			base.escape = function(str) {
 				return encodeURIComponent(str);
-			},
+			};
 			
 			/**	URL-decode a string. (using decodeURIComponent)
 			 *	@public
@@ -91,7 +91,7 @@ window.puredom = window.puredom || {};
 			 */
 			base.unescape = function(str) {
 				return decodeURIComponent(str);
-			},
+			};
 			
 			/**	Convert special characters to their HTML-encoded equivalents.
 			 *	@param {String} str		The string to modify
@@ -147,7 +147,7 @@ window.puredom = window.puredom || {};
 			
 			/** Truncate a string, optionally on word boundaries. <br />
 			 *	Optionally adds a textual truncation indicator (eg: "...").
-			 *	@param {String} str 					The string to truncate
+			 *	@param {String} str						The string to truncate
 			 *	@param {Number} [maxLen=80]				Maximum string length, in characters.
 			 *	@param {Boolean|String} [byWord=false]	Don't truncate in the middle of words. Resultant string may be shorter if set to true.
 			 *	@param {String} [indicatorChars="..."]	Custom indicator characters if truncation occurs. Defaults to "...".

@@ -1,7 +1,4 @@
 
-// json2.js, https://github.com/douglascrockford/JSON-js
-if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typeof Date.prototype.toJSON!=='function'){/**@ignore*/Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null};/**@ignore*/String.prototype.toJSON=/**@ignore*/Number.prototype.toJSON=/**@ignore*/Boolean.prototype.toJSON=function(key){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+string+'"'}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key)}if(typeof rep==='function'){value=rep.call(holder,key,value)}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null'}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null'}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v}}if(typeof JSON.stringify!=='function'){/**@ignore*/JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' '}}else if(typeof space==='string'){indent=space}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value})}}if(typeof JSON.parse!=='function'){/**@ignore*/JSON.parse=function(text,reviver){var j;/**@ignore*/function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v}else{delete value[k]}}}}return reviver.call(holder,key,value)}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j}throw new SyntaxError('JSON.parse');}}}());
-
 // Too convenient
 if (typeof(Date.now)!=='function') {
 	/**	@ignore */
@@ -11,13 +8,10 @@ if (typeof(Date.now)!=='function') {
 }
 
 
-
-/** PureDOM */
-
-window._previousPureDom = window.puredom;
-
 (function() {
 	/**	@exports self as puredom */
+	
+	var previousSelf = window.puredom;
 	
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
@@ -33,7 +27,7 @@ window._previousPureDom = window.puredom;
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.1.5',
+			version : '1.1.7',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
 			easingMethods : {
@@ -59,7 +53,7 @@ window._previousPureDom = window.puredom;
 		textContentProperty,
 		getSupportedTextContentProperty,
 		
-		/**	 @private */
+		/**	@private */
 		priv = {
 			oninit : [],
 			animationTimes : {
@@ -120,9 +114,6 @@ window._previousPureDom = window.puredom;
 	else if (navigator.userAgent.match(/\bmsie\s*?[4-8]\b/gim)) {
 		priv.support.filters = true;
 		priv.support.filterProperty = 'filter';
-		//if (navigator.userAgent.match(/\bmsie\s*8\b/gim)) {
-		//	priv.support.filterProperty = 'MsFilter';
-		//}
 	}
 	
 	
@@ -271,19 +262,6 @@ window._previousPureDom = window.puredom;
 	};
 	
 	
-	/*
-	self.flattenObj = function(obj, _prefix) {
-		var flat = {}, i, type;
-		_prefix = _prefix || '';
-		for (i in obj) {
-			if (obj.hasOwnProperty(i)) {
-				type = 
-			}
-		}
-	};
-	*/
-	
-	
 	/** Inject arbitrarily nested template fields into a string of text. <br />
 	 *	Fields are referenced like this:  {foo.bar.baz|truncate:300,byWord}<br />
 	 *	<em><strong>Note:</strong> keys are CaSe-SeNsItIvE.</em>
@@ -340,64 +318,6 @@ window._previousPureDom = window.puredom;
 		base.prototype.constructor = base;
 		base.prototype.__super = superClass;
 	};
-	/*
-	self.inherits = function(baseClass) {
-		var i, j, ext, F, oldConstructor, constructors=[], proto;
-		baseClass = baseClass || function(){};
-		proto = baseClass.prototype;
-		oldConstructor = baseClass;
-		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						F = function(){};
-						F.prototype = ext.prototype;
-						self.extend(proto, new F());
-						constructors.push(ext);
-				}
-		}
-		constructors.push(oldConstructor);
-		baseClass = function(){
-			for (var x=0; x<constructors.length; x++) {
-				constructors[x].apply(this, arguments);
-			}
-		};
-		self.extend(baseClass.prototype, proto);
-		baseClass.constructor.name = oldConstructor.name;
-		baseClass.prototype.constructor.name = oldConstructor.name;
-		baseClass.name = oldConstructor.name;
-		oldConstructor = proto = ext = F = null;
-		return baseClass;
-	};
-	*/
-	/*
-	self.inherits = function(baseClass) {
-		var i, j, ext, F, oldConstructor, constructors=[], proto;
-		baseClass = baseClass || function(){};
-		proto = baseClass.prototype;
-		oldConstructor = baseClass;
-		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						F = function(){};
-						F.prototype = ext.prototype;
-						self.extend(proto, new F());
-						constructors.push(ext);
-				}
-		}
-		constructors.push(oldConstructor);
-		baseClass = function(){
-			for (var x=0; x<constructors.length; x++) {
-				constructors[x].apply(this, arguments);
-			}
-		};
-		self.extend(baseClass.prototype, proto);
-		baseClass.constructor.name = oldConstructor.name;
-		baseClass.prototype.constructor.name = oldConstructor.name;
-		baseClass.name = oldConstructor.name;
-		oldConstructor = proto = ext = F = null;
-		return baseClass;
-	};
-	*/
 	
 	
 	/** Get the <strong>lowercase</code> type (constructor name) of an object.<br />
@@ -487,22 +407,6 @@ window._previousPureDom = window.puredom;
 			}
 		}
 		return arr;
-		/*
-		var arr=[], x=0, p;
-		while (true) {
-			if (obj.hasOwnProperty && obj.hasOwnProperty(x)) {
-				arr.push(obj[x]);
-			}
-			else if (obj.hasOwnProperty && obj.hasOwnProperty(x+'')) {
-				arr.push(obj[x+'']);
-			}
-			else {
-				break;
-			}
-			x += 1;
-		}
-		return arr;
-		*/
 	};
 	
 	
@@ -523,7 +427,7 @@ window._previousPureDom = window.puredom;
 	 *	@param {String} prop	A property name to test
 	 *	@returns {Boolean} hasOwnProperty
 	 */
-	self.hasOwnProperty = function(obj, prop) {
+	self.hasOwnProp = function(obj, prop) {
 		return Object.prototype.hasOwnProperty.call(obj, prop);
 	};
 	
@@ -581,73 +485,6 @@ window._previousPureDom = window.puredom;
 			}
 			el.appendChild(frag);
 		}
-		
-		/*
-		var els, i, j, c, s, depth, p, g, n, attrs, nodes=[];
-		
-		el.innerHTML = html || '';
-		
-		if (!priv.support.html5 || true) {
-			els = el.getElementsByTagName('*');
-			for (i=els.length; i--; ) {
-				c = els[i];
-				if (c && priv.html5elements.indexOf((c.nodeName+'').toLowerCase())>-1) {
-					nodes.push(c);
-//					// sort be relative depth, not really needed anymore:
-//					p = c;
-//					depth = 0;
-//					do {
-//						depth += 1;
-//					} while((p=p.parentNode) && p!==el)
-//					g = {
-//						depth : depth,
-//						node : c
-//					};
-//					for (j=0; j<nodes.length; j++) {
-//						if (nodes[j].depth<depth) {
-//							nodes.splice(j, 0, g);
-//							g = null;
-//							break;
-//						}
-//					}
-//					if (g) {
-//						nodes.push(g);
-//					}
-				}
-			}
-			p = nodes.length;
-			for (i=0; i<p; i++) {
-				c = nodes[i];
-				p = c.parentNode;
-				s = c.nextSibling;
-				console.log('html5node: ', c.nodeName);
-				// pull attributes and remove the node before creating the new one and setting attrs (prevents duplicate IDs etc):
-				attrs = {};
-				for (j=0; j<c.attributes.length; j++) {
-					attrs[c.attributes[j].name || c.attributes[j].nodeName] = c.attributes[j].value || c.attributes[j].nodeValue;
-				}
-				p.removeChild(c);
-				g = document.createElement(c.nodeName.toLowerCase());
-				for (j in attrs) {
-					if (attrs.hasOwnProperty(j)) {
-						g.setAttribute(j, attrs[j]);
-					}
-				}
-				j = c.childNodes.length;
-				while (j--) {
-					n = c.firstChild;
-					c.removeChild(n);
-					g.appendChild(n);
-				}
-				if (s) {
-					p.insertBefore(g, s);
-				}
-				else {
-					p.appendChild(g);
-				}
-			}
-		}
-		*/
 	};
 	
 	
@@ -668,25 +505,8 @@ window._previousPureDom = window.puredom;
 		if (!parent && options.insertBefore) {
 			parent = options.insertBefore.parentNode;
 		}
-		/*
-		// shouldn't be a problem, because appendChild persists
-		if (parent && parent.constructor===self.NodeSelection) {
-			parent = self.NodeSelection._nodes[0];
-		}
-		*/
 		for (x in options) {
-			/*
-			processProp = false;
-			try {
-				processProp = options.hasOwnProperty(x);
-			}catch(err){
-				processProp = false;
-				console.log('Cannot call '+self.typeOf(options)+'.hasOwnProperty("' + x + '");');
-			}
-			*/
-			//x = x + '';		// IE has trouble with non-string keys.
-			//if (options.hasOwnProperty(x)) {
-			if (self.hasOwnProperty(options, x)) {
+			if (self.hasOwnProp(options, x)) {
 				if ((x+"").substring(0,2).toLowerCase()==="on") {
 					self.addEvent(el, x.substring(2), options[x]);
 				}
@@ -705,7 +525,7 @@ window._previousPureDom = window.puredom;
 				}
 				else if (x==="attributes") {
 					for (i in options[x]) {
-						if (self.hasOwnProperty(options[x], i)) {
+						if (self.hasOwnProp(options[x], i)) {
 							el.setAttribute(i, options[x][i]);
 						}
 					}
@@ -741,26 +561,12 @@ window._previousPureDom = window.puredom;
 			}
 		}
 		
-		// IE puts elements into a document fragment. Remove it from that fragment if it exists.
-		if (!parent && el.parentNode && el.parentNode.nodeType===11 && ('removeNode' in el)) {
-			//el.removeNode(false);
-			//puredom.log('removed node', el+'', el.parentNode+'');
-		}
-		
 		if (options.children && self.isArray(options.children)) {
-			// TODO: Why was this check added? Was this a bug?
-			//if (priv.support.filters===true) {
-			//	for (x=0; x<options.children.length; x++) {
-			//		self.createElement(options.children[x], el);
-			//	}
-			//}
-			//else {
-				childFrag = document.createDocumentFragment();
-				for (x=0; x<options.children.length; x++) {
-					self.createElement(options.children[x], childFrag);
-				}
-				el.appendChild(childFrag);
-			//}
+			childFrag = document.createDocumentFragment();
+			for (x=0; x<options.children.length; x++) {
+				self.createElement(options.children[x], childFrag);
+			}
+			el.appendChild(childFrag);
 		}
 		return el;
 	};
@@ -832,18 +638,6 @@ window._previousPureDom = window.puredom;
 				else {
 					str += '[' + node.children().count() + ' children]';
 				}
-				/*
-				cn = node._nodes[0].childNodes;
-				for (i=0; i<cn.length; i++) {
-					if (cn[i].nodeType===3 || (cn[i].nodeName+'').toLowerCase()==='#text') {
-						g = node[textContentProperty || getSupportedTextContentProperty()];
-						if (g) {
-							str += g.replace(/(\r|\n)/gim,decodeURIComponent("%E2%86%A9")).replace(/\t/gim,decodeURIComponent("%E2%86%92")) + ' ';
-						}
-					}
-				}
-				*/
-				//str += '>' + (node.text() || '').replace(/(\r|\n)/gim,decodeURIComponent("%E2%86%A9")).replace(/\t/gim,decodeURIComponent("%E2%86%92"));
 				str += '</' + node.nodeName() + '>';
 				p.push(str);
 			});
@@ -1122,7 +916,7 @@ window._previousPureDom = window.puredom;
 				callback = tween;
 				tween = arguments[1];
 			}
-			if (originalOpacity>=1 || tween==0 || tween===false) {
+			if (originalOpacity>=1 || tween===0 || tween===false) {
 				this.css({
 					opacity : targetOpacity
 				}).show();
@@ -1185,7 +979,6 @@ window._previousPureDom = window.puredom;
 			/**	@ignore */
 			manual = function(cssProp, targetValue, duration, easing, callback) {
 				var startValues = [],
-					//cssObj = {},
 					perNodeProperties = [],
 					numericTargetValue, units, s;
 				
@@ -1210,7 +1003,6 @@ window._previousPureDom = window.puredom;
 					
 					if (targetValue==='auto' || targetValue==='') {
 						vis = node.style.visibility || '';
-						//node.style.visibility = 'hidden';
 						testCssObj[cssProp] = targetValue;
 						testCssObj.visibility = 'hidden';
 						self.applyCss(node, testCssObj);
@@ -1239,17 +1031,6 @@ window._previousPureDom = window.puredom;
 					}
 				});
 				
-				/*
-				numericTargetValue = parseFloat((targetValue + '').replace(priv.regex.getNumericCSSValue,'')) || 0;
-				s = self.typeOf(targetValue)==='string' && targetValue.match(priv.regex.getCSSValueUnits);
-				units = s && s[0] || 'px';
-				if (cssProp==='opacity') {
-					units = '';
-				}
-				*/
-				
-				//console.log('prop='+cssProp+':: target=', perNodeProperties, ' original_target=', arguments[1], ' start='+startValues.join(','), ' units='+units);
-				
 				return this.animate(function(fraction, anim) {
 					this._each(function(node, i) {
 						var cssObj = {},
@@ -1269,7 +1050,6 @@ window._previousPureDom = window.puredom;
 							}
 						}
 						cssObj[cssProp] = value + units;
-						//console.log('cssObj['+cssProp+'] = "'+value+''+units+'";', fraction);
 						self.applyCss(node, cssObj);
 					});
 				}, duration, easing, function(sel) {
@@ -1290,17 +1070,11 @@ window._previousPureDom = window.puredom;
 					me = this,
 					transition = {},
 					css = {};
-					//id = window._anim_id = (parseInt(window._anim_id) || 0)+1;
 				
-				//cssProp = (cssProp+'').replace(priv.regex.getUpperCaseAlphaChars,'-$1').toLowerCase();
-				//cssProp = self.getStyleAsCSS(cssProp);
-				//cssProp = cssProp.toLowerCase().replace(/-[a-z]/gi,function(s){return s.charAt(1).toUpperCase();});
 				cssProp = self.getStyleAsProperty(cssProp);
 				if (self.typeOf(targetValue)==='number' && (cssProp+'').toLowerCase()!=='opacity') {
 					targetValue = targetValue + 'px';
 				}
-				
-				//console.log('CSS transition', cssProp, 'started');
 				
 				transition[self.getStyleAsCSS(cssProp)] = {
 					duration : anim.duration,
@@ -1308,8 +1082,6 @@ window._previousPureDom = window.puredom;
 				};
 				
 				css[cssProp] = targetValue;
-				
-				//console.log(cssProp, targetValue);
 				
 				setTimeout(function() {
 					/**	@ignore */
@@ -1321,7 +1093,6 @@ window._previousPureDom = window.puredom;
 					/**	@ignore */
 					anim._cb = function() {
 						if (anim) {
-							//console.log(cssProp, (parseInt(anim.duration,10) || 0)+20, transition, 'callback fired');
 							
 							/** remove CSS transition definitions from the generated CSS:
 							 *	@ignore
@@ -1335,17 +1106,6 @@ window._previousPureDom = window.puredom;
 							
 							if (anim.callback) {
 								anim.callback.call(me, me);
-								// just plain annoying to debug.
-								/*
-								try {
-									anim.callback(me);
-								} catch(errDelayed) {
-									setTimeout(function() {
-										throw(errDelayed);
-										errDelayed = null;
-									}, 10);
-								}
-								*/
 							}
 							for (var x in anim) {
 								if (anim.hasOwnProperty(x)) {
@@ -1366,13 +1126,6 @@ window._previousPureDom = window.puredom;
 			
 			return function(cssProp, targetValue, duration, easing, callback) {
 				var iosCompat=false, x;
-				/*
-				for (x in css) {
-					if (css.hasOwnProperty(x) && !(x+'').match(/^(opacity|left|right|top|bottom|width|height)$/)) {
-						iosCompat = false;
-					}
-				}
-				*/
 				if (self.typeOf(supportsCssTransition)!=='boolean') {
 					checkCssTransitionSupport();
 				}
@@ -1407,7 +1160,6 @@ window._previousPureDom = window.puredom;
 						anim.fraction = anim.easingMethod.call(self.easingMethods, anim.fraction, anim);
 					}
 					
-					//console.log(anim.position, anim.fraction);
 					anim.animator.call(nodeSelection, anim.fraction, anim);
 					
 					if (anim.fraction===1) {
@@ -1452,14 +1204,14 @@ window._previousPureDom = window.puredom;
 				switch (anim.duration.toLowerCase()) {
 					case 'long':
 					case 'slow':
-						anim.duration = priv.animationTimes.slow;		// 1000;
+						anim.duration = priv.animationTimes.slow;
 						break;
 					case 'short':
 					case 'fast':
-						anim.duration = priv.animationTimes.fast;		// 150;
+						anim.duration = priv.animationTimes.fast;
 						break;
 					default:
-						anim.duration = parseInt(anim.duration) || priv.animationTimes.medium;		// 450;
+						anim.duration = parseInt(anim.duration, 10) || priv.animationTimes.medium;
 				}
 			}
 			else {
@@ -1585,18 +1337,6 @@ window._previousPureDom = window.puredom;
 					offsetHeight -= parseInt( (self.nodeStyle(node, 'padding-bottom')+'').replace(priv.regex.getNonIntegerCharsSigned,'') ,10) || 0;
 				}
 			});
-			/*
-			if (this._nodes.length>0) {
-				node = this._nodes[0];
-				offsetHeight = node.offsetHeight;
-				if (options.border===true) {
-					offsetHeight += parseInt( (self.nodeStyle(node, 'border-top-width')+'').replace(/[^0-9\.\-]/gm,'') ,10) || 0;
-					offsetHeight += parseInt( (self.nodeStyle(node, 'border-bottom-width')+'').replace(/[^0-9\.\-]/gm,'') ,10) || 0;
-				}
-				return offsetHeight;
-			}
-			return null;
-			*/
 			return offsetHeight;
 		},
 		width : function(width, options) {
@@ -1639,18 +1379,6 @@ window._previousPureDom = window.puredom;
 					offsetWidth -= parseInt( (self.nodeStyle(node, 'padding-right')+'').replace(priv.regex.getNonIntegerCharsSigned,'') ,10) || 0;
 				}
 			});
-			/*
-			if (this._nodes.length>0) {
-				node = this._nodes[0];
-				offsetWidth = node.offsetWidth;
-				if (options.border===true) {
-					offsetWidth += parseInt( (self.nodeStyle(node, 'border-left-width')+'').replace(/[^0-9\.\-]/gm,'') ,10) || 0;
-					offsetWidth += parseInt( (self.nodeStyle(node, 'border-right-width')+'').replace(/[^0-9\.\-]/gm,'') ,10) || 0;
-				}
-				return offsetWidth;
-			}
-			return null;
-			*/
 			return offsetWidth;
 		},
 		x : function(absolute, mark) {
@@ -1663,14 +1391,6 @@ window._previousPureDom = window.puredom;
 					while((node=node.parentNode) && node!==document) {
 						pos += parseFloat(node.offsetLeft) || 0;
 					}
-					/*
-					while((node=node.parentNode) && node!==document.body) {
-						posProp = (self.nodeStyle(node, 'position') || 'static').toLowerCase();
-						if (posProp!=='static' && posProp.length>1) {
-							pos += parseFloat(node.offsetLeft) || 0;
-						}
-					}
-					*/
 				}
 			}
 			return pos;
@@ -1789,39 +1509,11 @@ window._previousPureDom = window.puredom;
 				this._each(function(node) {
 					var name = (node.nodeName+'').toLowerCase(),
 						type = (node.getAttribute('type') || '').toLowerCase();
+					
 					if (name==='input' && (type==='checkbox' || type==='radio')) {
-						/*
-						if (newValue) {
-							node.setAttribute('checked', 'checked');
-						}
-						else {
-							node.setAttribute('checked', '');
-							node.removeAttribute('checked');
-						}
-						*/
 						node.checked = !!newValue;
-						//node.value = !!newValue;
 					}
-					/*
-					else if (name==='select') {
-						self.el(node).query('option')._each(function(option) {
-							if (option.getAttribute('value')===(newValue+'') || (self.typeOf(option.getAttribute('value'))!=='string' && option.innerHTML===(newValue+''))) {
-								option.setAttribute('selected', 'selected');
-								option.setAttribute('checked', 'checked');
-								option.checked = true;
-							}
-							else {
-								option.setAttribute('checked', '');
-								option.setAttribute('selected', '');
-								option.removeAttribute('checked');
-								option.removeAttribute('selected');
-							}
-						});
-					}
-					*/
-					//else {
-						node.value = newValue;
-					//}
+					node.value = newValue;
 					
 					if (options.fireChange!==false) {
 						self.fireEvent({
@@ -1842,7 +1534,6 @@ window._previousPureDom = window.puredom;
 						type = (node.getAttribute('type') || '').toLowerCase(),
 						value;
 					if (name==='input' && (type==='checkbox' || type==='radio')) {
-						//values.push(node.checked ? (node.getAttribute('value') || true) : null);
 						values.push(!!node.checked);
 					}
 					else if (name==='select') {
@@ -1850,10 +1541,10 @@ window._previousPureDom = window.puredom;
 						self.el(node).query('option')._each(function(option) {
 							if (option.selected || option.checked) {
 								if (self.isArray(value)) {
-									value.push(option.value);		// BUG FIX NOTE: innerHTML should not be used in place of the value!!.
+									value.push(option.value);
 								}
 								else {
-									value = option.value;			// || option.innerHTML
+									value = option.value;
 								}
 							}
 						});
@@ -1872,7 +1563,8 @@ window._previousPureDom = window.puredom;
 				attrs = {};
 				for (i=this._nodes[0].attributes.length; i--; ) {
 					k = this._nodes[0].attributes[i];
-					if (k.specified) {		// skip over non-user-specified attributes in IE
+					// skip over non-user-specified attributes in IE
+					if (k.specified) {
 						attrs[k.name || k.nodeName] = k.value || k.nodeValue;
 					}
 				}
@@ -1927,7 +1619,7 @@ window._previousPureDom = window.puredom;
 					try {
 						val = node[key];
 					}catch(err){
-						console.log('NodeSelection.prop('+key+') :: Access Error', err);
+						self.log('NodeSelection#prop('+key+') :: Access Error', err);
 					}
 					props.push( val || null );
 				});
@@ -2059,12 +1751,6 @@ window._previousPureDom = window.puredom;
 		destroy : function() {
 			this.remove();
 			this.fireEvent('destroy');
-			/*
-			this.query('*').fireEvent('destroy', {
-				self : false,
-				removed : this
-			});
-			*/
 			this._removeAllEvents(true);
 			this._nodes.splice(0, this._nodes.length);
 			return this;
@@ -2182,15 +1868,11 @@ window._previousPureDom = window.puredom;
 							}
 						}
 					}
-					else {
-						//console.log(this);
-					}
 				}
 			}
 			return new self.NodeSelection(children);
 		},
 		submit : function() {
-			//this.fireEvent('submit');
 			this._each(function(node) {
 				var evt = self.fireEvent({
 					type : 'submit',
@@ -2282,23 +1964,18 @@ window._previousPureDom = window.puredom;
 				var filters = value.split('|'),
 					i;
 				value = filters.splice(0, 1)[0];
-				//if (htmlEntities===true) {
-					for (i=filters.length; i--; ) {
-						if (filters[i]==='htmlEntities') {
-							filters.splice(i, 1);
-						}
+				for (i=filters.length; i--; ) {
+					if (filters[i]==='htmlEntities') {
+						filters.splice(i, 1);
 					}
-					//filters.splice(0, 0, 'htmlEntities');
-				//}
+				}
 				return filters;
 			};
-			
-			//console.log('fields', templateFields);
 			
 			this.query('[data-tpl-id]').each(function(node) {
 				var nodeName = node.nodeName(),
 					tplField = node.attr('data-tpl-id'),
-					tplValue = tplField,						//puredom.delve(templateFields, tplField);
+					tplValue = tplField,
 					tplFilters,
 					nType;
 				
@@ -2306,7 +1983,6 @@ window._previousPureDom = window.puredom;
 				tplField = tplField.split('|')[0];
 				
 				tplValue = puredom.delve(templateFields, tplField);
-				//console.log(tplField, ' :: ', tplValue);
 				
 				if (tplValue!==null && tplValue!==undefined) {
 					if (typeof(tplValue)==='date' || tplValue.constructor===Date) {
@@ -2323,7 +1999,6 @@ window._previousPureDom = window.puredom;
 							case 'textarea':
 							case 'meter':
 							case 'progress':
-								//tplValue = applyFilters(tplValue, false);
 								node.value(tplValue);
 								break;
 							
@@ -2331,7 +2006,6 @@ window._previousPureDom = window.puredom;
 							case 'video':
 							case 'audio':
 							case 'iframe':
-								//tplValue = applyFilters(tplValue, true);
 								tplFilters.splice(0, 0, 'htmlEntities');
 								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
 								node.attr('src', tplValue);
@@ -2351,7 +2025,7 @@ window._previousPureDom = window.puredom;
 		}
 	});
 	
-	/**	Alias of {@link puredom.NodeSelect#addEvent}
+	/**	Alias of {@link puredom.NodeSelection#addEvent}
 	 *	@function
 	 */
 	self.NodeSelection.prototype.on = self.NodeSelection.prototype.addEvent;
@@ -2363,26 +2037,25 @@ window._previousPureDom = window.puredom;
 	
 	/**	@private */
 	priv.incrementAnimationCount = function(node) {
-		node.setAttribute('data-puredom-animation-count', (priv.getAnimationCount(node) + 1) + '');
-		self.addClass(node, '_puredom_animating');
+		node._puredom_animationCount = priv.getAnimationCound(node) + 1;
+		if (node._puredom_animationCount===1) {
+			self.addClass(node, '_puredom_animating');
+		}
 	};
 	/**	@private */
 	priv.decrementAnimationCount = function(node) {
 		var current = Math.max(0, priv.getAnimationCount(node));
 		if (current>1) {
-			node.setAttribute('data-puredom-animation-count', (current - 1) + '');
+			node._puredom_animationCount = current - 1;
 		}
 		else {
-			node.setAttribute('data-puredom-animation-count', '');
-			if (node.removeAttribute) {
-				node.removeAttribute('data-puredom-animation-count');
-			}
+			node._puredom_animationCount = null;
 			self.removeClass(node, '_puredom_animating');
 		}
 	};
 	/**	@private */
 	priv.getAnimationCount = function(node) {
-		return parseInt(node.getAttribute('data-puredom-animation-count'), 10) || 0;
+		return parseInt(node._puredom_animationCount, 10) || 0;
 	};
 	
 	
@@ -2391,56 +2064,13 @@ window._previousPureDom = window.puredom;
 	 *	@private
 	 */
 	priv.unload = function() {
-		//var time = Date.now();
-		var old, x;
-		
-		// CAUSES MAJOR IE HANGUP:::
-		/*
-		priv.wrappedEventListener.destroyObjHandlers(window);
-		priv.wrappedEventListener.destroyObjHandlers(document);
-		new self.NodeSelection([
-			document.body,
-			document.getElementsByTagName('head')[0]
-		])._removeAllEvents().children().destroy();
-		*/
-		
-		//console.log('before reset = ', window._eventCount);
-		
 		priv.wrappedEventListener.reset();
-		
-		// CAUSES MAJOR IE HANGUP:::
-		//priv.wrappedEventListener.reset(true);
-		
-		//priv.wrappedEventListener.summary();
-		
-		//console.log('after reset = ', window._eventCount);
-		
 		self.getElement.clearCache();
-		
 		priv._nodeToIdList = {};
-		
-		//time = Date.now()-time;
-		//alert('Unload time: ' + time + 'ms');
-		//alert('Events registered = ' + priv.registeredEventCount);
-		
-		//window.puredom = priv = self = objConstructor = getSupportedTextContentProperty = null;
-		
-		//old = {
-		//	typeOf : self.typeOf
-		//};
-		
-		// CAUSES MAJOR IE HANGUP:::
-		//self.strip(self);
-		
-		//window.puredom = priv = objConstructor = getSupportedTextContentProperty = null;
 		setTimeout(function() {
 			window.puredom = priv = objConstructor = getSupportedTextContentProperty = null;
 		}, 10);
-		//self = old;
 	};
-	//window._td_doUnloadTest = priv.unload;
-	
-	
 	
 	
 	/**	Create or retrieve one or more elements based on a query
@@ -2459,25 +2089,25 @@ window._previousPureDom = window.puredom;
 			}
 			if (query.constructor===self.NodeSelection) {
 				if (log===true) {
-					console.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
+					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
 				}
 				return query;
 			}
 			else if ((type==='string' && query.charAt(0)==='<') || (type==='object' && !query.nodeName && query!==window)) {
 				if (log===true) {
-					console.log('query is an HTML fragment', query, type);
+					self.log('query is an HTML fragment', query, type);
 				}
 				results = self.createElement.apply(self, arguments);
 			}
 			else if (type==='string') {
 				if (log===true) {
-					console.log('query is a CSS selector', query, type);
+					self.log('query is a CSS selector', query, type);
 				}
 				results = self.getElement(query, arguments[1]);
 			}
 			else if (query.nodeName || query===window) {
 				if (log===true) {
-					console.log('query is an HTML element', query, type);
+					self.log('query is an HTML element', query, type);
 				}
 				results = query;
 			}
@@ -2500,13 +2130,12 @@ window._previousPureDom = window.puredom;
 	
 	/** Returns an {Array} of elements matching the passed CSS selector query.
 	 *	@function
-	 *	@param search {String}		A CSS selector, or multiple CSS selectors separated by a comma
-	 *	@param [options {Objec}]	Optional hash of one-time triggers for the engine:
-	 *		Available options:
-	 *			within {HTMLElement}	Look for matches within the given element only. Default is the {document} element (<html>).
-	 *			logging {Boolean}		Enable logging for this query
-	 *			useCached {Boolean}		Return a cached result if available. Default is false.
-	 *			cache {Boolean}			Cache the result. Default is false.
+	 *	@param {String} search							A CSS selector, or multiple CSS selectors separated by a comma
+	 *	@param {Object} [options]						Hashmap of one-time triggers for the engine (see detailed parameter listing)
+	 *	@param {HTMLElement} [options.within=document]	Look for matches within the given element only
+	 *	@param {Boolean} [options.logging=false]		Enable logging for this query
+	 *	@param {Boolean} [options.useCached=false]		Return a cached result if available
+	 *	@param {Boolean} [options.cache=false]			Cache the result
 	 *	@returns {Array(HTMLElement)}	An Array of matched HTML elements.
 	 */
 	self.getElement = (function() {
@@ -2542,7 +2171,6 @@ window._previousPureDom = window.puredom;
 				/**	@ignore */
 				filter : function(matches, results, config) {
 					var b = (config.searchBaseNode && config.searchBaseNode.getElementById) ? config.searchBaseNode : document;
-					//results.splice(0, results.length, document.getElementById(matches[1]));
 					return [b.getElementById(matches[0].substring(1))];
 				}
 			},
@@ -2563,31 +2191,6 @@ window._previousPureDom = window.puredom;
 							results.splice(i, 1);
 						}
 					}
-					/*
-					var i, className, node,
-						len = results.length+0,
-						filtered = [],
-						klass = ' '+matches[1]+' ';
-					for (i=0; i<len; i++) {
-						node = results[i];
-						className = node.className;
-						if (className) {
-							if ((' ' + className + ' ').indexOf(klass)>-1) {
-								filtered.push(node);
-							}
-						}
-					}
-					return filtered;
-					*/
-					/*
-					var i, className;
-					for (i=results.length; i--; ) {
-						className = ' ' + (results[i].className || '') + ' ';
-						if (className.indexOf(' '+matches[1]+' ')<0) {
-							results.splice(i, 1);
-						}
-					}
-					*/
 				}
 			},
 			
@@ -2762,10 +2365,6 @@ window._previousPureDom = window.puredom;
 							even : [2]
 						};
 					
-					//if (!config.isFiltered || config.first) {
-					//	results.splice(0, results.length, config.searchBaseNode);
-					//}
-					
 					originalResults = results.splice(0, results.length);
 					
 					if (matches[1].indexOf('-last')!==-1) {
@@ -2803,8 +2402,6 @@ window._previousPureDom = window.puredom;
 					}
 					
 					
-					//console.log(matches, ' --> ', a+'n+'+b);
-					
 					for (x=0; x<originalResults.length; x++) {
 						children = (originalResults[x].parentNode || {}).childNodes;
 						type = (originalResults[x].nodeName+'').toLowerCase();
@@ -2817,7 +2414,6 @@ window._previousPureDom = window.puredom;
 								if (t) {
 									childIndex += 1;
 									if (child===originalResults[x]) {
-										//console.log('<'+child.nodeName+' class="'+child.className+'"> found at position ', childIndex, b);
 										if (a>0) {
 											isMatch = (childIndex%a - b)===0;
 										}
@@ -2835,8 +2431,6 @@ window._previousPureDom = window.puredom;
 							results.push(originalResults[x]);
 						}
 					}
-					
-					//console.log(results);
 				}
 			},
 			
@@ -2851,7 +2445,6 @@ window._previousPureDom = window.puredom;
 					var originalResults = [].concat(results),
 						nodeName = matches[1] || '*',
 						x;
-					//self.log('subSearch --> matches:'+matches.join(',')+' --> nodeName:'+nodeName);
 					results.splice(0, results.length);
 					for (x=0; x<originalResults.length; x++) {
 						Array.prototype.splice.apply(results, [results.length-1,0].concat(self.toArray(originalResults[x].getElementsByTagName(nodeName))));
@@ -2870,14 +2463,13 @@ window._previousPureDom = window.puredom;
 		
 		
 		/** The selector engine's interface. Returns an {Array} of elements matching the passed CSS selector query
-		 *	@param search {String}		A CSS selector, or multiple CSS selectors separated by a comma
-		 *	@param [options {Objec}]	Optional hash of one-time triggers for the engine:
-		 *		Available options:
-		 *			within {HTMLElement}		Look for matches within the given element only. Default is the {document} element (<html>).
-		 *			includeInvisibles {Boolean}	Return #comment nodes, etc. Default is false.
-		 *			logging {Boolean}			Enable logging for this query
-		 *			useCached {Boolean}			Return a cached result if available. Default is false.
-		 *			cache {Boolean}				Cache the result. Default is false.
+		 *	@param {String} search			A CSS selector, or multiple CSS selectors separated by a comma
+		 *	@param {Object} [options]		Optional hash of one-time triggers for the engine:
+		 *	@param {HTMLElement} [options.within=document]		Look for matches within the given element only
+		 *	@param {Boolean} [options.includeInvisibles=false]	Return #comment nodes, etc
+		 *	@param {Boolean} [options.logging=false]			Enable logging for this query
+		 *	@param {Boolean} [options.useCached=false]			Return a cached result if available
+		 *	@param {Boolean} [options.cache=false]				Cache the result
 		 *	@private
 		 */
 		getElement = function(search, options) {
@@ -2994,7 +2586,7 @@ window._previousPureDom = window.puredom;
 				try {
 					currentResults = self.toArray(baseNode.querySelectorAll(nativeSearch) || []);
 				} catch (querySelectorError) {
-					console.log('Native querySelectorAll failed for selector: ', nativeSearch, ', error:', querySelectorError.message);
+					self.log('Native querySelectorAll failed for selector: ', nativeSearch, ', error:', querySelectorError.message);
 					currentResults = [];
 					useCustomImplementation = true;
 				}
@@ -3005,17 +2597,14 @@ window._previousPureDom = window.puredom;
 			if (useCustomImplementation) {
 				if (search.substring(0,1)==='#') {
 					currentResults = [];
-					//console.log('"'+originalSearch+'" --> # --> clearing results', currentResults.length);
 				}
 				else if ((!nodeName || nodeName==='*') && document.all && !window.opera && (baseNode===document || baseNode===document.documentElement)) {
-					//console.log('"'+originalSearch+'" --> self.toArray(document.all)');
 					currentResults = self.toArray(baseNode.all || document.all);
 					constrainedToNode = false;
 				}
 				else {
 					currentResults = self.toArray(baseNode.getElementsByTagName(nodeName || '*'));
 					constrainedToNode = true;
-					//console.log('"'+originalSearch+'" --> self.toArray(baseNode.getElementsByTagName(nodeName || \'*\'))', nodeName, currentResults.length);
 				}
 				
 				// A pass-by-reference handlerConfig for filters will be needed for :not() support:
@@ -3026,12 +2615,6 @@ window._previousPureDom = window.puredom;
 					isFiltered : constrainedToNode || !!(nodeName && nodeName!=='*')
 				};
 				
-				
-				//if (doLogging) {
-				//	console.log(currentResults);
-				//}
-				
-				//alert('"'+originalSearch+'" --> "'+searchParsed+'" ('+((/^#[^\s\[\]\(\)\:\*\.\,\<\>#]+$/gim).test(originalSearch)?'match':'non')+')')
 				
 				// Filter until there are no more selectors left in the statement:
 				while (searchParsed.length>0) {
@@ -3097,14 +2680,10 @@ window._previousPureDom = window.puredom;
 					
 					// If no selector filters matched the statement, bail out. Otherwise causes an infinite loop.
 					if (!hasMatch) {
-						throw(new Error('puredom.getElement() :: Unknown CSS selector near: ' + searchParsed.substring(0,20), 'puredom.js', 1775));
-						break;
+						throw(new Error('puredom.getElement() :: Unknown CSS selector near: ' + searchParsed.substring(0,20), 'puredom.js', 2689));
 					}
 				}
 			}
-			
-			
-			//console.log(search, nativeResults.length, currentResults.length, {native:nativeResults, custom:currentResults});
 			
 			
 			if (options.includeInvisibles!==true) {
@@ -3114,12 +2693,6 @@ window._previousPureDom = window.puredom;
 					}
 				}
 			}
-			
-			/*
-			if (currentResults.length<1) {
-				self.log('query=',originalSearch, ', result=',currentResults);
-			}
-			*/
 			
 			if (doLogging) {
 				self.log('query=',originalSearch, ', result=',currentResults);
@@ -3275,78 +2848,7 @@ window._previousPureDom = window.puredom;
 	
 	
 	
-	/** Events */
-	/*
-	window.wrappedEventListener = priv.wrappedEventListener = {
-		list : [],
-		none : {},
-		summary : function() {
-			for (var x=0; x<this.list.length; x++) {
-				self.log( priv.idToNode(this.list[x].target), '.on', this.list[x].type, ' -> ', (this.list[x].handler.displayName || this.list[x].handler.name) );
-			}
-		},
-		reset : function(removeEvents) {
-			var i, evt;
-			if (removeEvents===true) {
-				for (i=this.list.length; i--; ) {
-					evt = this.list[i];
-					this.list[i] = this.none;
-					self.removeEvent(priv.idToNode(evt.target), evt.type, evt.handler);
-				}
-			}
-			this.list.splice(0, this.list.length);
-		},
-		destroyObjHandlers : function(obj) {
-			var i, evt,
-				objId = priv.nodeToId(obj);
-			for (i=this.list.length; i--; ) {
-				evt = this.list[i];
-				if (evt.target===objId) {
-					this.list.splice(i, 1);
-					self.removeEvent(obj, evt.type, evt.handler);
-				}
-			}
-		},
-		get : function(type, handler, obj, andDestroy) {
-			var i, evt;
-			obj = priv.nodeToId(obj);
-			for (i=this.list.length; i--; ) {
-				evt = this.list[i];
-				if (evt.target===obj && evt.handler===handler && evt.type===type) {
-					if (andDestroy===true) {
-						this.list.splice(i, 1);
-						//window.killCount = (window.killCount || 0) + 1;
-						return evt.handler;
-					}
-				}
-			}
-			// fall back to the original handler
-			return handler;
-		},
-		
-		create : function(type, handler, obj) {
-			this.list.push({
-				type	: type,
-				target	: priv.nodeToId(obj),
-				handler	: handler
-			});
-			return handler;
-		},
-		
-		// internal event firing, used when proper event firing fails (in IE for ~20 blocked event names)
-		internalFireEvent : function(options) {
-			var i, evt, obj, type;
-			obj = priv.nodeToId(options.target);
-			type = options.type.replace(/^on/gi,'');
-			for (i=this.list.length; i--; ) {
-				evt = this.list[i];
-				if (evt.target===obj && evt.type===options.type) {
-					evt.handler.call(options.target, options);
-				}
-			}
-		}
-	};
-	*/
+	// Events
 	
 	
 	/**	@class Represents a DOM event.
@@ -3354,12 +2856,13 @@ window._previousPureDom = window.puredom;
 	 */
 	self.DOMEvent = function PureDOMEvent(type) {
 		if (type) {
-			this.type = type.replace(/^on/gi,'')
+			this.type = type.replace(/^on/gi,'');
 		}
 	};
 	self.DOMEvent.displayName = 'puredom.DOMEvent';
 	
 	self.extend(self.DOMEvent.prototype, /** @lends puredom.DOMEvent# */ {
+		
 		/**	Which mouse button or key generated the action (if applicable)
 		 *	@type Number
 		 */
@@ -3421,12 +2924,12 @@ window._previousPureDom = window.puredom;
 		timeStamp : null
 	});
 	
-	/**	Alias of {@see puredom.DOMEvent#stopPropagation}, provided only for backward compatibility.
+	/**	Alias of {@link puredom.DOMEvent#stopPropagation}, provided only for backward compatibility.
 	 *	@function
 	 */
 	self.DOMEvent.prototype.cancelBubble = self.DOMEvent.prototype.stopPropagation;
 	
-	/**	Alias of {@see puredom.DOMEvent#cancel}, provided only for compatibility with other notable DOM libraries.
+	/**	Alias of {@link puredom.DOMEvent#cancel}, provided only for compatibility with other notable DOM libraries.
 	 *	@function
 	 */
 	self.DOMEvent.prototype.stop = self.DOMEvent.prototype.cancel;
@@ -3457,9 +2960,7 @@ window._previousPureDom = window.puredom;
 			if (removeEvents===true) {
 				for (i=this.list.length; i--; ) {
 					evt = this.list[i];
-					//evt._kill();
 					this.list[i] = this.none;
-					//console.log(priv.idToNode(evt.target), evt.type, evt.wrappedHandler);
 					self.removeEvent(priv.idToNode(evt.target), evt.type, evt.wrappedHandler);
 					this.unsetRefs(evt);
 					window.killCount = (window.killCount || 0) + 1;
@@ -3475,7 +2976,6 @@ window._previousPureDom = window.puredom;
 			for (i=this.list.length; i--; ) {
 				evt = this.list[i];
 				if (evt.target===objId) {
-					//evt._kill();
 					this.unsetRefs(evt);
 					this.list.splice(i, 1);
 					self.removeEvent(obj, evt.type, evt.wrappedHandler);
@@ -3494,7 +2994,6 @@ window._previousPureDom = window.puredom;
 					handler = evt.wrappedHandler;
 					if (andDestroy===true) {
 						this.list.splice(i, 1);
-						//evt._kill();
 						window.killCount = (window.killCount || 0) + 1;
 						this.unsetRefs(evt);
 					}
@@ -3504,11 +3003,6 @@ window._previousPureDom = window.puredom;
 			// fall back to the original handler
 			return handler;
 		},
-		/*
-		convertTargetToId : function(evt) {
-			evt.target = priv.nodeToId(evt.target);
-		},
-		*/
 		
 		/**	@private */
 		unsetRefs : function(item) {
@@ -3524,9 +3018,7 @@ window._previousPureDom = window.puredom;
 				i, item, returnValue;
 			for (i=this.list.length; i--; ) {
 				item = this.list[i];
-				//console.log('item('+item.target+'.'+item.type+') | search('+target+'.'+type+')');
 				if (item.target===target && item.type===type) {
-					//console.log('Found matching custom event handler for "'+type+'".');
 					returnValue = item.handler.call(event.target, event);
 					if (returnValue===false) {
 						break;
@@ -3549,8 +3041,6 @@ window._previousPureDom = window.puredom;
 						event, i,
 						d = {
 							isInSelf : false,
-							//searchNode : null,
-							//handlerResponse : null,
 							doPreventDefault : false,
 							doCancelBubble : false,
 							doStopPropagation : false,
@@ -3560,7 +3050,6 @@ window._previousPureDom = window.puredom;
 							end : function() {
 								d.end = null;
 								e = event = d = handler = type = originalTarget = null;
-								//console.log('returning', this.ret);
 								return this.ret;
 							}
 						};
@@ -3570,7 +3059,6 @@ window._previousPureDom = window.puredom;
 					e = d.e;
 					
 					
-					//console.log('handler called: ', type, originalTarget, handler);
 					event = self.extend(new self.DOMEvent(type), {
 						which	: e.which,
 						target	: e.target || e.srcElement || originalTarget || document.body,
@@ -3583,7 +3071,7 @@ window._previousPureDom = window.puredom;
 					// NOTE: For convenience, copy extra properties from the original event. 
 					// This is mostly used for custom events to pass custom properties.
 					for (i in e) {
-						if (!event.hasOwnProperty(i) && typeof(e[i])!=='function' && i!==i.toUpperCase() && i!=='layerX' && i!=='layerY') {
+						if (!event.hasOwnProperty(i) && typeof e[i]!=='function' && i!==i.toUpperCase() && i!=='layerX' && i!=='layerY') {
 							event[i] = e[i];
 						}
 					}
@@ -3632,7 +3120,6 @@ window._previousPureDom = window.puredom;
 					} while(d.searchNode && (d.searchNode=d.searchNode.parentNode) && d.searchNode!==document);
 					
 					// Don't fire mouseout events when the mouse is moving in/out a child node of the handler context element
-					//console.log(type, (type!=='mouseover' && type!=='mouseout'), ' || ', !d.isInSelf);
 					if ((type!=='mouseover' && type!=='mouseout') || !d.isInSelf) {
 						if (handler && handler.call) {
 							d.handlerResponse = handler.call(originalTarget, event);
@@ -3646,13 +3133,11 @@ window._previousPureDom = window.puredom;
 						if (event.defaultPrevented) {
 							event.returnValue = e.returnValue = false;
 							if (e.preventDefault) {
-								//console.log('calling preventDefault');
 								e.preventDefault();
 							}
 						}
 						if (event.bubblingCancelled===true || event.propagationStopped===true || event.cancelBubble===true) {
 							if (e.stopPropagation) {
-								//console.log('calling stopPropagation');
 								e.stopPropagation();
 							}
 							try {
@@ -3677,409 +3162,18 @@ window._previousPureDom = window.puredom;
 			evt.wrappedHandler.type = type;
 			evt.wrappedHandler.target = evt.target;		// an ID, not the node itself
 			this.list.push(evt);
-			//console.log('evt['+type+'] = ', evt);
 			obj = type = handler = evt = null;
 			return this.list[this.list.length-1].wrappedHandler;
 		}
 		
-		
-		/*
-		create : (function wrappedEventListener_create_closure() {
-			var self, initialized, vendorCssPrefix, vendorCssPrefixJS, objConstructor, textContentProperty, getSupportedTextContentProperty, priv;
-			return function wrappedEventListener_create(type, handler, obj) {
-				this.list.push({
-					type	: type,
-					target	: obj,
-					handler	: handler,
-					wrappedHandler : function(e) {
-						if (handler && type) {
-							var event,
-								d = {
-									isInSelf : false,
-									//searchNode : null,
-									//handlerResponse : null,
-									doPreventDefault : false,
-									doCancelBubble : false,
-									doStopPropagation : false,
-									e : e || window.event,
-									ret : null,
-									end : function() {
-										event = d = null;
-										return this.ret;
-									}
-								};
-							event = {
-								which	: e.which,
-								type	: type,
-								target	: e.target || e.srcElement || this || document.body,
-								relatedTarget : e.relatedTarget || (type==='mouseout' ? e.toElement : e.fromElement),
-								preventDefault : function(){ d.doPreventDefault=true; },
-								cancelBubble : function(){ d.doCancelBubble=true; },
-								stopPropagation : function(){ d.doStopPropagation=true; },
-								returnValue : true,
-								originalEvent : d.e
-							};
-							
-							if (!event.target) {
-								self.log('Event target doesn\'t exist for type "'+event.type+'": ',event.target,', srcElement=',e.srcElement);
-							}
-							
-							if (e.pageX || e.pageX===0 || e.clientX || e.clientX===0) {
-								event.pageX = e.pageX || (e.clientX+document.body.offsetLeft);
-								event.pageY = e.pageY || (e.clientY+document.body.offsetTop);
-							}
-							if (type.indexOf('key')>-1 || e.keyCode || e.charCode) {
-								event.keyCode = e.keyCode || e.which;
-								event.charCode = e.keyCode || e.charCode || e.which;			// this should never be used
-								event.which = e.which;
-							}
-							if (type.indexOf('mouse')>-1 || type.indexOf('click')>-1 || (e.button!==null && e.button!==undefined)) {
-								event.button = e.button || e.which;
-							}
-							
-							// fix safari #textnode target bug
-							if (event.target && event.target.nodeType===3 && this.nodeType!==3) {
-								event.target = event.target.parentNode;
-							}
-							
-							// is the capturing node within the original handler context?
-							d.searchNode = event.relatedTarget || event.target;
-							do {
-								if (d.searchNode===this) {
-									d.isInSelf = true;
-									break;
-								}
-							} while(d.searchNode && (d.searchNode=d.searchNode.parentNode) && d.searchNode!==document);
-							
-							// Don't fire mouseout events when the mouse is moving into a child node of the handler context element
-							if ((type!=='mouseover' && type!=='mouseout') || d.isInSelf) {
-								if (typeof(handler)==='function' && handler.call) {
-									d.handlerResponse = handler.call(this, event);
-								}
-								else {
-									// NOTE: Turn this on and fix the IE bug.
-									//console.log('Handler not a function: ', self.typeOf(handler), ' handler=', handler, ' type=', type);
-								}
-								
-								event.returnValue = d.handlerResponse!==false && event.returnValue!==false;
-								if (d.doPreventDefault) {
-									event.returnValue = false;
-									if (e.preventDefault) {
-										e.preventDefault();
-									}
-								}
-								if (d.doCancelBubble || d.doStopPropagation || event.cancelBubble===true) {
-									if (e.stopPropagation) {
-										e.stopPropagation();
-									}
-									if (self.typeOf(e.cancelBubble)==='function') {
-										e.cancelBubble();
-									}
-									else {
-										try {
-											e.cancelBubble = true;
-										}catch(err){}
-									}
-								}
-								d.ret = event.returnValue;
-							}
-							else {
-								d.ret = true;
-							}
-							return d.end();
-						}
-					},
-					_kill : function() {
-						type = handler = null;
-					}
-				});
-				obj = null;
-				this.convertTargetToId(this.list[this.list.length-1]);
-				return this.list[this.list.length-1].wrappedHandler;
-			};
-		}())
-		*/
 	};
 	
-	
-	/*
-	priv.wrappedEventListener = {
-		queryHandlers : function(query, op) {
-			var hasMatch, handler, i, p, matches=[];
-			query = query || {};
-			for (i=this.handlers.length; i--; ) {
-				handler = this.handlers[i];
-				hasMatch = true;
-				for (p in query) {
-					if (query.hasOwnProperty(p) &&  query[p]!==handler[p]) {
-						hasMatch = false;
-						break;
-					}
-				}
-				if (hasMatch) {
-					if (op==='remove') {
-						op(handler, i);
-					}
-					else if (self.typeOf(op)==='function') {
-						op(handler, i);
-					}
-					matches.push(handler);
-				}
-			}
-			return matches;
-		},
-		reset : function(removeEvents) {
-			if (removeEvents===true) {
-				this.queryHandlers({}, 'remove');
-			}
-		},
-		destroyObjHandlers : function(obj) {
-			if (removeEvents===true) {
-				this.queryHandlers({
-					obj : obj
-				}, 'remove');
-			}
-		},
-		get : function(type, handler, obj, andDestroy) {
-			return handler;
-		},
-		create : function(type, handler, obj) {
-			return handler;
-		}
-	};
-	*/
-	
-	/*
-	priv.wrappedEventListener = (function() {
-		var wrappers = {},
-			idCounter = 0,
-			Event,
-			factory;
-		//function Event(){}
-		
-		factory = function(type, handler, obj) {
-			var wrapped,
-				id;
-			type = (type+'').replace(/^on/,'');
-			if (!self.isArray(wrappers['on'+type])) {
-				wrappers['on'+type] = [];
-			}
-			idCounter += 1;
-			id = 'wrapper_' + idCounter;
-			obj = priv.nodeToId(obj);
-			priv.registeredEventCount += 1;
-			//window._td_registeredEventCount = (window._td_registeredEventCount || 0) + 1;
-			
-			(function(wrappers, type, obj) {
-				//var interval = setInterval(function() {
-				//	if (!handler) {
-				//		console.log('handler is no longer defined!! ', type);
-				//		clearInterval(interval);
-				//	}
-				//}, 100);
-				wrapped = function(e) {
-					var event,			// = new Event(),
-						isInSelf = false,
-						searchNode,
-						handlerResponse,
-						doPreventDefault = false,
-						doCancelBubble = false,
-						doStopPropagation = false;
-					e = e || window.event;
-					if (!type) {
-						return false;
-					}
-					event = {
-						pageX	: e.pageX || (e.clientX+document.body.offsetLeft),
-						pageY	: e.pageY || (e.clientY+document.body.offsetTop),
-						which	: e.which,
-						type	: type,
-						target	: e.target || e.srcElement || this || document.body,
-						relatedTarget : e.relatedTarget || (type==='mouseout' ? e.toElement : e.fromElement),
-						preventDefault : function(){ doPreventDefault=true; },
-						cancelBubble : function(){ doCancelBubble=true; },
-						stopPropagation : function(){ doStopPropagation=true; },
-						returnValue : true,
-						originalEvent : e
-					};
-					
-					
-					if (!event.target) {
-						self.log('Event target doesn\'t exist for type "'+event.type+'": ',event.target,', srcElement=',e.srcElement);
-					}
-					
-					
-					if (type.indexOf('key')>-1 || e.keyCode || e.charCode) {
-						event.keyCode = e.keyCode || e.which;
-						event.charCode = e.keyCode || e.charCode || e.which;			// this should never be used
-						event.which = e.which;
-					}
-					if (type.indexOf('mouse')>-1 || type.indexOf('click')>-1 || (e.button!==null && e.button!==undefined)) {
-						event.button = e.button || e.which;
-					}
-					
-					// fix safari #textnode target bug
-					if (event.target && event.target.nodeType===3 && this.nodeType!==3) {
-						event.target = event.target.parentNode;
-					}
-					
-					// is the capturing node within the original handler context?
-					searchNode = event.relatedTarget || event.target;
-					do {
-						if (searchNode===this) {
-							isInSelf = true;
-							break;
-						}
-					} while(searchNode && (searchNode=searchNode.parentNode) && searchNode!==document);
-					
-					// Don't fire mouseout events when the mouse is moving into a child node of the handler context element
-					if (type==='mouseover' && isInSelf) {
-						return true;
-					}
-					else if (type==='mouseout' && isInSelf) {
-						return true;
-					}
-					
-					if (self.typeOf(handler)==='function') {
-						handlerResponse = handler.call(this, event);
-					}
-					else {
-						// NOTE: Turn this on and fix the IE bug.
-						//console.log('Handler not a function: ', self.typeOf(handler), ' handler=', handler, ' type=', type);
-					}
-					
-					event.returnValue = handlerResponse!==false && event.returnValue!==false;
-					if (doPreventDefault) {
-						event.returnValue = false;
-						if (e.preventDefault) {
-							e.preventDefault();
-						}
-					}
-					if (doCancelBubble || doStopPropagation || event.cancelBubble===true) {
-						if (e.stopPropagation) {
-							e.stopPropagation();
-						}
-						if (self.typeOf(e.cancelBubble)==='function') {
-							e.cancelBubble();
-						}
-						else {
-							try {
-								e.cancelBubble = true;
-							}catch(err){}
-						}
-					}
-					return event.returnValue;
-				};
-				wrapped.id = id;
-				wrapped._obj = obj;
-				wrapped._scopeKill = function() {
-					//console.log('_scopeKill:', type);
-					//console.log('_scopeKill:', type, handler, id,  wrapped._obj);
-					wrapped._obj = null;
-					try{ delete wrapped._obj; }catch(err){}
-					wrapped._scopeKill = null;
-					wrappers = Event = wrapped = id = type = handler = null;
-				};
-				wrapped._getOriginalHandler = function() {
-					//if (!wrapped || !wrapped._scopeKill || !handler) {
-					//	console.log('_getOriginalHandler called on wrapper with removed scope!');
-					//}
-					return handler;
-				};
-				obj = null;
-			}(wrappers, type, obj));
-			
-			obj = null;
-			wrappers['on'+type].push(wrapped);
-			return wrapped;
-		};
-		
-		factory.create = function() {
-			return factory.apply(this, arguments);
-		};
-		
-		factory.get = function(type, handler, obj, andDestroy) {
-			var index, handlerSearch, wrapper;
-			obj = priv.nodeToId(obj);
-			type = 'on' + (type+'').replace(/^on/,'');
-			if (wrappers.hasOwnProperty(type)) {
-				for (index=wrappers[type].length; index--; ) {
-					wrapper = wrappers[type][index];
-					handlerSearch = wrapper._getOriginalHandler();
-					//if (!handlerSearch) {
-					//	console.log(wrapper, handlerSearch, wrapper._scopeKill);
-					//}
-					if (handlerSearch===handler && wrapper._obj===obj) {
-						if (andDestroy===true) {
-							wrappers[type].splice(index, 1);
-							wrapper._scopeKill();
-						}
-						return wrapper;
-					}
-				}
-			}
-			//if (window.console && window.console.log) {
-			//	console.log('Could not find event for:', type);
-			//}
-			return false;
-		};
-		
-		factory.destroyObjHandlers = function(obj) {
-			var index, wrapper, originalHandler;
-			obj = priv.nodeToId(obj);
-			for (type in wrappers) {
-				if (wrappers.hasOwnProperty(type)) {
-					for (index=wrappers[type].length; index--; ) {
-						wrapper = wrappers[type][index];
-						if (wrapper._obj===obj) {
-							originalHandler = wrapper._getOriginalHandler();
-							wrappers[type].splice(index, 1);
-							priv.registeredEventCount -= 1;
-							//console.log(priv.idToNode(wrapper._obj), type, originalHandler);
-							self.removeEvent(priv.idToNode(wrapper._obj), type, originalHandler);
-							wrapper._scopeKill();
-							return wrapper;
-						}
-					}
-				}
-			}
-			return true;
-		};
-		
-		factory.reset = function(removeEvents) {
-			var type, index, wrapper, originalHandler;
-			for (type in wrappers) {
-				if (wrappers.hasOwnProperty(type)) {
-					for (index=wrappers[type].length; index--; ) {
-						wrapper = wrappers[type][index];
-						if (removeEvents===true) {
-							originalHandler = wrapper._getOriginalHandler();
-							priv.registeredEventCount -= 1;
-							//console.log(priv.idToNode(wrapper._obj), type, originalHandler);
-							self.removeEvent(priv.idToNode(wrapper._obj), type, originalHandler);
-						}
-						if (wrapper._scopeKill) {
-							wrapper._scopeKill();
-						}
-					}
-					wrappers[type] = null;
-				}
-			}
-			wrappers = {};
-			idCounter = 0;
-		};
-		
-		return factory;
-	}());
-	*/
-	
-	//window.wrappedEventListener = priv.wrappedEventListener;
 	
 	
 	
 	/** Get a String description of the subject for an event operation
 	 *	@private
-	 *	@param subject		An object of any type.
+	 *	@param {Any} subject		An object of any type.
 	 */
 	priv.getSubjectDescription = function(obj) {
 		return (obj.nodeName ? (self.el(obj)+'') : (obj.constructor && obj.constructor.name || obj.name || obj)) + '';
@@ -4101,7 +3195,7 @@ window._previousPureDom = window.puredom;
 	
 	/**	Add an event listener to a DOM node for the given event type.
 	 *	@private
-	 *	@param {Element} obj				An element to add the event listener to.
+	 *	@param {HTMLElement} obj			An element to add the event listener to.
 	 *	@param {String} type				A type of event to register the listener for.
 	 *	@param {Function} listener			The listener function to register. Gets passed {Event} event.
 	 *	@param {Boolean} [useCapture=false]	If true, handler will be invoked during the capture phase instead of the bubbling phase.
@@ -4135,19 +3229,13 @@ window._previousPureDom = window.puredom;
 				type = self.eventTypeMap[type];
 			}
 			
-			//var t = obj.nodeName ? (obj.id ? ('#'+obj.id) : (self.el(obj)+'')) : (obj.constructor && obj.constructor.name || obj.name || obj);
-			//console.log('addEvent(): ', t, type, (fn+'').substring(0, (fn+'').indexOf('{')));
-			
 			fn = priv.wrappedEventListener.create(origType, fn, obj);
 			if (obj.attachEvent) {
-				//obj['e'+type+fn] = fn;
-				//obj[type+fn] = function () {obj['e'+type+fn]( window.event );};
-				//obj.attachEvent( 'on'+type, obj[type+fn] );
 				obj.attachEvent( 'on'+type, fn );
 			}
 			else if (obj.addEventListener) {
 				obj.addEventListener( type, fn, useCapture===true );
-				window._eventCount = (window._eventCount || 0) + 1;
+				self._eventCount = (self._eventCount || 0) + 1;
 			}
 		}
 	};
@@ -4191,30 +3279,13 @@ window._previousPureDom = window.puredom;
 			
 			fn = priv.wrappedEventListener.get(origType, fn, obj, true);		// , useCapture===true ?
 			if (obj.detachEvent) {
-				//try {
-					obj.detachEvent( 'on'+type, fn );
-				//}catch(err){
-				//	var t = obj.nodeName ? (self.el(obj)+'') : (obj.constructor && obj.constructor.name || obj.name || obj);
-				//	self.log('WARNING: removeEvent('+t+', '+type+') failed.', {type:type, obj:obj, handler:fn});
-				//}
-				/*
-				try {
-					obj.detachEvent( 'on'+type, obj[type+fn] );
-				} catch(err) {
-					self.log('Event removal failed with an error: ', 'on'+type, self.typeOf(obj[type+fn]));
-				}
-				*/
-				//obj[type+fn] = null;
+				obj.detachEvent( 'on'+type, fn );
 			}
 			else if (obj.removeEventListener) {
 				try {
 					obj.removeEventListener( type, fn, useCapture===true );
-					window._eventCount = (window._eventCount || 0) - 1;
-				}catch(err) {
-					//if (window.console && window.console.log) {
-					//	window.console.log('removeEventListener failed:', type, ',', fn, ', false');
-					//}
-				}
+					self._eventCount = (self._eventCount || 0) - 1;
+				} catch(err) {}
 			}
 		}
 	};
@@ -4223,7 +3294,7 @@ window._previousPureDom = window.puredom;
 	/**	When called from within an event handler and passed the DOM Event, cancels the event, prevents the event's default action, and returns false.<br />
 	 *	<strong>Note:</strong> puredom-wrapped Event objects have a cancel() method that does this for you.
 	 *	@private
-	 *	@param {Event} event			A DOM Event.
+	 *	@param {Event} event	A DOM Event.
 	 *	@returns false
 	 */
 	self.cancelEvent = function(e) {
@@ -4268,9 +3339,9 @@ window._previousPureDom = window.puredom;
 	
 	/**	Fire an event on a DOM node.
 	 *	@private
-	 *	@param {Object} options			An event options object, having at least a "type" and "target".
-	 *	@param {String} options.type	The event type to fire. "on"- prefixes get stripped.
-	 *	@param {String} options.target	A DOM node to fire the event on.
+	 *	@param {Object} options				An event options object, having at least a "type" and "target".
+	 *	@param {String} [options.type]		The event type to fire. "on"- prefixes get stripped.
+	 *	@param {String} [options.target]	A DOM node to fire the event on.
 	 *	@returns {Object} result description, with {Boolean} "rval" (false if any handler returned false), and {Boolean} "preventDefault" (default was prevented).
 	 */
 	self.fireEvent = function (options) {
@@ -4319,7 +3390,6 @@ window._previousPureDom = window.puredom;
 					} catch(err) {}
 				}
 			}
-			//console.log('event('+evt.type+') :: ', evt);
 			rval = !options.target.dispatchEvent(evt);
 			preventDefault = evt.preventDefault===true;
 		}
@@ -4340,7 +3410,6 @@ window._previousPureDom = window.puredom;
 	
 	/**	@private */
 	priv._nodeToIdList = {};
-	//window._nodeToIdList = priv._nodeToIdList;
 	
 	/**	Get the UUID value for a given node. If the node does not yet have a UUID, it is assigned one.
 	 *	@private
@@ -4386,15 +3455,12 @@ window._previousPureDom = window.puredom;
 			return document.body;
 		}
 		if (listed) {
-			//console.log('idToNode.listed :: ', listed);
-			//node = listed;
 			node = self.getElement(listed);
 			if (!(/\s_td_autoid_[0-9]+\s/gm).exec(' ' + node.className + ' ')) {
 				node = null;
 			}
 		}
 		if (!node) {
-			//console.log('idToNode.search :: ', listed);
 			search = self.getElement('._td_autoid_'+id);
 			node = search && search[0];
 			if (node) {
@@ -4414,7 +3480,6 @@ window._previousPureDom = window.puredom;
 				node.setAttribute('id', idAttr);
 			}
 			priv._nodeToIdList[id] = '#'+idAttr;
-			//priv._nodeToIdList[id] = node;
 		}
 	};
 	
@@ -4509,7 +3574,6 @@ window._previousPureDom = window.puredom;
 		if (opac<=1 && opac>0) {
 			opac = opac * 100;
 		}
-		//console.log('setOpacity');
 		opac = Math.round(opac);
 		if (opac<100) {
 			el.style.opacity = parseFloat(opac/100).toFixed(2);
@@ -4531,17 +3595,6 @@ window._previousPureDom = window.puredom;
 	 *	@param {String} value		The value to set for the given filter type.
 	 */
 	self.applyMsFilter = function(el, type, value) {
-		/*
-		var fType = 'DXImageTransform.Microsoft.',
-			filters;
-		type = type.replace(/^\s*?(progid\\:)?DXImageTransform\.Microsoft\./gm,'');
-		fType += type;
-		filters = el.style.filter || '';
-		filters.replace(new RegExp('DXImageTransform\.Microsoft\.'+type+'\s*?\(.*?\)','gim'));
-		*/
-		
-		
-		
 		var item, filters,
 			valueStr = '',
 			ch = priv.support.filterProperty==='MsFilter' ? '"' : '',
@@ -4567,85 +3620,26 @@ window._previousPureDom = window.puredom;
 		try {
 			item = el.filters && el.filters.item && (el.filters.item('DXImageTransform.Microsoft.'+type) || el.filters.item(type));
 		}catch(err){}
-		//console.log('filter['+type+'] >> ', value, !!item);
 		if (item) {
-			//console.log('el.filters.item('+type+') >> ' + puredom.json(value));
-			//if (value.enabled!==false) {
-				for (p in value) {
-					if (value.hasOwnProperty(p) && p!=='enabled') {
-						item[p] = value[p];
-					}
+			for (p in value) {
+				if (value.hasOwnProperty(p) && p!=='enabled') {
+					item[p] = value[p];
 				}
-			//}
+			}
 			item.enabled = value.enabled?1:0;
 		}
 		else {
-			//filters = el.style[priv.support.filterProperty] || '';
 			filters = el.style.MsFilter || el.style.filter || '';
 			filters += ' ' + (self.nodeStyle(el, 'MsFilter') || self.nodeStyle(el, 'filter') || '');
 			if (filters) {
-				filters = filters.replace(new RegExp('(^|\s|\))"?((progid\:)?DXImageTransform\.Microsoft\.)?'+type+'\s*?\(.*?\)"?\s*?','gim'),'$1') + ' ';
+				filters = filters.replace(new RegExp('(^|\\s|\\))"?((progid\\:)?DXImageTransform\\.Microsoft\\.)?'+type+'\\s*?\\(.*?\\)"?\\s*?','gim'),'$1') + ' ';
 			}
-			//console.log(priv.support.filterProperty, 'filters: ', filters);
 			el.style[priv.support.filterProperty] = filters + ch+'progid:DXImageTransform.Microsoft.'+type+'('+valueStr+')'+ch;
 		}
 		// hasLayout
 		if (!el.style.zoom) {
 			el.style.zoom = 1;
 		}
-		
-		
-		
-		//console.log('filters['+(el.className && ('.'+el.className) || el.id && ('#'+el.id))+'] = ', puredom.json(props));
-		/*
-		var i,
-			props = {},
-			vtype = self.typeOf(value),
-			propsStr,
-			existingProps = [],
-			currentFilterStr = self.nodeStyle(el, 'filter') || el.style.filter || '';
-		if (vtype==='string') {
-			value = (value+'').replace(/\,\s*?/gim,',').split(',');
-			for (i=0; i<value.length; i++) {
-				props[ value[i].substring(0,value[i].indexOf('=')) ] = value[i].substring(value[i].indexOf('=')+1);
-			}
-		}
-		else if(vtype==='object') {
-			props = value;
-		}
-		//console.log('filters['+(el.className && ('.'+el.className) || el.id && ('#'+el.id))+'] = ', puredom.json(el.filters));
-		props.enabled = props.enabled!==false;
-		if (!el.filters[type]) {
-			propsStr = '';
-			for (i in props) {
-				if (props.hasOwnProperty(i) && !(i==='enabled' && props[i]===true)) {
-					existingProps.push(i);
-					if (self.typeOf(props[i])==='number') {
-						props[i] = Math.round(props[i]);
-					}
-					propsStr += (propsStr.length>0?', ':'') + i + '=' + props[i];
-				}
-			}
-			if (existingProps.length===0 || (existingProps.length===1 && existingProps[0]==='enabled')) {
-				el.style.filter = currentFilterStr;
-				//console.log('filter:: ' + currentFilterStr);
-			}
-			else {
-				el.style.filter = currentFilterStr + ' '+type+'('+propsStr+')';
-				//console.log('filter:: ' + currentFilterStr + ' '+type+'('+propsStr+')');
-			}
-		}
-		else {
-			for (i in props) {
-				if (props.hasOwnProperty(i)) {				// && (i!=='enabled' || props[i]===false)
-					if (self.typeOf(props[i])==='number') {
-						props[i] = Math.round(props[i]);
-					}
-					el.filters[type][i] = props[i];
-				}
-			}
-		}
-		*/
 	};
 	
 	
@@ -4663,26 +3657,21 @@ window._previousPureDom = window.puredom;
 			if (properties.hasOwnProperty(x)) {
 				try {
 					cx = self.getStyleAsCSS(x);
-					//if (cx.substring(0, 8)==='-vendor-') {
-						cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
-					//}
+					cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
 					cx = self.getStyleAsProperty(cx);
 					if (cx==='opacity' && priv.support.filters) {
 						ieOpac = Math.round( parseFloat(properties[x])*100 );
 						if (ieOpac<100) {
-							//self.log("opac="+properties[x]+", alpha=" + ieOpac);
 							self.applyMsFilter(el, 'alpha', {
 								enabled : true,
 								opacity : ieOpac
 							});
 						}
 						else {
-							//self.log("disabling alpha filter");
 							self.applyMsFilter(el, 'alpha', {
 								enabled : false
 							});
 						}
-						//el.style.opacity = properties[x];
 					}
 					else if (cx==='--box-shadow' && priv.support.filters) {
 						d = properties[x].match(/\b(\#[0-9af]{3}[0-9af]{3}?|rgba?\([0-9\,\s]+\))\b/gim);
@@ -4794,7 +3783,6 @@ window._previousPureDom = window.puredom;
 		for (p in transitions) {
 			if (transitions.hasOwnProperty(p) && transitions[p]) {
 				css['-vendor-transition-property'].push(p.toLowerCase());
-				//css['-vendor-transition-duration'].push(transitions[p].duration + 'ms');
 				css['-vendor-transition-duration'].push((transitions[p].duration/1000).toFixed(3) + 's');
 				css['-vendor-transition-timing-function'].push(transitions[p].timingFunction || 'ease');
 			}
@@ -4846,8 +3834,6 @@ window._previousPureDom = window.puredom;
 				}
 				prev = prev.substring(1);
 			}
-			//prev = (' '+prev+' ').replace(/\s+$/gim,' ');
-			//prev = prev.substring(1, prev.length-1);
 			el.className = (prev + classes.join(' ')).replace(/\s+/gim,' ');
 		}
 	};
@@ -4886,14 +3872,7 @@ window._previousPureDom = window.puredom;
 		dashed = dashed.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
 		camelized = dashed.replace(/\-[a-z]/gim, function (s) {return s.substring(1).toUpperCase();});
 		
-		/*
 		if (dashed==='opacity' && priv.support.filters) {
-			filter = 'opacity';
-			dashed = camelized = 'filter';
-		}
-		*/
-		if (dashed==='opacity' && priv.support.filters) {
-			//console.log(node.filters.alpha && node.filters.alpha.opacity);
 			return node.filters.alpha && node.filters.alpha.enabled!==false && Math.round(node.filters.alpha.opacity)/100;
 		}
 		
@@ -4915,30 +3894,6 @@ window._previousPureDom = window.puredom;
 			style = s && (s.getPropertyValue(dashed) || s.getPropertyValue(camelized)) || '';
 		}
 		
-		/*
-		if (filter) {
-			//if (filter==='opacity' && (s=node.getAttribute('data-custom-opacity'))) {
-			if (filter==='opacity') {
-				var a = (/\balpha\s*?\(\s*?opacity\s*?=\s*?([0-9\.\-]+)/gim).exec(s);
-				console.log(s + ' ::: ' + (a && a[1]));
-				style = parseInt(a && a[1] || 100, 10)/100;
-			}
-		}
-		*/
-		
-		/*
-		if (filter) {
-			style = style.split(',');
-			for (s=0; s<style.length; s++) {
-				style[s] = style[s].replace(/^\s*?(?:(?:progid\:)?DXImageTransform\.Microsoft\.)?(.*?)\s*?\(/g,'$1');
-				if (style[s].substring(0, filter.length+1).toLowerCase()===filter+'(') {
-					style = styles[s].substring(filter.length+1, styles[s].lastIndexOf(')'));
-					break;
-				}
-			}
-		}
-		*/
-		
 		return style;
 	};
 	
@@ -4958,7 +3913,6 @@ window._previousPureDom = window.puredom;
 	/**	Log to the browser console, if it exists.
 	 */
 	self.log = function() {
-		var i,j,args;
 		if (window.console && window.console.log) {
 			window.console.log.apply(window.console, arguments);
 		}
@@ -5012,14 +3966,13 @@ window._previousPureDom = window.puredom;
 	 *	@ignore
 	 */
 	(function() {
-		if (window._previousPureDom) {
-			for (var x in window._previousPureDom) {
-				if (window._previousPureDom.hasOwnProperty(x)) {
-					self[x] = window._previousPureDom[x];
+		if (previousSelf) {
+			for (var x in previousSelf) {
+				if (previousSelf.hasOwnProperty(x)) {
+					self[x] = previousSelf[x];
 				}
 			}
-			window._previousPureDom = null;
-			try{ delete window._previousPureDom; }catch(err){}
+			previousSelf = null;
 		}
 	}());
 	
@@ -5041,5 +3994,9 @@ window._previousPureDom = window.puredom;
 	
 	self.extend(self, baseSelf);
 	self.toString = function(){return 'function puredom(){}';};
+	
 	window.puredom = self;
+	if (typeof window.define==='function') {
+		window.define('puredom', self);
+	}
 }());

@@ -280,7 +280,7 @@ puredom.extend(puredom.ViewManager.prototype, {
 	
 	/** @private Cache a view for future use */
 	cacheView : function(name, ui, copy) {
-		return false;
+		/*
 		if (copy===true) {
 			ui = ui && this.buildViewFromDOM(ui);
 		}
@@ -289,6 +289,8 @@ puredom.extend(puredom.ViewManager.prototype, {
 		ui.attr('id', null);
 		ui._removeAllEvents();
 		ui.insertInto(this.cacheBase);
+		*/
+		return false;
 	}
 	
 	

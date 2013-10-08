@@ -324,9 +324,10 @@ puredom.extend(puredom.ControllerManager.prototype, {
 				error.lineNumber
 			);
 			setTimeout(function() {
-				throw(customError);
+				var e = customError;
 				error = customError = listener = null;
-			}, 10);
+				throw(e);
+			}, 1);
 		};
 		
 		/** A sandbox that can be safely passed to a controller */
@@ -342,7 +343,7 @@ puredom.extend(puredom.ControllerManager.prototype, {
 				if (!muted) {
 					controllerManager._fireEvent('message', msgObj);
 					controllerManager._fireEvent(msgObj.type, msgObj);
-					for (var x=0; x<controllerManager._messageListeners.length; x++) {
+					for (x=0; x<controllerManager._messageListeners.length; x++) {
 						listener = controllerManager._messageListeners[x];
 						if (!listener.controller || listener.controller===name.toLowerCase()) {
 							try {

@@ -64,11 +64,15 @@ puredom.extend(puredom.StateManager.prototype, {
 		},
 		base : {
 			getState : function(cb) {
-				throw(new Error("StateManager:: getState method not defined for the specified adapter."));
+				setTimeout(function() {
+					throw(new Error("StateManager:: getState method not defined for the specified adapter."));
+				}, 1);
 				cb({});
 			},
 			setState : function(s,cb) {
-				throw(new Error("StateManager:: setState method not defined for the specified adapter."));
+				setTimeout(function() {
+					throw(new Error("StateManager:: setState method not defined for the specified adapter."));
+				}, 1);
 				cb(true);
 			}
 		}
@@ -88,7 +92,7 @@ puredom.extend(puredom.StateManager.prototype, {
 			this.restoreFromState(options.state);
 		}
 		if (options.objects) {
-			for (x in options.objects) {
+			for (var x in options.objects) {
 				this.addObject(x, options.objects[x]);
 			}
 		}
@@ -110,8 +114,6 @@ puredom.extend(puredom.StateManager.prototype, {
 		this.initialized = false;
 	},
 	
-	emptyFunc : function(){},
-	
 	startPolling : function() {
 		if (this.adapter && this.adapter.startPolling) {
 			this.adapter.startPolling();
@@ -127,7 +129,9 @@ puredom.extend(puredom.StateManager.prototype, {
 	addObject : function(id, obj, callback) {
 		var stateManager;
 		if (this.objects.hasOwnProperty(id)) {
-			throw(new Error("Cannot add duplicate object ID '"+id+"' to state list."));
+			setTimeout(function() {
+				throw(new Error("Cannot add duplicate object ID '"+id+"' to state list."));
+			}, 1);
 			if (callback) {
 				callback(false);
 			}

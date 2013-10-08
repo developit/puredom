@@ -60,9 +60,8 @@ puredom.date = {
 			}
 			var i = rdate.getDate();
 			if (temp.hours===12 && temp.pm===false) {
-				if (rdate.getHours()!==0 || pm===!!pm) {
+				if (rdate.getHours()!==0 || typeof pm==='boolean') {
 					rdate.setHours(0);
-
 				}
 			}
 			else {
@@ -96,6 +95,12 @@ puredom.date = {
 		replacers.P = replacers.p;
 		replacers.h = replacers.b;
 		
+		/**	@ignore */
+		function rp(e) {
+			rep[1](e);
+			return '';
+		}
+		
 		for (index=0; index<format.length; index++) {
 			if (format.charAt(index)==="%") {
 				rep = null;
@@ -105,14 +110,11 @@ puredom.date = {
 				for (r in replacers) {
 					if (replacers.hasOwnProperty(r) && format.substring(index+1, index+1+r.length)===r) {
 						rep = replacers[r];
-						str = str.replace(rep[0], function(e){rep[1](e);return '';});
+						str = str.replace(rep[0], rp);
 						index += rep.length-1;		// advance past the used symbol in format str
 						break;
 					}
 				}
-				//if (!rep) {
-				//	index += 1;
-				//}
 			}
 			else {
 				if (str.charAt(0)===format.charAt(index)) {
@@ -127,8 +129,6 @@ puredom.date = {
 		if (temp.year || temp.year===0) {
 			rdate.setFullYear(temp.year);
 		}
-		
-		//console.log('PARSE: format="'+format+'", orig="'+origStr+'", remain="'+str+'", date='+rdate);
 		
 		return rdate;
 	},

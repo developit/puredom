@@ -332,10 +332,11 @@ puredom.extend(puredom.FormHandler.prototype, {
 		for (x=0; x<this._customTypes.length; x++) {
 			customType = this._customTypes[x];
 			//console.log('customType for', el, '<>', customType);
-			if ( (customType.types && this._arrayIndexNC(customType.types,type)>-1) 
-				|| (customType.type && (customType.type+'').toLowerCase()===type)
-				|| (customType.nodeNames && this._arrayIndexNC(customType.nodeNames,nodeName)>-1)
-				|| (customType.nodeName && (customType.nodeName+'').toLowerCase()===nodeName) ) {
+			if ( (customType.types && this._arrayIndexNC(customType.types,type)>-1)  ||
+				(customType.type && (customType.type+'').toLowerCase()===type) ||
+				(customType.nodeNames && this._arrayIndexNC(customType.nodeNames,nodeName)>-1) ||
+				(customType.nodeName && (customType.nodeName+'').toLowerCase()===nodeName) ) {
+				
 				return customType;
 			}
 		}
@@ -361,7 +362,7 @@ puredom.extend(puredom.FormHandler.prototype, {
 				node.submit();
 				break;
 			}
-		} while((node=node.parent()).exists() && node.nodeName()!=='body')
+		} while((node=node.parent()).exists() && node.nodeName()!=='body');
 		return puredom.cancelEvent(e);
 	},
 	

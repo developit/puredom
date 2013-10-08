@@ -141,7 +141,7 @@ puredom.net = /** @lends puredom.net */ {
 	 *	@returns {puredom.net.HttpRequest}</td><td>An HTTP request object
 	 */
 	request : function(options) {
-		var opt, h, self;
+		var opt, self;
 		if (!options.url) {
 			return false;
 		}
@@ -230,7 +230,7 @@ puredom.net = /** @lends puredom.net */ {
 			opt.request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 			opt.request.setRequestHeader('x-requested-with', 'XMLHttpRequest');
 			if (opt.headers) {
-				for (h in opt.headers) {
+				for (var h in opt.headers) {
 					if (opt.headers.hasOwnProperty(h)) {
 						try {
 							opt.request.setRequestHeader(h, opt.headers[h]);

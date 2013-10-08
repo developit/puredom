@@ -7,7 +7,7 @@ window.puredom = window.puredom || {};
  */
 
 puredom.NativeAPI = function(api) {
-	var self = (this.constructor===arguments.callee ? this : api) || {},		/* can be used as a method OR a class */
+	var self = (this instanceof puredom.NativeAPI ? this : api) || {},		/* can be used as a method OR a class */
 		priv = {},
 		globalParameters = {},
 		authParameters = {},
@@ -92,7 +92,7 @@ puredom.NativeAPI = function(api) {
 		response = new NativeAPIResponse();
 		shallowObjectCopy(response, data);
 		return (function() {
-			data = response = originalResponse = NativeAPIResponse = null;
+			data = response = originalResponse = null;
 			return arguments[0];
 		}(response));
 	};
@@ -147,7 +147,6 @@ puredom.NativeAPI = function(api) {
 			entry = priv.cache.hasOwnProperty(key) ? puredom.json.parse(priv.cache[key]) : null;
 		if (self.enableCacheLogging===true) {
 			console.log('CACHE: Getting ['+method.type+'] '+method.endpoint, options, ' --> ', entry);
-			//console.log('CACHE->GET: ', key, ' --> ', entry);
 		}
 		return entry;
 	};
@@ -166,7 +165,6 @@ puredom.NativeAPI = function(api) {
 		var key = priv.getCacheKey(method, options);
 		if (self.enableCacheLogging===true) {
 			console.log('CACHE: Storing ['+method.type+'] '+method.endpoint, options, ' --> ', response);
-			//console.log('CACHE->SET: ', key, ' --> ', response);
 		}
 		priv.cache[key] = puredom.json.stringify(response);
 	};
@@ -227,7 +225,6 @@ puredom.NativeAPI = function(api) {
 			}
 		}
 		
-		//console.log(requiredParams);
 		if (requiredParams) {
 			for (name in requiredParams) {
 				if (requiredParams.hasOwnProperty(name)) {
@@ -243,7 +240,7 @@ puredom.NativeAPI = function(api) {
 							field : name,
 							type : 'RequiredError',
 							message : '{fieldnames.' + name + '} is required'
-						}
+						};
 					}
 					else if (pType==='regex' && !p.test(inputField+'')) {
 						error = {
@@ -264,24 +261,9 @@ puredom.NativeAPI = function(api) {
 						response.message += (response.message.length>0?', ':'') + error.message + ' ('+error.type+')';
 						response.errors.push(puredom.extend(error, baseErrorMessage));
 					}
-					
-					//if (!options.hasOwnProperty(p) || options[p]===null || options[p]===undefined)) || (typeof(options[p])+'').toLowerCase()!==requiredParams[p]) {
-					//	log("api."+subject+"."+action+": Required parameter '"+p+"' is missing or not a "+requiredParams[p]+". Cannot complete request.", 9);
-					//	if (options.callback) {
-					//		response.errors.push({
-					//			nativeApiError : true,
-					//			clientSideError : true,
-					//			missingParameter : p,
-					//			requiredParamType : requiredParams[p],
-					//			message : p+" is required."
-					//		});
-					//	}
-					//}
 				}
 			}
 		}
-		
-		//console.log('PREvalidationResponse', response);
 		
 		response.failed = response.errors.length>0;
 		return response;
@@ -299,8 +281,6 @@ puredom.NativeAPI = function(api) {
 				optionsLongPollingProperty = options.longPolling,
 				unCache;
 			
-			//console.log('validationResponse', validationResponse);
-			
 			// Check for a failed validation
 			if (validationResponse.failed) {
 				log("api."+subject+"."+action+": Errors: " + validationResponse.message, 9);
@@ -311,7 +291,7 @@ puredom.NativeAPI = function(api) {
 			}
 			
 			// callback for JSONp (or other request methods)
-			callback = function callback(json, extraData) {
+			callback = function(json, extraData) {
 				var success = json && (json[api.statusProperty || 'success']===true || json[api.statusProperty || 'success']===1),			// The response.success property MUST be Boolean TRUE or Integer 1  <---
 					data = json.data || json || null,
 					message = json.errorMessage || json.message || null,
@@ -376,7 +356,7 @@ puredom.NativeAPI = function(api) {
 				if (api.onRequestCompleted) {
 					api.onRequestCompleted(subject+'.'+action, data, success, requestParameters, options);
 				}
-				callback = req = type = querystring = x = i = funcs = postData = requestParameters = isLongPolling = optionsHasLongPollingProperty = optionsLongPollingProperty = unCache = enhancedMessage = null;
+				callback = req = type = querystring = funcs = postData = requestParameters = isLongPolling = optionsHasLongPollingProperty = optionsLongPollingProperty = unCache = enhancedMessage = null;
 				options = p = null;
 			};//-callback
 			
@@ -449,11 +429,11 @@ puredom.NativeAPI = function(api) {
 				
 				case "post":
 					funcs = {};
-					for (i in options) {
-						if (options.hasOwnProperty(i) && Object.prototype.toString.apply(options[i])==="[object Function]") {
-							funcs[i] = options[i];
-							options[i] = null;
-							try{ delete options[i]; }catch(err2){}
+					for (var j in options) {
+						if (options.hasOwnProperty(j) && Object.prototype.toString.apply(options[j])==="[object Function]") {
+							funcs[j] = options[j];
+							options[j] = null;
+							try{ delete options[j]; }catch(err2){}
 						}
 					}
 					requestParameters = postData = shallowObjectCopy(
@@ -463,9 +443,9 @@ puredom.NativeAPI = function(api) {
 						method.defaultParameters || {},
 						options
 					);
-					for (i in funcs) {
-						if (funcs.hasOwnProperty(i)) {
-							options[i] = funcs[i];
+					for (j in funcs) {
+						if (funcs.hasOwnProperty(j)) {
+							options[j] = funcs[j];
 						}
 					}
 					funcs = null;
