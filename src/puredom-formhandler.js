@@ -1,3 +1,7 @@
+/**	Handles populating and submitting HTML forms. 
+ *	@constructor Creates a new FormHandler instance.
+ *	@augments puredom.EventEmitter
+ */
 puredom.FormHandler = function(form, options) {
 	var me = this;
 
@@ -41,7 +45,11 @@ puredom.FormHandler = function(form, options) {
 	}
 };
 
-puredom.extend(puredom.FormHandler.prototype, {
+
+puredom.inherits(puredom.FormHandler, puredom.EventEmitter);
+
+
+puredom.extend(puredom.FormHandler.prototype, /** @lends puredom.FormHandler# */ {
 	
 	errorMessageSelector : '.errorMessage, .generalForm_errorMessage',
 	
@@ -370,12 +378,6 @@ puredom.extend(puredom.FormHandler.prototype, {
 	_customTypes : []
 	
 });
-
-
-puredom.inherits(puredom.FormHandler, puredom.EventEmitter);
-
-
-
 
 
 /** @static */

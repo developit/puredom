@@ -1,6 +1,9 @@
-(function(){  this.puredom = this.puredom || {}; }());
-
-/** @inherits puredom#EventEmitter */
+/** Provides a managed notification/toast display area.
+ *	@constructor Creates a new Notifier instance.
+ *	@augments puredom.EventEmitter
+ *	@param {Object} [options]	Hashmap of options
+ *	@param {puredom.NodeSelection} [options.parent]		Construct the display area within a given element.
+ */
 puredom.Notifier = function(options) {
 	var self = this;
 	
@@ -21,7 +24,19 @@ puredom.Notifier = function(options) {
 	}
 };
 
-puredom.extend(puredom.Notifier.prototype, {
+
+puredom.inherits(puredom.Notifier, puredom.EventEmitter);
+
+
+puredom.extend(puredom.Notifier.prototype, /** @lends puredom.Notifier# */ {
+
+	/**	Show a notification.
+	 *	@param {Object} config	Describes what to display
+	 *	@param {Object} [config.message]	The text to display
+	 *	@param {Object} [config.icon]		Icon/image to show next to the text
+	 *	@param {Object} [config.image]		Icon/image to show next to the text
+	 *	@param {Object} [config.timeout=Notifier.timeout]	How many seconds to wait before auto-dismissing the notification
+	 */
 	show : function(config) {
 		var notify;
 		if (config) {
@@ -43,6 +58,8 @@ puredom.extend(puredom.Notifier.prototype, {
 		return false;
 	},
 	
+
+	/**	@private */
 	_createBase : function(parent) {
 		if (this.notifications_base) {
 			this.notifications_base.remove();
@@ -55,6 +72,8 @@ puredom.extend(puredom.Notifier.prototype, {
 		}
 	},
 	
+
+	/**	@private */
 	_build : function(id, options) {
 		var base, iconSrc;
 		base = puredom.el({
@@ -111,6 +130,8 @@ puredom.extend(puredom.Notifier.prototype, {
 		return base;
 	},
 	
+
+	/**	@private */
 	_show : function(id) {
 		var notify = this.get(id);
 		if (notify) {
@@ -123,6 +144,8 @@ puredom.extend(puredom.Notifier.prototype, {
 		}
 	},
 	
+
+	/**	@private*/
 	_hide : function(id) {
 		var notify = this.get(id);
 		if (notify) {
@@ -136,6 +159,8 @@ puredom.extend(puredom.Notifier.prototype, {
 		}
 	},
 	
+
+	/**	@private */
 	_resetTimeout : function(id) {
 		var notify = this.get(id),
 			self = this;
@@ -153,11 +178,14 @@ puredom.extend(puredom.Notifier.prototype, {
 		}
 	},
 	
-	/** @public Get a notification by ID */
+
+	/** Get a notification by ID */
 	get : function(id) {
 		return id && this._data.list.hasOwnProperty(id+'') && this._data.list[id+''] || false;
 	},
 	
+
+	/**	@private */
 	_performAction : function(id, action, args) {
 		var notify = this.get(id),
 			ret;
@@ -178,15 +206,14 @@ puredom.extend(puredom.Notifier.prototype, {
 		}
 	},
 	
+
+	/**	@private */
 	timeout : 15,
 	
+
+	/**	@private */
 	_data : {
 		counter : 0,
 		list : {}
 	}
 });
-
-
-puredom.inherits(puredom.Notifier, puredom.EventEmitter);
-
-

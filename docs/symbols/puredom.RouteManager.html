@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		<title>puredom.RouteManager | JsDoc Reference</title>
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+		<meta name="mobileoptimized" content="1" />
+	
+		<link rel="stylesheet" href="../css/all.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		
+		<script src="../javascript/puredom.light.js"></script>
+		<script src="../javascript/all.js"></script>
+		<!--[if lt IE 9]>
+			<script src="../javascript/html5.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+<div class="index">
+	<div class="menu">
+		<div class="indexLinks">
+			<a href="../index.html">Classes</a>
+			<a href="../files.html">Files</a>
+		</div>
+	
+		<h2 class="heading1">Classes</h2>
+		
+		<input type="text" name="classFilter" class="classFilter" id="ClassFilter" placeholder="Filter"></input>
+		
+		<nav>
+			<ul class="classList" id="ClassList">
+				
+					<li><a href="../symbols/_global_.html">_global_</a></li>
+				
+					<li><a href="../symbols/puredom.html">puredom</a></li>
+				
+					<li><a href="../symbols/puredom.Cache.html">puredom<span class='break'> </span>.<span class='break'> </span>Cache</a></li>
+				
+					<li><a href="../symbols/puredom.ControllerManager.html">puredom<span class='break'> </span>.<span class='break'> </span>ControllerManager</a></li>
+				
+					<li><a href="../symbols/puredom.cookies.html">puredom<span class='break'> </span>.<span class='break'> </span>cookies</a></li>
+				
+					<li><a href="../symbols/puredom.date.html">puredom<span class='break'> </span>.<span class='break'> </span>date</a></li>
+				
+					<li><a href="../symbols/puredom.DOMEvent.html">puredom<span class='break'> </span>.<span class='break'> </span>DOMEvent</a></li>
+				
+					<li><a href="../symbols/puredom.EventEmitter.html">puredom<span class='break'> </span>.<span class='break'> </span>EventEmitter</a></li>
+				
+					<li><a href="../symbols/puredom.FormHandler.html">puredom<span class='break'> </span>.<span class='break'> </span>FormHandler</a></li>
+				
+					<li><a href="../symbols/puredom.i18n.html">puredom<span class='break'> </span>.<span class='break'> </span>i18n</a></li>
+				
+					<li><a href="../symbols/puredom.json.html">puredom<span class='break'> </span>.<span class='break'> </span>json</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.cookie.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>cookie</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.LocalStorage.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>LocalStorage</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.none.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>none</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.UserData.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>UserData</a></li>
+				
+					<li><a href="../symbols/puredom.LocalStorage.adapters.WebkitSQLite.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>WebkitSQLite</a></li>
+				
+					<li><a href="../symbols/puredom.NativeAPI.html">puredom<span class='break'> </span>.<span class='break'> </span>NativeAPI</a></li>
+				
+					<li><a href="../symbols/puredom.NativeAPI.MessageStringWithData.html">puredom<span class='break'> </span>.<span class='break'> </span>NativeAPI<span class='break'> </span>.<span class='break'> </span>MessageStringWithData</a></li>
+				
+					<li><a href="../symbols/puredom.net.html">puredom<span class='break'> </span>.<span class='break'> </span>net</a></li>
+				
+					<li><a href="../symbols/puredom.net.HttpRequest.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>HttpRequest</a></li>
+				
+					<li><a href="../symbols/puredom.net.jsonp.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>jsonp</a></li>
+				
+					<li><a href="../symbols/puredom.net.jsonp.Request.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>jsonp<span class='break'> </span>.<span class='break'> </span>Request</a></li>
+				
+					<li><a href="../symbols/puredom.NodeSelection.html">puredom<span class='break'> </span>.<span class='break'> </span>NodeSelection</a></li>
+				
+					<li><a href="../symbols/puredom.Notifier.html">puredom<span class='break'> </span>.<span class='break'> </span>Notifier</a></li>
+				
+					<li><a href="../symbols/puredom.querystring.html">puredom<span class='break'> </span>.<span class='break'> </span>querystring</a></li>
+				
+					<li><a href="../symbols/puredom.RouteManager.html">puredom<span class='break'> </span>.<span class='break'> </span>RouteManager</a></li>
+				
+					<li><a href="../symbols/puredom.selectorEngine.html">puredom<span class='break'> </span>.<span class='break'> </span>selectorEngine</a></li>
+				
+					<li><a href="../symbols/puredom.TestSuite.html">puredom<span class='break'> </span>.<span class='break'> </span>TestSuite</a></li>
+				
+					<li><a href="../symbols/puredom.text.html">puredom<span class='break'> </span>.<span class='break'> </span>text</a></li>
+				
+					<li><a href="../symbols/puredom.ViewManager.html">puredom<span class='break'> </span>.<span class='break'> </span>ViewManager</a></li>
+				
+					<li><a href="../symbols/puredom.xml.html">puredom<span class='break'> </span>.<span class='break'> </span>xml</a></li>
+				
+			</ul>
+		</nav>
+	</div>
+	<div class="fineprint" style="clear:both">
+		&copy;2013<br />
+		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
+		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
+		Generated on: 2013-9-9 5:38
+	</div>
+</div>
+
+<div class="index indexStatic"></div>
+
+<div class="content">
+	<div class="innerContent">
+		<h1 class="classTitle">
+			
+			Class <span>puredom.RouteManager</span>
+		</h1>
+		
+		<div class="intro">
+			<p class="description summary">
+				
+			</p>
+				
+			
+				<ul class="summary">
+					
+					
+					
+						<li>Extends <span class="fixedFont">
+						<a href="../symbols/puredom.ControllerManager.html">puredom.ControllerManager</a></span></li>
+					
+				</ul>
+			
+		</div>
+		
+		
+			<div class="props">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class puredom.RouteManager.">
+					<caption class="sectionTitle">Class Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Constructor Attributes</th>
+							<th scope="col">Constructor Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription" >
+								<div class="fixedFont">
+									<b><a href="../symbols/puredom.RouteManager.html#constructor">puredom.RouteManager</a></b>(options)
+								</div>
+								<div class="description">Manages controllers, providing a means for separating functionality into feature-centric modules.</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+		
+		
+			
+			
+				<div class="props">
+					<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class puredom.RouteManager.">
+						<caption class="sectionTitle">Field Summary</caption>
+						
+						<thead>
+							<tr>
+								<th scope="col">Field Attributes</th>
+								<th scope="col">Field Name and Description</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							
+								<tr>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+										<b><a href="../symbols/puredom.RouteManager.html#rewrites">rewrites</a></b>
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+										<b><a href="../symbols/puredom.RouteManager.html#singular">singular</a></b>
+										</div>
+										<div class="description">RouteManagers are singular by default, because a browser can only navigate to one URL at a time.</div>
+									</td>
+								</tr>
+							
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+				<dl class="inheritsList">
+				<dt>Fields borrowed from class <a href="../symbols/puredom.ControllerManager.html">puredom.ControllerManager</a>: </dt><dd><a href="../symbols/puredom.ControllerManager.html#controllerOptions">controllerOptions</a></dd>
+				</dl>
+			
+		
+<!--
+#### METHODS SUMMARY
+-->
+		
+			
+			
+			<div class="props">
+				<h2 class="sectionTitle">Method Summary</h2>
+				
+				
+					<table class="summaryTable" id="MethodsList" cellspacing="0" summary="A summary of the methods documented in the class puredom.RouteManager.">
+						<thead>
+							<tr>
+								<th scope="col">Method Attributes</th>
+								<th scope="col">Method Name and Description</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							
+							
+								<tr
+									 class='item0'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+											
+											<b><a href="../symbols/puredom.RouteManager.html#doStateUpdate">doStateUpdate</a></b>
+											(state, options)
+										</div>
+										<div class="description">For use with StateManager</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item1'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+											
+											<b><a href="../symbols/puredom.RouteManager.html#register">register</a></b>
+											(name, controller)
+										</div>
+										<div class="description"></div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item2'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+											
+											<b><a href="../symbols/puredom.RouteManager.html#restoreState">restoreState</a></b>
+											(state)
+										</div>
+										<div class="description">For use with StateManager</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item3'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+											
+											<b><a href="../symbols/puredom.RouteManager.html#route">route</a></b>
+											(url)
+										</div>
+										<div class="description">Attempt to route the given URL to a controller.</div>
+									</td>
+								</tr>
+							
+								<tr
+									 class='item4'
+								>
+									<td class="attributes">&nbsp;</td>
+									<td class="nameDescription">
+										<div class="fixedFont">
+											
+											<b><a href="../symbols/puredom.RouteManager.html#routeDefault">routeDefault</a></b>
+											(url)
+										</div>
+										<div class="description">Attempt to route the given URL to a controller.</div>
+									</td>
+								</tr>
+							
+						</tbody>
+					</table>
+				
+			
+				
+					<dl class="inheritsList" id="MethodsListInherited">
+					<dt>Methods borrowed from class <span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html">puredom.ControllerManager</a></span>: </dt><dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#current">current</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#destroy">destroy</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#get">get</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#getList">getList</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#init">init</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#load">load</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#loadDefault">loadDefault</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#loadPrevious">loadPrevious</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#none">none</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#postMessage">postMessage</a></span></dd> <dd><span class='fixedFont'><a href="../symbols/puredom.ControllerManager.html#reloadCurrent">reloadCurrent</a></span></dd>
+					</dl>
+				
+			</div>
+		
+		
+<!--
+#### EVENTS SUMMARY
+-->
+		
+<!--
+#### CONSTRUCTOR DETAILS
+-->
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle" id="constructor">
+						Class Detail
+					</h2>
+					
+					<div class="fixedFont">
+						<b>puredom.RouteManager</b>(options)
+					</div>
+					
+					<div class="description">
+						Manages controllers, providing a means for separating functionality into feature-centric modules.
+						
+					</div>
+					
+					
+				
+					
+						<dl class="detailList params">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span>  <b>options</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Hashmap of options to be given to the instance.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span>  <b>options.allowTemplateFallback</b>
+									<i>Optional, Default: false</i>
+								</dt>
+								<dd>If no URL templates match, attempt to load by name.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span>  <b>options.useBest</b>
+									<i>Optional, Default: false</i>
+								</dt>
+								<dd>If no URL templates match, attempt to load by name.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span>  <b>options.allowPartialUrlFallback</b>
+									<i>Optional, Default: false</i>
+								</dt>
+								<dd>Use the longest URL template match, even if it isn't a perfect match.</dd>
+							
+						</dl>
+					
+					
+					
+				</div>
+			</div>
+		
+<!--
+#### FIELD DETAILS
+-->
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle">
+						Field Detail
+					</h2>
+					
+					
+						<div class="fixedFont heading nomultiline" id="rewrites">
+							<span class='lighter methodModifier'>
+							
+							</span>
+							
+							
+							
+							<b>rewrites</b>							
+						</div>
+						
+						<div class="description">
+							
+							
+							
+							
+						</div>
+						
+						
+							
+						
+						<div class="hr"></div>
+					
+						<div class="fixedFont heading nomultiline" id="singular">
+							<span class='lighter methodModifier'>
+							
+							</span>
+							
+							
+							
+							<b>singular</b>							
+						</div>
+						
+						<div class="description">
+							RouteManagers are singular by default, because a browser can only navigate to one URL at a time.
+							
+							
+							
+						</div>
+						
+						
+							
+						
+						
+					
+				</div>
+			</div>
+		
+<!--
+#### METHOD DETAILS
+-->		
+		
+			<div class="details props">
+				<div class="innerProps">
+					<h2 class="sectionTitle">
+						Method Detail
+					</h2>
+					
+					<ul class="methodDetail" id="MethodDetail">
+						
+						
+							<li 
+								 class='item0'
+							>
+								<div class="fixedFont heading nomultiline" id="doStateUpdate">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>doStateUpdate</b>(state, options)
+								</div>
+								
+								<div class="description">
+									For use with StateManager
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>state</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>options</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item1'
+							>
+								<div class="fixedFont heading nomultiline" id="register">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>register</b>(name, controller)
+								</div>
+								
+								<div class="description">
+									
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>name</b>
+												
+											</dt>
+											<dd></dd>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>controller</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item2'
+							>
+								<div class="fixedFont heading nomultiline" id="restoreState">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>restoreState</b>(state)
+								</div>
+								
+								<div class="description">
+									For use with StateManager
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>state</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item3'
+							>
+								<div class="fixedFont heading nomultiline" id="route">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>route</b>(url)
+								</div>
+								
+								<div class="description">
+									Attempt to route the given URL to a controller.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>url</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item4'
+							>
+								<div class="fixedFont heading nomultiline" id="routeDefault">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									
+									
+									<b>routeDefault</b>(url)
+								</div>
+								
+								<div class="description">
+									Attempt to route the given URL to a controller.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType paramType_any">{Any}</span><b>url</b>
+												
+											</dt>
+											<dd></dd>
+										
+									</dl>
+								
+								
+								
+								
+							</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+		
+<!--
+#### EVENT DETAILS
+-->		
+		
+	</div>
+</div>
+		<script>window.puredom && window.puredom.init();</script>
+	</body>
+</html>
+

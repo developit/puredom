@@ -1,5 +1,6 @@
 /**	Manages views, providing methods for loading, templating, caching and swapping.
  *	@constructor Creates a new TestSuite instance.
+ *	@augments puredom.EventEmitter
  *	@param {Object} options		Hashmap of options to be given to the instance.
  */
 puredom.TestSuite = function(options) {
@@ -8,6 +9,9 @@ puredom.TestSuite = function(options) {
 };
 
 
+puredom.inherits(puredom.TestSuite, puredom.EventEmitter);
+
+	
 puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 	
 	/** Add a test to the suite.
@@ -33,11 +37,12 @@ puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 	},
 	
 
-	/** Run the test that matches <name>.
+	/** Run the test that matches <code>name</code>.
 	 *	@param {String} name	The name of a registered test to run
 	 */
 	run : function(name, callback, messageHandler) {
-		var ob = this.get(name),
+		var self = this,
+			ob = this.get(name),
 			test = ob && ob.test,
 			passed = null,
 			finish, onMessage, sandboxController, sandbox, finalResult;
@@ -52,6 +57,7 @@ puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 					passed = message===true;
 				}
 				else if (messageHandler) {
+					self.fireEvent(type, name, message);
 					messageHandler(type, message);
 					return false;
 				}
@@ -77,11 +83,12 @@ puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 					});
 				}
 				
+				self.fireEvent('finish', name, finalResult, passed);
 				if (callback) {
 					callback(finalResult, passed);
 				}
 				sandboxController.destroy();
-				finish = onMessage = finalResult = ob = test = sandboxController = sandbox = callback = messageHandler = null;
+				self = finish = onMessage = finalResult = ob = test = sandboxController = sandbox = callback = messageHandler = null;
 			};
 			
 			// Get a new sandbox controller:
@@ -101,7 +108,7 @@ puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 	},
 	
 
-	/** Retrieve the test that matches <name>.
+	/** Retrieve the test that matches <code>name</code>.
 	 *	@param {String} name	The name of a registered test to find
 	 */
 	get : function(name) {
@@ -131,15 +138,20 @@ puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 
 	/** @private */
 	_createSandboxController : function(testObj) {
-		/**	@exports sandbox as puredom.TestSuite.test# */
+		/**	@exports sandbox as puredom.TestSuite.test */
+
+			/**	@private */
 		var self = this,
+			/**	@private */
 			controller = {},
 			/**	@name puredom.TestSuite.test */
 			sandbox = {};
 		
+		/**	@private */
 		controller.getSandbox = function() {
 			return sandbox;
 		};
+		/**	@private */
 		controller.destroy = function() {
 			sandbox = controller = self = testObj = null;
 		};

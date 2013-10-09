@@ -1,7 +1,3 @@
-/**	@ignore */
-window.puredom = window.puredom || {};
-
-
 /**	When called as a function, acts as an alias of {@link puredom.i18n.localize}.
  *	@namespace Internationalization extension for puredom.
  *	@function

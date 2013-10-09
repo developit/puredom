@@ -1,15 +1,7 @@
-/** @name puredom
- *	@namespace
+/**	@namespace Functions for working with dates <br />
+ *	See {@link http://php.net/strftime} for formatting options.
  */
-window.puredom = window.puredom || {};
-
-
-/**	Functions for working with dates.<br />
- *	See http://php.net/strftime for formatting options.
- *	@namespace
- */
-puredom.date = {
-	/** @lends puredom.date */
+puredom.date = /** @lends puredom.date */ {
 	
 	/** Returns the current timestamp, in milliseconds.
 	 *	@function
@@ -23,6 +15,7 @@ puredom.date = {
 		}
 	),
 	
+
 	/** Create a date, optionally from a string.<br />
 	 *	This is a wrapper on new Date(str), adding support for more date formats and smoothing out differences between browsers.
 	 *	@param {String} [str=now]	A date string, parsed and used to set the initial date.
@@ -39,6 +32,7 @@ puredom.date = {
 		}
 		return date;
 	},
+	
 	
 	/**	Parse a string with the given format into a Date object.
 	 *	@param {String} str						A date string to parse
@@ -132,12 +126,15 @@ puredom.date = {
 		
 		return rdate;
 	},
+
+
 	/** Alias of {@link puredom.date.parse}
 	 *	@see puredom.date.parse
 	 *	@deprecated
 	 *	@private
 	 */
 	unformat : function(){return this.parse.apply(this,arguments);},
+	
 	
 	/**	Get a formatted string representation of a Date object.
 	 *	@param {String} date					A date object to convert
@@ -190,6 +187,7 @@ puredom.date = {
 		});
 	},
 	
+
 	/** @private */
 	_getMonthIndex : function(m){
 		m = m.substring(0,3).toLowerCase();
@@ -201,12 +199,16 @@ puredom.date = {
 		return -1;
 	},
 	
+
 	/** Weekday names
-	 *	@type String[]
+	 *	@type Array(String)
 	 */
 	weekdays : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+
+
 	/** Month names
-	 *	@type String[]
+	 *	@type Array(String)
 	 */
 	months : ["January","February","March","April","May","June","July","August","September","October","November","December"]
+	
 };

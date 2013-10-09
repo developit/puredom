@@ -1,4 +1,3 @@
-
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
  *	@constructor Creates a new ControllerManager instance.
  *	@param {Object} [options]		Hash of options to be given to the instance.
@@ -24,9 +23,9 @@ puredom.ControllerManager = function(options) {
 	}
 };
 
-puredom.extend(puredom.ControllerManager.prototype, {
+puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.ControllerManager#*/ {
 
-	/** @public */
+	/** Options to pass to every controller. */
 	controllerOptions : {},
 
 	

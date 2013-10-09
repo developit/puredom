@@ -1,40 +1,3 @@
-/*
- * TABLE OF CONTENTS:
- * - JsDoc styling
- * - Media query check
- */
-
-
-
-
-
-
-@media all and (max-width: 1025px) and (max-height: 1025px) {
-	body div.content *,
-	body .mobilescroll_scrolling *,
-	body .mobilescroll_scrollable *,
-	body [data-mobilescroll-enabled="true"] * {
-		-webkit-transform: none !important;
-		-moz-transform: none !important;
-		transform: none !important;
-		-webkit-transition: none !important;
-		-moz-transition: none !important;
-		transition: none !important;
-		-webkit-text-shadow: none !important;
-		-moz-text-shadow: none !important;
-		text-shadow: none !important;
-		-webkit-box-shadow: none !important;
-		-moz-box-shadow: none !important;
-		box-shadow: none !important;
-		-webkit-border-radius: 0 !important;
-		-moz-border-radius: 0 !important;
-		border-radius: 0 !important;
-	}
-}
-
-
-
-
 
 /*
  * BEGIN JSDOC
@@ -138,6 +101,7 @@ div.index div.menu {
 body .index .menu nav {
 	top: 60px;
 	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 }
 	.index .menu nav ul {
 		padding: 0 0 20px;
@@ -268,6 +232,7 @@ div.content {
 	height: 100%;
 	overflow: auto;
 	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
 	/*
 	margin: 0 0 0 auto;
 	width: 70%;
@@ -294,6 +259,10 @@ div.content ul.methodDetail {
 		margin: 0 0 10px;
 	}
 		div.content ul.methodDetail li div.hr {
+			display: none;
+		}
+		
+		div.content .methodMemberOf {
 			display: none;
 		}
 	
@@ -441,6 +410,7 @@ div.content ul.methodDetail {
 		ul.methodDetail li div.fixedFont.heading .methodNamespacePrefix {
 			color: #ABC;
 			font-weight: normal;
+			display: none;
 		}
 		/** method [property] type */
 		ul.methodDetail li div.fixedFont.heading .methodPropertyType {

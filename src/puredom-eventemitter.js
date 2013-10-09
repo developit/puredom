@@ -1,15 +1,11 @@
-
-/** @ignore */
-window.puredom = window.puredom || {};
-
-
-/**	EventEmitter class for puredom. <br />
- *	The name is intentially similar to Node.JS's EventEmitter class.
- *	@class
+/**	Fire events and listen for fired events. <br />
+ *	Let's just assume every framework provides one of these now.
+ *	@constructor Creates a new EventEmitter instance.
  */
 puredom.EventEmitter = function EventEmitter() {
 	this._eventRegistry = [];
 };
+
 
 /** Register an event listener on the instance.
  *	@param {String} type		An event type, or a comma-seprated list of event types.

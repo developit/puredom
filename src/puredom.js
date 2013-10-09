@@ -16,6 +16,7 @@ if (typeof(Date.now)!=='function') {
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
+	 *	@version 1.1.7
 	 *	@namespace Top-level puredom namespace.
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
@@ -320,7 +321,7 @@ if (typeof(Date.now)!=='function') {
 	};
 	
 	
-	/** Get the <strong>lowercase</code> type (constructor name) of an object.<br />
+	/** Get the <strong>lowercase</strong> type (constructor name) of an object.<br />
 	 *	<em><strong>Important Note:</strong> Unlike many other typeOf implementations, this method returns the name of an Object's constructor, rather than just "object".</em>
 	 *	@param {Any} what		An object to analyze
 	 *	@returns {String} type
@@ -576,9 +577,9 @@ if (typeof(Date.now)!=='function') {
 	 *	This class is not generally instantiated directly - instead, use the puredom() 
 	 *	function to query for elements or wrap an Array of elements with a selection.
 	 *	@class Represents a collection of DOM Elements. <br />
-	 *	Methods that work with DOM elements generally return an instance of this.
-	 *	@param {Array} nodes		An array of raw DOM nodes to wrap in a selection.
+	 *	Puredom methods that work with DOM elements generally return an instance of this.
 	 *	@name puredom.NodeSelection
+	 *	@param {Array} nodes		An array of raw DOM nodes to wrap in a selection.
 	 */
 	self.NodeSelection = function NodeSelection(nodes) {
 		var x;
@@ -603,22 +604,23 @@ if (typeof(Date.now)!=='function') {
 			}
 		}
 	};
+
 	self.extend(self.NodeSelection.prototype, /** @lends puredom.NodeSelection# */ {
 		
 		/**	@private */
-		_results	: [],
+		_results : [],
 		
 		/**	@private */
-		_nodes		: [],
+		_nodes : [],
 		
 		/**	@private */
-		_animations	: [],
+		_animations : [],
 		
 		
 		/**	Get an Array of String representations of each element in the selection. <br />
 		 *	For a more logging-friendly option, see {@link puredom.NodeSelection#describe}.
 		 */
-		describe	: function() {
+		describe : function() {
 			var p = [];
 			this.each(function(node) {
 				var str = '<' + node.nodeName(),
@@ -647,12 +649,12 @@ if (typeof(Date.now)!=='function') {
 		/**	Get a String representation of the selection's current contents. <br />
 		 *	For the raw Array description, see {@link puredom.NodeSelection#describe}.
 		 */
-		toString	: function() {
+		toString : function() {
 			return this.describe().join(', ');
 		},
 		
 		/**	@private */
-		toSource	: function() {
+		toSource : function() {
 			return this._nodes;
 		},
 		
@@ -662,7 +664,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@param {Number} [reverseIndex=0]		Optionally get an older return value. This value is a 0-based offset.
 		 *	@returns {Any} returnValue, or <code>undefined</code> if no value was returned.
 		 */
-		getResult	: function(reverseIndex) {
+		getResult : function(reverseIndex) {
 			reverseIndex = Math.round(reverseIndex) || 0;
 			return this._results[this._results.length - reverseIndex - 1];
 		},
@@ -723,7 +725,7 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/**	Get the <strong>lower-case</code> nodeName of an element.<br />
+		/**	Get the <strong>lower-case</strong> nodeName of an element.<br />
 		 *	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em> <br />
 		 *	<strong>Note:</strong> In puredom, the <code>window</code> Object is given a nodeName of "#window".
 		 *	@returns {String} nodeName
@@ -894,7 +896,7 @@ if (typeof(Date.now)!=='function') {
 		 *	If the element that is already semi-transparent, it fades from the current opacity. <br />
 		 *	If the element that is hidden but not explicitly transparent, it fades from opacity=0 (hidden). <br />
 		 *	If the element is already 100% opaque (non-transparent), no animation is performed, and the callback is fired after a very small delay (to enforce async). <br />
-		 *	Arguments are interchangeable for backward compatibility reasons.
+		 *	Arguments are interchangeable for backward compatibility.
 		 *	@param {Number|String} tween	A tween value. Can be a <code>{Number} duration</code>, or <code>{String} "duration,easing-method"</code>.
 		 *	@param {Function} [callback]	A function to call once the fade has completed. Gets passed the selection.
 		 *	@returns {this}
@@ -936,8 +938,7 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/**	The opposite function for fadeIn(), also makes several guesses about the desired effect.
-		 */
+		/**	The opposite of fadeIn(). Makes several guesses about the desired effect. */
 		fadeOut : function(tween, callback, andIgnore) {
 			var originalOpacity = parseFloat(this.getStyle('opacity') || '1') || 1;
 			if (self.typeOf(tween)==='function') {
@@ -972,7 +973,9 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/** @note: automatically detects and uses CSS3 transitions. */
+		/** Automatically detects and uses CSS3 transitions.
+		 * 	@private
+		 */
 		animateCSS : (function() {
 			var manual, cssTransition, supportsCssTransition, checkCssTransitionSupport;
 			
@@ -1119,6 +1122,7 @@ if (typeof(Date.now)!=='function') {
 				}, 10);
 			};
 			
+			/**	@ignore */
 			checkCssTransitionSupport = function() {
 				supportsCssTransition = document.body.style[vendorCssPrefixJS+'Transition']!==undefined || document.body.style.transition!==undefined;
 				return supportsCssTransition;
@@ -1138,6 +1142,7 @@ if (typeof(Date.now)!=='function') {
 				return this;
 			};
 		}()),
+		
 		animate : function(animator, duration, easing, callback) {
 			if (animator) {
 				var nodeSelection = this,
@@ -1190,6 +1195,8 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	@private */
 		_createAnimationObj : function(animator, duration, easing, callback) {
 			var anim = {
 				animator	: animator,
@@ -1649,18 +1656,42 @@ if (typeof(Date.now)!=='function') {
 				return this.attr('disabled')!=='disabled' && this.prop('disabled')!==true && !this.hasClass('_puredom_disabled');
 			}
 		},
+
+		/**	Register an event handler. <br />
+		 *	When an event of the given type is triggered, the handler function is called.
+		 *	@param {String} eventType		An event type to listen for
+		 *	@param {Function} handler		A handler to call in response to the event
+		 *	@example
+		 *		function clickHandler(e){ alert(e.button); }
+		 *		foo.addEvent("click", clickHandler);
+		 *	@returns {this}
+		 */
 		addEvent : function(eventType, handler, useCapture) {
 			this._each(function(el) {
 				self.addEvent(el, eventType, handler, useCapture);
 			});
 			return this;
 		},
+
+		/**	Un-register an event handler.
+		 *	@param {String} eventType		The event type
+		 *	@param {Function} handler		The handler to remove
+		 *	@example
+		 *		foo.removeEvent("click", clickHandler);
+		 *	@returns {this}
+		 */
 		removeEvent : function(eventType, handler, useCapture) {
 			this._each(function(el) {
 				self.removeEvent(el, eventType, handler, useCapture);
 			});
 			return this;
 		},
+
+		/**	Fire an event on the selection.
+		 *	@param {String} type		An event type
+		 *	@param {Object|Event} e		The event data
+		 *	@returns {this}
+		 */
 		fireEvent : function(type, e) {
 			this._each(function(node) {
 				self.fireEvent(self.extend({}, e || {}, {
@@ -1670,6 +1701,8 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
+
+		/**	@private */
 		_removeAllEvents : function(deep) {
 			var children;
 			this._each(function(node) {
@@ -1682,6 +1715,11 @@ if (typeof(Date.now)!=='function') {
 			children = deep = null;
 			return this;
 		},
+
+		/**	Append an element to the DOM.
+		 *	@param {puredom.NodeSelection|HTMLElement} child	An element or a Selection of elements to append
+		 *	@returns {this}
+		 */
 		appendChild : function(child) {
 			if (child && this._nodes.length>0) {
 				if (child.constructor===this.constructor) {
@@ -1696,6 +1734,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Insert an element into the DOM before a given reference element.
+		 *	@param {puredom.NodeSelection|HTMLElement} child	An element or a Selection of elements to insert
+		 *	@param {puredom.NodeSelection|HTMLElement} before	An element or a Selection to insert <code>child</code> before
+		 *	@returns {this}
+		 */
 		insertBefore : function(child, before) {
 			if (child && this._nodes.length>0) {
 				if (before && before.constructor===this.constructor) {
@@ -1716,6 +1760,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Insert all elements in the Selection into a given parent. <br />
+		 *	Uses document fragments to improve performance when inserting a Selection containing multiple nodes.
+		 *	@param {puredom.NodeSelection|HTMLElement} what		A parent into which the selection should be inserted
+		 *	@returns {this}
+		 */
 		insertInto : function(what) {
 			var frag;
 			if (what && this.count()>0) {
@@ -1739,6 +1789,10 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Remove all elements in the Selection from the DOM.
+		 *	@returns {this}
+		 */
 		remove : function() {
 			this.fireEvent('remove');
 			this._each(function(node) {
@@ -1748,6 +1802,11 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
+
+		/**	Remove all elements in the Selection from the DOM, and <strong>destroy them</strong>. <br />
+		 *	<strong>Note:</strong> This also removes all elements from the Selection.
+		 *	@returns {this}
+		 */
 		destroy : function() {
 			this.remove();
 			this.fireEvent('destroy');
@@ -1755,13 +1814,21 @@ if (typeof(Date.now)!=='function') {
 			this._nodes.splice(0, this._nodes.length);
 			return this;
 		},
-		query : function(search, options) {
+
+		/**	Search for elements within the Selection's tree that match the given CSS selector. <br />
+		 *	<strong>Note:</strong> This is a scoped version of puredom(selector).
+		 *	@param {String} selector	A CSS selector
+		 *	@param {Object} [options]	Options, which get passed to puredom()
+		 *	@returns {puredom.NodeSelection} results
+		 */
+		query : function(selector, options) {
 			var results = [];
 			if (this._nodes.length>0) {
+				options = puredom.extend({}, options || {});
 				this._each(function(node) {
-					var r = self.getElement(search, puredom.extend({}, options || {}, {
-						within : node
-					}));
+					var r;
+					options.within = node;
+					r = self.getElement(selector, options);
 					if (self.isArray(r) && r.length>0) {
 						results = results.concat(r);
 					}
@@ -1769,6 +1836,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return new self.NodeSelection(results);
 		},
+
+		/**	Clone the selection, optionally into a new parent node.
+		 *	@param {Boolean} [deep=true]	Perform a deep clone, which clones all descendent nodes.
+		 *	@param {Object} [newParent]		Optionally inject into a new parentNode. Pass <code>true</code> to clone into the same parent.
+		 *	@returns {puredom.NodeSelection} clonedSelection
+		 */
 		clone : function(deep, newParent) {
 			var sel = [];
 			if (newParent===true) {
@@ -1787,45 +1860,24 @@ if (typeof(Date.now)!=='function') {
 			}
 			return sel;
 		},
+
+		/**	Get the number of elements in the Selection.
+		 *	@returns {Number} count
+		 */
 		count : function() {
 			return this._nodes.length;
 		},
+
+		/**	Check if the selection contains at least one element.
+		 *	@returns {Boolean} exists
+		 */
 		exists : function() {
 			return this.count()>0;
 		},
-		next : function() {
-			var sib = this._nodes[0] && this._nodes[0].nextSibling;
-			while (sib && sib.nodeType===3) {
-				sib = sib.nextSibling;
-			}
-			return new self.NodeSelection(sib && [sib] || null);
-		},
-		prev : function() {
-			var sib = this._nodes[0] && this._nodes[0].previousSibling;
-			while (sib && sib.nodeType===3) {
-				sib = sib.previousSibling;
-			}
-			return new self.NodeSelection(sib && [sib] || null);
-		},
-		previous : function(){ return this.prev.apply(this,arguments); },
-		firstChild : function() {
-			return this.children().first();
-		},
-		lastChild : function() {
-			return this.children().last();
-		},
-		nthChild : function(n) {
-			return this.children().index(n);
-		},
-		first : function(n) {
-			return new self.NodeSelection( this._nodes.slice(0, n || 1) );
-		},
-		last : function(n) {
-			return new self.NodeSelection( this._nodes.slice(this._nodes.length-(n || 1)) );
-		},
-		index : function(i, n) {
-			return new self.NodeSelection(self.typeOf(i)==='number' && this._nodes.slice(i, i + (n || 1)) || null);
-		},
+
+		/**	Get a new Selection containing both the next and previous sibling elements of each element in the current Selection.
+		 *	@returns {puredom.NodeSelection} siblings
+		 */
 		siblings : function() {
 			var newSelection = new self.NodeSelection();
 			this._each(function(node) {
@@ -1844,6 +1896,82 @@ if (typeof(Date.now)!=='function') {
 			});
 			return newSelection;
 		},
+
+		/**	Get a new Selection containing the next sibling elements of each element in the current Selection.
+		 *	@returns {puredom.NodeSelection} nextSiblings
+		 */
+		next : function() {
+			var sib = this._nodes[0] && this._nodes[0].nextSibling;
+			while (sib && sib.nodeType===3) {
+				sib = sib.nextSibling;
+			}
+			return new self.NodeSelection(sib && [sib] || null);
+		},
+
+		/**	Get a new Selection containing the previous sibling elements of each element in the current Selection.
+		 *	@returns {puredom.NodeSelection} previousSiblings
+		 */
+		prev : function() {
+			var sib = this._nodes[0] && this._nodes[0].previousSibling;
+			while (sib && sib.nodeType===3) {
+				sib = sib.previousSibling;
+			}
+			return new self.NodeSelection(sib && [sib] || null);
+		},
+
+		/**	Alais of {@link puredom.NodeSelection#prev} */
+		previous : function() {
+			return this.prev.apply(this,arguments);
+		},
+
+		/**	Get a new Selection containing the first direct child element of the current Selection.
+		 *	@returns {puredom.NodeSelection} firstChild
+		 */
+		firstChild : function() {
+			return this.children().first();
+		},
+
+		/**	Get a new Selection containing the last direct child element of the current Selection.
+		 *	@returns {puredom.NodeSelection} firstChild
+		 */
+		lastChild : function() {
+			return this.children().last();
+		},
+
+		/**	Get a new Selection containing the direct child element of the current Selection at index <code>n</code>.
+		 *	@param {Number} n		A 0-based index.
+		 *	@returns {puredom.NodeSelection} nthChild
+		 */
+		nthChild : function(n) {
+			return this.children().index(n);
+		},
+
+		/**	Get a new Selection containing only the first element in the current Selection.
+		 *	@returns {puredom.NodeSelection} first
+		 */
+		first : function(n) {
+			return new self.NodeSelection( this._nodes.slice(0, n || 1) );
+		},
+
+		/**	Get a new Selection containing only the last element in the current Selection.
+		 *	@returns {puredom.NodeSelection} last
+		 */
+		last : function(n) {
+			return new self.NodeSelection( this._nodes.slice(this._nodes.length-(n || 1)) );
+		},
+
+		/**	Get a new Selection containing only the <code>n</code> element(s) in the current Selection starting at index <code>i</code>.
+		 *	@param {Number} i		A 0-based index of the elements(s) to return
+		 *	@param {Number} [n=1]	The number of elements to return
+		 *	@returns {puredom.NodeSelection} slice
+		 */
+		index : function(i, n) {
+			return new self.NodeSelection(self.typeOf(i)==='number' && this._nodes.slice(i, i + (n || 1)) || null);
+		},
+
+		/**	Get a new Selection containing the de-duped parent elements of the current Selection.
+		 *	@returns {puredom.NodeSelection} parents
+		 */
 		parent : function() {
 			var nodes=[], parent;
 			this._each(function(node) {
@@ -1856,6 +1984,10 @@ if (typeof(Date.now)!=='function') {
 			});
 			return new self.NodeSelection(nodes);
 		},
+
+		/**	Get a new Selection containing all direct child elements of the current Selection.
+		 *	@returns {puredom.NodeSelection} children
+		 */
 		children : function() {
 			var children = [], 
 				x, y;
@@ -1872,8 +2004,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return new self.NodeSelection(children);
 		},
+
+		/**	Submit any forms in the Selection.
+		 *	@returns {this}
+		 */
 		submit : function() {
-			this._each(function(node) {
+			return this._each(function(node) {
 				var evt = self.fireEvent({
 					type : 'submit',
 					target : node
@@ -1885,7 +2021,13 @@ if (typeof(Date.now)!=='function') {
 				}
 			});
 		},
-		/** @notes: Only affects the first item in the selection. */
+
+		/** Get or set the selected text of an input element. <br />
+		 *	<strong>Note:</strong> This only operates on the first element in the selection.
+		 *	@param {Number} start			A character index at which to start text selection
+		 *	@param {Number} [end=start]		A character index at which to end text selection
+		 *	@returns {Object} An object with <code>start</code>, <code>end</code> and <code>text</code> properties correspdonding to the current selection state.
+		 */
 		selection : function(start, end) {
 			var el = this._nodes[0],
 				value, sel, before, endMax, range;
@@ -1956,6 +2098,16 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Template the Selection and all descendants based on <code>data-tpl-id</code> attributes. <br />
+		 *	Each element with a <code>data-tpl-id</code> attribute will have it's contents updated with the corresponding value of that attribute when interpreted as a dot-notated key path within <code>templateFields</code>. <br />
+		 *	<code>data-tpl-id</code> attribute values can optionally include a pipe-separated list of "filters". <br />
+		 *	<strong>Example:</strong> <br />
+		 *		<pre><span data-tpl-id="article.title|ucWords|truncate:byWord,300|htmlEntities"></span></pre> <br />
+		 *	<em><strong>Note:</strong> the "htmlEntities" filter is already added for you where needed.</em>
+		 *	@param {Object} [templateFields={}]		Template data fields. Nested Objects/Arrays are addressable via dot notation.
+		 *	@returns {this}
+		 */
 		template : function(templateFields) {
 			var getFilters;
 			templateFields = templateFields || {};

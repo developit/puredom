@@ -23,7 +23,6 @@ module.exports = function(grunt) {
 					'src/puredom-utils.js',
 					'src/puredom-eventemitter.js',
 					'src/puredom-date.js',
-					'src/puredom-eventemitter.js',
 					'src/puredom-net.js',
 					'src/puredom-localstorage.js',
 					'src/localstorage-adapters/cookie-adapter.js',

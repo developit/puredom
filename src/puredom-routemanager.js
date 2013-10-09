@@ -1,10 +1,10 @@
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
  *	@constructor Creates a new RouteManager instance.
+ *	@augments puredom.ControllerManager
  *	@param {Object} [options]	Hashmap of options to be given to the instance.
  *	@param {Boolean} [options.allowTemplateFallback=false]		If no URL templates match, attempt to load by name.
  *	@param {Boolean} [options.useBest=false]					If no URL templates match, attempt to load by name.
  *	@param {Boolean} [options.allowPartialUrlFallback=false]	Use the longest URL template match, even if it isn't a perfect match.
- *	@inherits {puredom.ControllerManager}
  */
 puredom.RouteManager = function(options) {
 	var self = this;
@@ -14,10 +14,14 @@ puredom.RouteManager = function(options) {
 	this.allowTemplateFallback = options.allowTemplateFallback===true || options.useBest===true;
 	this.allowPartialUrlFallback = options.allowPartialUrlFallback===true;
 	
+	/**	@ignore */
 	this._controllerUpdateState = function(options) {
 		self.doStateUpdate(self._routerState, options);
 	};
 };
+
+
+puredom.inherits(puredom.RouteManager, puredom.ControllerManager);
 
 
 puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# */ {
@@ -214,7 +218,3 @@ puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# 
 	}
 	
 });
-
-
-puredom.inherits(puredom.RouteManager, puredom.ControllerManager);
-

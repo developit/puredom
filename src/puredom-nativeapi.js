@@ -1,11 +1,8 @@
-window.puredom = window.puredom || {};
-
-/**
- *	Generate a functional JavaScript interface on top of a REST-like API from a JSON API description.
+/**	Generate a functional JavaScript interface on top of a REST-like API from a JSON API description.
+ *	@constructor Creates a new NativeAPI instance.
  *	@param {Object} api		The API description
- *	@returns {Object}		A complex object with methods corresponding to the REST API object's method descriptions.
+ *	@returns {Object}	An object with methods corresponding to the API object's method descriptions.
  */
-
 puredom.NativeAPI = function(api) {
 	var self = (this instanceof puredom.NativeAPI ? this : api) || {},		/* can be used as a method OR a class */
 		priv = {},
@@ -22,13 +19,14 @@ puredom.NativeAPI = function(api) {
 		emptyFunc = function(){},
 		log;
 	
+	/**	@private */
 	log = function(text) {
 		if (self.enableLogging!==false && window.console && window.console.log) {
 			window.console.log(text);
 		}
 	};
 	
-	
+	/**	@private */
 	getQueryStringFromObj = function (obj) {
 		var querystring = "",
 			x, i;
@@ -45,6 +43,7 @@ puredom.NativeAPI = function(api) {
 		return querystring;
 	};
 	
+	/**	@private */
 	shallowObjectCopy = function(base, args) {
 		var i, p, obj;
 		for (i=1; i<arguments.length; i++) {
@@ -58,26 +57,37 @@ puredom.NativeAPI = function(api) {
 		return base;
 	};
 	
+	/**	@private */
 	isArray = function(what) {
 		return Object.prototype.toString.apply(what)==="[object Array]";
 	};
 	
+	/**	@private */
 	NativeAPIMethod = function NativeAPIMethod(){};
 	
+	/**	@class Wrapped String/Data pair
+	 *	@name puredom.NativeAPI.MessageStringWithData
+	  */
 	self.MessageStringWithData = MessageStringWithData = function MessageStringWithData(data, message){
 		this.message = message || '';
 		shallowObjectCopy(this, data);
 	};
+	/**	@private */
 	MessageStringWithData.prototype.toString = MessageStringWithData.prototype.toSource = function(){
 		return this.message;
 	};
 	
+	/**	@private */
 	createNativeAPIResponse = function(data, originalResponse) {
 		var response;
 		if (puredom.isArray(data.data) && data.data.length===0) {
 			data.data = {};
 		}
 		
+		/**	@class Represents a response from NativeAPI's methods.
+		 *	@name puredom.NativeAPI.NativeAPIResponse
+		 *	@ignore
+		 */
 		function NativeAPIResponse(){}
 		shallowObjectCopy(NativeAPIResponse.prototype, {
 			getData : function() {
@@ -97,6 +107,7 @@ puredom.NativeAPI = function(api) {
 		}(response));
 	};
 	
+	/**	Set a paramter that will be passed on all requests. */
 	self.setGlobalParameter = function (key, value) {
 		if (value===undefined || arguments.length<2) {
 			delete globalParameters[key];
@@ -106,6 +117,7 @@ puredom.NativeAPI = function(api) {
 		}
 	};
 	
+	/**	Set a paramter that will be passed on all requests that require authentiation (eg: a token). */
 	self.setAuthParameter = function (key, value) {
 		if (value===undefined || arguments.length<2) {
 			delete authParameters[key];
@@ -116,7 +128,7 @@ puredom.NativeAPI = function(api) {
 	};
 	
 	
-	
+	/**	@ignore */
 	priv.cache = {};
 	
 	//window._inspectNativeApiCache = function(){ return priv.cache; };
@@ -544,6 +556,7 @@ puredom.NativeAPI = function(api) {
 	
 	if (self.constructor===({}).constructor) {
 		self = (function(obj) {
+			/**	@ignore */
 			function NativeAPI(){}
 			for (var i in obj) {
 				if (obj.hasOwnProperty(i)) {

@@ -1,7 +1,3 @@
-/** @ignore */
-window.puredom = window.puredom || {};
-
-
 /** @namespace Networking functionality. */
 puredom.net = /** @lends puredom.net */ {
 	
@@ -34,7 +30,7 @@ puredom.net = /** @lends puredom.net */ {
 	
 	/**	Make an HTTP POST request. This is a convenience wrapper around {@link puredom.net.request}. <br />
 	 *	<strong>Post value type conversion:</strong> <br />
-	 *		Object: Objects get automatically converted to a querystring-encoded Strings through {puredom.querystring.stringify}.
+	 *		Object: Objects get automatically converted to a querystring-encoded Strings through {@link puredom.querystring.stringify}.<br />
 	 *		String: Strings are used as the POST body, without any conversion.
 	 *	@param {String} url				The URL to which a request should be sent.
 	 *	@param {Object|String} post		POST body (see description). If this value is set, the request type will be POST unless overridden via <code>options.type</code>.
@@ -58,14 +54,13 @@ puredom.net = /** @lends puredom.net */ {
 	
 	/**	Make multiple HTTP requests in order, firing the callback only when all have completed.
 	 *	<br /><b>Callback Format:</b><br />
-	 *	<code>
+	 *	@example
 	 *	callback(
 	 *		success   // {Boolean} - did *any* requests succeed?
 	 *		responses // {Array}   - responses corresponding to the provided resources.
 	 *		successes // {Number}  - how many requests succeeded (status<400)
 	 *		failures  // {Number}  - how many requests failed (status>=400)
 	 *	);
-	 *	</code>
 	 *	@param {Object[]} resources		An array of resource objects, with format as described in {@link puredom.net.request} options.
 	 *	@param {Function} [callback]	A function to call once all requests have completed, with signature <code>function(success, responses, successes, failures)</code>. [See description]
 	 *	@returns {Boolean} returns false if no resources were provided.
@@ -139,7 +134,7 @@ puredom.net = /** @lends puredom.net */ {
 	 *		</tbody></table>
 	 *	@param {Object} options			Define request options
 	 *	@param {Function} [callback]	A callback function, used if options.callback is not set.
-	 *	@returns {puredom.net.HttpRequest}</td><td>An HTTP request object
+	 *	@returns {puredom.net.HttpRequest} An HTTP request object
 	 */
 	request : function(options) {
 		var opt, self;
@@ -245,19 +240,10 @@ puredom.net = /** @lends puredom.net */ {
 	},
 	
 	
-	/**	Make a JSONp call (GET-only, works across domains, server must support the JSONp pattern). <br />
-	 *	<strong>Options:</strong> <br />
-	 *		<table class="options"><tbody>
-	 *		<tr><td>{String}</td><td><b>url</b></td><td></td></tr>
-	 *		<tr><td>{Object}</td><td><b>params</b></td><td>Request parameters as an object. Serialized to URL using {@link puredom.querystring.stringify}</td></tr>
-	 *		<tr><td>{Function}</td><td><b>callback</b></td><td>A function to handle the data once received.</td></tr>
-	 *		<tr><td>{Number}</td><td><b>timeout</b></td><td>Maximum number of seconds to wait before assuming failure. Default is 10.</td></tr>
-	 *		</tbody></table>
+	/**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
+	 *	@namespace JSONp Implementation. JSONp is GET-only and works across domains, but the server must support the JSONp pattern.
 	 *	@function
-	 *	@param {String} url			The service URL, including querystring parameters.
-	 *	@param {Object} options		A hash of available options.
-	 *	@param {Function} callback	A function that gets called when the request returns.
-	 *	@returns {Boolean} Was the request initiated?
+	 *	@returns {puredom.net.jsonp.Request} jsonpRequest
 	 */
 	jsonp : (function() {
 		/** @namespace JSONp-related functionality.
@@ -269,7 +255,18 @@ puredom.net = /** @lends puredom.net */ {
 			},
 			reqIndex = 0;
 		
-		/** @private */
+		/**	Initiate a JSONp request.
+		 *	@name puredom.net.jsonp.get
+		 *	@function
+		 *	@param {String} url			The service URL, including querystring parameters.
+		 *	@param {Object} [options]		A hash of available options.
+		 *	@param {String} [options.url=url]		The service URL
+		 *	@param {Object} [options.params]		GET parameters as an object.
+		 *	@param {Function} [options.callback]	A function to handle the data once received.
+		 *	@param {Number} [options.timeout=10]	A number of seconds to wait before triggering failure.
+		 *	@param {Function} callback	A function that gets called when the request returns.
+		 *	@returns {puredom.net.jsonp.Request} jsonpRequest
+		 */
 		jsonp.get = function(url, options, callback) {
 			var script, requestObj, callbackId, tmp;
 			
@@ -303,6 +300,7 @@ puredom.net = /** @lends puredom.net */ {
 			
 			options.callback = callbackId = "puredom_net_jsonp_"+reqIndex;
 			(function(jsonp, reqIndex) {
+				/**	@ignore */
 				window[options.callback] = function(data) {
 					var e;
 					if (callback) {
@@ -345,9 +343,14 @@ puredom.net = /** @lends puredom.net */ {
 				parent : this._head || document.body
 			});
 			
-			requestObj = {
+			/**	@class Represents a JSONp request.
+			 *	@name puredom.net.jsonp.Request
+			 */
+			requestObj = /** @lends puredom.net.jsonp.Request# */ {
+				/**	The request's callback ID */
 				id : callbackId,
-				/** @inner */
+				
+				/**	Attempt to stop the request. */
 				stop : function() {
 					if (requestObj._timer) {
 						clearTimeout(requestObj._timer);

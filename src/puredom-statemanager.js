@@ -1,3 +1,12 @@
+/**	Generic namespaced state persistence with adapters for URL/history and Cookies.
+ *	@constructor Creates a new StateManager instance.
+ *	@param {String} [adapter=defaultAdapter]	Which persistence adapter to use
+ *	@param {Object} options						Hashmap of options.
+ *	@param {String} [options.adapter=defaultAdapter]	Which persistence adapter to use
+ *	@param {String} [options.adapterOptions]			Configuration to pass to the adapter
+ *	@param {String} [options.state]						Manually specify initial state
+ *	@param {String} [options.objects]					Register a key-value list of objects using {@link puredom.StateManager#addObject}
+ */
 puredom.StateManager = function(adapter, options) {
 	var x;
 	if (!options && puredom.typeOf(adapter)==='object') {
@@ -38,20 +47,26 @@ puredom.StateManager = function(adapter, options) {
 		}
 	}
 };
-puredom.extend(puredom.StateManager.prototype, {
+
+
+puredom.extend(puredom.StateManager.prototype, /** @lends puredom.StateManager# */ {
 	
-	/** @public A time to wait (in milliseconds) before committing state updates. Can be overridden 
+	/** A time to wait (in milliseconds) before committing state updates. Can be overridden 
 	 *	on a per-save basis by passing true as a second parameter to puredom#StateManager.save()
 	 */
 	saveQueueDelay : 50,
 	
-	/** @public If two save() calls occur within the specified number of milliseconds, overwrite the first
-	 *	@notes: This is no longer used, just supply a larger value for saveQueueDelay
+
+	/** If two save() calls occur within the specified number of milliseconds, overwrite the first
+	 *	@private
 	 */
-	replaceTimeout : 0,		//125,
+	replaceTimeout : 0,
 	
+
 	/** List of available Adapters, keyed by ID. */
-	adapters : {
+	adapters : /** @lends puredom.StateManager#adapters */ {
+
+		/**	In-memory persistence adapter. */
 		session : {
 			getState : function(callback){
 				callback(this.state);
@@ -62,6 +77,8 @@ puredom.extend(puredom.StateManager.prototype, {
 			},
 			state : {}
 		},
+
+		/**	Fallback abstract persistence adapter. */
 		base : {
 			getState : function(cb) {
 				setTimeout(function() {
@@ -76,12 +93,31 @@ puredom.extend(puredom.StateManager.prototype, {
 				cb(true);
 			}
 		}
+
 	},
 	
+
+	/**	Stores references to persisted instances.
+	 *	@private
+	 */
 	objects : {},
+
+
+	/**	@private */
 	states : {},
+
+
+	/**	@private */
 	initialized : false,
 	
+
+	/**	Initialize the State Manager.
+	 *	@param {Object} [options]				Hashmap of options
+	 *	@param {String} [options.state]			Manually specify initial state
+	 *	@param {String} [options.objects]		Register a key-value list of objects using {@link puredom.StateManager#addObject}
+	 *	@param {String} [options.restore=true]	Immediately restore persisted state?
+	 *	@returns {this}
+	 */
 	init : function(options) {
 		if (this.initialized===true) {
 			return this;
@@ -106,6 +142,8 @@ puredom.extend(puredom.StateManager.prototype, {
 		return this;
 	},
 	
+
+	/**	Dismantle and cleanup the instance. */
 	destroy : function() {
 		this.stopPolling();
 		
@@ -114,18 +152,30 @@ puredom.extend(puredom.StateManager.prototype, {
 		this.initialized = false;
 	},
 	
+
+	/**	@private */
 	startPolling : function() {
 		if (this.adapter && this.adapter.startPolling) {
 			this.adapter.startPolling();
 		}
 	},
 	
+
+	/**	@private */
 	stopPolling : function() {
 		if (this.adapter && this.adapter.stopPolling) {
 			this.adapter.stopPolling();
 		}
 	},
 	
+
+	/**	Register an object for state persistence. <br />
+	 *	<strong>Note:</strong> If stored state is already available for the specified <code>id</code>, it will be applied immediately.
+	 *	@param {String} id				A meaningful identifier for the object
+	 *	@param {Object} obj				The object to persist
+	 *	@param {Function} [callback]	Called once the object's state has been restored
+	 *	@returns {this}
+	 */
 	addObject : function(id, obj, callback) {
 		var stateManager;
 		if (this.objects.hasOwnProperty(id)) {
@@ -180,8 +230,19 @@ puredom.extend(puredom.StateManager.prototype, {
 		}
 		return this;
 	},
-	addObj : function(){ return this.addObject.apply(this,arguments); },
+
+
+	/**	@private */
+	addObj : function() {
+		return this.addObject.apply(this,arguments);
+	},
 	
+
+	/**	Stop persisting state for the object given by <code>id</code>.
+	 *	@param {String} id				The object id to remove from persistence
+	 *	@param {Function} [callback]	Called once the removal is committed to the persistence layer
+	 *	@returns {this}
+	 */
 	removeObject : function(id, callback) {
 		if (this.objects.hasOwnProperty(id)) {
 			if (this.objects[id].destroyStateManagerConnections) {
@@ -195,14 +256,23 @@ puredom.extend(puredom.StateManager.prototype, {
 			}catch(err){}
 			this.save(callback);
 		}
+		return this;
 	},
-	removeObj : function(){ return this.removeObject.apply(this,arguments); },
+
+
+	/**	@private */
+	removeObj : function() {
+		return this.removeObject.apply(this,arguments);
+	},
 	
+
+	/**	@private
+	 *	@returns {this}
+	 */
 	restoreFromState : function(state, callback, andSave) {
 		var self=this, cb, id, total=0, count=0;
 		if (callback) {
 			cb = function() {
-				//console.log('cb(', count,',', total,')');
 				count += 1;
 				if (count>=total) {
 					if (andSave!==false) {
@@ -228,16 +298,13 @@ puredom.extend(puredom.StateManager.prototype, {
 		if (puredom.typeOf(state)==='string') {
 			state = puredom.json(state);
 		}
-		//if (puredom.typeOf(state)==='object') {
-			for (id in this.objects) {
-				if (/*state[id] &&*/ this.objects[id].restoreState) {
-					total += 1;
-					//this.objects[id].restoreState(state[id], cb);
-					this.objects[id].restoreState(state[id]);
-					cb();
-				}
+		for (id in this.objects) {
+			if (this.objects[id].restoreState) {
+				total += 1;
+				this.objects[id].restoreState(state[id]);
+				cb();
 			}
-		//}
+		}
 		if (total===0) {
 			if (callback) {
 				callback(false);
@@ -248,22 +315,23 @@ puredom.extend(puredom.StateManager.prototype, {
 	},
 	
 	
-	//_disableSaveCount : 0,
+	/**	@private */
 	disableSave : function() {
-		//this._disableSaveCount += 1;
 		this._saveDisabled = true;
 	},
+
+
+	/**	@private */
 	enableSave : function() {
-		//this._disableSaveCount = Math.max(this._disableSaveCount-1, 0);
-		//this._saveDisabled = this._disableSaveCount<=0;
 		this._saveDisabled = false;
 	},
 	
 	
+	/**	@private */
 	restoreOne : function(id, callback) {
 		var self = this;
 		this.adapter.getState(function(state) {
-			if (/*state[id] &&*/ self.objects[id] && self.objects[id].restoreState) {
+			if (self.objects[id] && self.objects[id].restoreState) {
 				self.objects[id].restoreState(state[id]);
 			}
 			self = null;
@@ -273,16 +341,17 @@ puredom.extend(puredom.StateManager.prototype, {
 		});
 	},
 	
+
+	/**	Restore state based on persisted values.
+	 *	@param {Function} [callback]	Called once state is restored.
+	 *	@returns {this}
+	 */
 	restore : function(callback) {
-		//console.log('StateManager.restore');
 		var self = this;
 		this._restoring = true;
-		//puredom.log('StateManager::restore');
 		this.adapter.getState(function(state) {
-			//console.log('StateManager.restore#.adapter.getState::callback', state);
 			var newCurrentState = state && puredom.json(state);
 			self._lastSaveTime = new Date().getTime();
-			//console.log('this.adapter.getState::callback', state);
 			if (newCurrentState && newCurrentState!==self.currentState) {
 				self.currentState = newCurrentState;
 				self.restoreFromState(state, function() {
@@ -307,10 +376,17 @@ puredom.extend(puredom.StateManager.prototype, {
 		return this;
 	},
 	
+
+	/**	Save object state to the persistence layer.
+	 *	@param {Function} callback		Called once the data is saved
+	 *	@param {Boolean} [now=false]	By default, saves are buffered. Pass <code>true</code> to commit the save operation immediately.
+	 *	@param {Object} [options]		Hashmap of save options
+	 *	@param {Object} [options.replace=false]		By default, a new history entry is created for each unique save(). Passing <code>true</code> updates the current history entry in-place. This only affects adapters with history, such as the URL adapter.
+	 *	@returns {this}
+	 */
 	save : function(callback, now, options) {
 		var self = this;
 		options = options || {};
-		//console.log('save :: ', puredom.json(options), this.initialized===true && !this._saveDisabled);
 		
 		if (this.initialized===true && !this._saveDisabled) {		// NOTE: Disabled check only on sync saves?
 			if (now===true) {										// --> && !this._saveDisabled
@@ -318,15 +394,12 @@ puredom.extend(puredom.StateManager.prototype, {
 					clearTimeout(this.currentSaveTimer);
 					delete this.currentSaveTimer;
 				}
-				//puredom.log('StateManager::save');
 				this.getStateObj(function(state) {
 					var newCurrentState = puredom.json(state),
 						saveTime = new Date().getTime(),
 						timeSinceLastSave = saveTime - (self._lastSaveTime || saveTime);
-					//console.log(saveTime, self._lastSaveTime, timeSinceLastSave);
 					self._lastSaveTime = saveTime;
 					if (newCurrentState!==self.currentState) {
-						//console.log('save>commit :: ', puredom.json(options), newCurrentState);
 						self.currentState = newCurrentState;
 						self.adapter.setState(state, function(success) {
 							if (callback && puredom.typeOf(callback)==='function') {
@@ -354,9 +427,15 @@ puredom.extend(puredom.StateManager.prototype, {
 		return this;
 	},
 	
+
+	/**	Overwrite state information for the given object ID.
+	 *	@param {String} id				The object ID to update
+	 *	@param {Object} state			Arbitrary state information
+	 *	@param {Function} [callback]	Called once the data is committed to the persistence layer
+	 *	@param {Boolean} [now=false]	Saves are buffered by default. Pass <code>true</code> to commit immediately.
+	 */
 	setObjState : function(id, state, callback, now) {
 		var options;
-		//console.log('puredom#StateManager.setObjState', id, state);
 		if (callback && typeof(callback)==='object') {
 			options = callback;
 		}
@@ -364,10 +443,16 @@ puredom.extend(puredom.StateManager.prototype, {
 		this.save(callback, options && options.now===true || callback===true, options);
 	},
 	
+
+	/**	Looks like a mistake.
+	 *	@private
+	 */
 	getObjState : function(id, state) {
 		this.states[id] = state;
 	},
 	
+
+	/**	@private */
 	getStateObj : function(callback) {
 		if (callback) {
 			callback(this.states);
@@ -375,47 +460,17 @@ puredom.extend(puredom.StateManager.prototype, {
 		return this;
 	},
 	
+
+	/**	@private */
 	emptyFunc : function(){}
 	
-	/*
-	getStateObj : function(callback) {
-		var cb, id, total=0, count=0;
-		if (callback) {
-			cb = function() {
-				count += 1;
-				if (count>=total) {
-					if (callback) {
-						callback();
-					}
-				}
-			};
-		}
-		else {
-			cb = function(){};
-		}
-		for (id in this.objects) {
-			if (this.objects.hasOwnProperty(id) && this.objects[id].getState) {
-				total += 1;
-				this.objects[id].getState(cb);
-			}
-		}
-		if (total===0) {
-			callback();
-		}
-		return this;
-	}
-	*/
-	
-	/*
-	,
-	setObjState : function(id, state) {
-		this.objects[id].state = state;
-	}
-	*/
 });
 
 
 
+/**	URL persistence implemented via HTML5's history (pushState) API, with a #! fallback.
+ *	@name puredom.StateManager#adapters.url
+ */
 puredom.StateManager.prototype.adapters.url = {
 	init : function(options) {
 		var self = this,
@@ -465,7 +520,6 @@ puredom.StateManager.prototype.adapters.url = {
 	/** Start the location poller */
 	startPolling : function() {
 		if (!this.polling) {
-			//puredom.log('Initializing poller.');
 			this.polling = true;
 			this.getCurrentUrl(true);
 			this.pollingTimer = setTimeout(this._doPollTimed, this.getPollInterval());
@@ -475,7 +529,6 @@ puredom.StateManager.prototype.adapters.url = {
 	
 	/** Stop the location poller */
 	stopPolling : function() {
-		//puredom.log('Stopping poller.');
 		clearTimeout(this.pollingTimer);
 		puredom.removeEvent(window, 'hashchange,pushstate,popstate', this._doPoll);
 		this.polling = false;
@@ -487,24 +540,15 @@ puredom.StateManager.prototype.adapters.url = {
 	
 	/** @private Poll the location, this is a timer callback and requires explicit setting of context. */
 	_doPoll : function() {
-		var self = this,		// arguments.callee._self || 
+		var self = this,
 			currentUrl = self.currentUrl || null,
 			url = self.getCurrentUrl(true) || null;
 		if (url!==currentUrl) {
-			//puredom.log('poll::changed: ', currentUrl, ' --> ', url);
 			var startTime = new Date().getTime();
 			self.stateManager.disableSave();
 			self.stateManager.restore(function() {
 				self.stateManager.enableSave();
 				self = currentUrl = url = null;
-				/*
-				setTimeout(function() {
-					var time = new Date().getTime() - startTime;
-					//puredom.log('StateManager::UrlAdapter::time = ' + time);
-					self.stateManager.enableSave();
-					self = currentUrl = url = null;
-				}, Math.round(self.getPollInterval()*1.5));
-				*/
 			});
 		}
 	},
@@ -541,7 +585,6 @@ puredom.StateManager.prototype.adapters.url = {
 			}
 		}
 		else if (index>-1) {
-			//url = url.substring(index+2);
 			url = url.substring(index+location.host.length);
 		}
 		else {
@@ -552,16 +595,6 @@ puredom.StateManager.prototype.adapters.url = {
 			url = this.normalizeUrl(url);
 		}
 		
-		/*
-		var url = location.href + '',
-			index = url.indexOf('#!');
-		if (index>-1) {
-			url = url.substring(index+2);
-		}
-		else {
-			url = null;
-		}
-		*/
 		if (andSave===true) {
 			if (url!==this.currentUrl && this.urlHistory[this.urlHistory.length-1]!==url) {
 				this.urlHistory.push(url);
@@ -581,13 +614,9 @@ puredom.StateManager.prototype.adapters.url = {
 		url = this.normalizeUrl(url);
 		crunchedUrl = '#!' + url;
 		isCurrentHistoryEntry = this.urlHistory.length>0 && this.urlHistory[this.urlHistory.length-1]===url;
-		//isCurrentHistoryEntry = false;
-		
-		//console.log('url='+url + ', currentUrl='+currentUrl + ', isCurrent='+isCurrentHistoryEntry);
+
 		if (url!==currentUrl && !isCurrentHistoryEntry) {
-			//puredom.log('Changing URL to: ' + url);
-			
-			if (window.history.pushState /*&& !navigator.userAgent.match(/\bandroid\b/gim)*/) {
+			if (window.history.pushState) {
 				// HTML5 History API
 				if (url.substring(0,1)!=='/') {
 					url = '/' + url;
@@ -597,14 +626,7 @@ puredom.StateManager.prototype.adapters.url = {
 				if (this.beforeCommit) {
 					url = this.beforeCommit(url) || url;
 				}
-				//console.log(this.html5UrlPrefix, url);
-				/*
-				stateObj = {
-					url : url,
-					title : ''
-				};
-				*/
-				//console.log('pushing html5 history entry: ', url);
+
 				if (replace===true && window.history.replaceState) {
 					window.history.replaceState(null, null, url);
 				}
@@ -613,7 +635,6 @@ puredom.StateManager.prototype.adapters.url = {
 				}
 			}
 			else {
-				//console.log('adding #! history entry: ', crunchedUrl);
 				// Crunchbang history management
 				if (window.location.href!==crunchedUrl) {
 					if (replace===true && window.location.replace) {
@@ -641,21 +662,6 @@ puredom.StateManager.prototype.adapters.url = {
 		
 		this.setCurrentUrl(stateUrl, options.replace===true);
 		
-		//console.log('puredom#StateManager::URLAdaptor::setState', state, index);
-		/*
-		if (index>-1) {
-			url = url.substring(0, index);
-		}
-		
-		stateUrl = this.stringify(state);
-		url += '#!' + stateUrl;
-		if (this.urlHistory.length<=1 || this.urlHistory[this.urlHistory.length-1]!==stateUrl) {
-			if (location.href!==url) {
-				location.href = url;
-			}
-			this.getCurrentUrl(true);
-		}
-		*/
 		callback(true);
 	},
 	
@@ -670,20 +676,6 @@ puredom.StateManager.prototype.adapters.url = {
 		else {
 			callback(false);
 		}
-		/*
-		var url = location.href + '',
-			index = url.indexOf('#!'),
-			state;
-		if (index>-1) {
-			url = url.substring(index+2);
-			state = this.parse(url);
-			callback(state);
-		}
-		else {
-			callback(false);
-		}
-		*/
-		//console.log('puredom#StateManager::URLAdapter::getState', state, index);
 	},
 	
 	/** @private parse a URL and return a valid state Object. */
@@ -694,7 +686,6 @@ puredom.StateManager.prototype.adapters.url = {
 		
 		isArrayKey = function(key) {
 			return !!key.match(/^\-?[0-9]+$/);
-			//return !!levelKey.match(/^\[[0-9]+\]$/);
 		};
 		
 		/** auto-detects types by sniffing the content */
@@ -808,8 +799,6 @@ puredom.StateManager.prototype.adapters.url = {
 			//level[key[key.length-1]] = value;
 		}
 		
-		//console.log('STR:: '+str+' || OBJ:: '+puredom.json(obj));
-		
 		return obj;
 	},
 	
@@ -867,28 +856,14 @@ puredom.StateManager.prototype.adapters.url = {
 					else {
 						str += '&' + encodeURIComponent(id) + '=' + encodeURIComponent(obj);
 					}
-					//str += '&' + encodeURIComponent(id).replace('%5B','[').replace('%5D',']') + '=' + encodeURIComponent(obj);
 			}
 		};
-		
-		/*
-		mappedUrl = puredom.delve(obj, urlMapping);
-		console.log(mappedUrl);
-		*/
 		
 		serialize(obj);
 		serialize = obj = null;
 		if (str.substring(0,1)==='&') {
 			str = '?' + str.substring(1);
 		}
-		
-		/*
-		if (mappedUrl.indexOf('{')>-1) {
-			mappedUrl.replace(/\{([^\\\/\'\"\{\}\(\)]+)\}/gim,funciton(str, ) {
-				
-			});
-		}
-		*/
 		
 		// add a preceeding slash if not disallowed:
 		if (this.usePreceedingSlash!==false && mappedUrl.charAt(0)!=='/') {
@@ -902,16 +877,23 @@ puredom.StateManager.prototype.adapters.url = {
 
 
 
+/**	Ugly but simple JSON-in-URL-hash persistence.
+ *	@name puredom.StateManager#adapters.urlbasic
+ */
 puredom.StateManager.prototype.adapters.urlbasic = {
-	setState : function(state, callback) {
+	setState : function(state, callback, options) {
 		var url = location.href + '',
 			index = url.indexOf('#!');
-		//console.log('puredom#StateManager::URLAdapter::setState', state, index);
 		if (index>-1) {
 			url = url.substring(0, index);
 		}
 		url += '#!' + this.serializeState(state);
-		location.href = url;
+		if (options && options.replace===true && typeof location.replace==='function') {
+			location.replace(url);
+		}
+		else {
+			location.href = url;
+		}
 		callback(true);
 	},
 	
@@ -927,7 +909,6 @@ puredom.StateManager.prototype.adapters.urlbasic = {
 		else {
 			callback(false);
 		}
-		//console.log('puredom#StateManager::URLAdapter::getState', state, index);
 	},
 	
 	serializeState : function(state) {

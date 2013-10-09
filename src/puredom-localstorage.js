@@ -1,5 +1,3 @@
-window.puredom = window.puredom || {};
-
 /**	Provides a cross-browser persisted storage layer using various storage adapters.
  *	@constructor Asynchronously creates an instance of LocalStorage.<br />
  *	<strong>Available Options:</strong><br />
