@@ -1,8 +1,11 @@
-
 /**	Manages views, providing methods for loading, templating, caching and swapping.
- *	@param options {Object}		A hash of options to be given to the instance.
+ *	@constructor Creates a new ViewManager instance.
+ *	@augments puredom.EventEmitter
+ *	@param {Object} [options]		Hashmap of options to be given to the instance.
+ *	@param {Object} [options.init=false]				Immediately calls init(options) for you
+ *	@param {Object} [options.viewDomPrefix=views_]		Custom DOM cache ID prefix
+ *	@param {Object} [options.cacheBase=document.body]	Move the DOM view cache
  */
-
 puredom.ViewManager = function(options) {
 	puredom.EventEmitter.call(this);
 	this._htmlViews = {};
@@ -12,15 +15,27 @@ puredom.ViewManager = function(options) {
 	}
 };
 
-puredom.extend(puredom.ViewManager.prototype, {
-	/** public: */
-	
+
+puredom.inherits(puredom.ViewManager, puredom.EventEmitter);
+
+
+puredom.extend(puredom.ViewManager.prototype, /** @lends puredom.ViewManager# */ {
+
+	/** ID prefix for view storage. */
 	viewDomPrefix : 'views_',
 	
+
+	/**	@private */
 	_regs : {
 		node : /<(\/?)([a-z][a-z0-9]*)(\s+[a-z0-9._-]+=(['"]).*?\4)*\s*\/?>/gim
 	},
 	
+
+	/**	Initialize the manager.
+	 *	@param {Object} [options]		Hashmap of options.
+	 *	@param {Object} [options.viewDomPrefix=views_]		Custom DOM cache ID prefix
+	 *	@param {Object} [options.cacheBase=document.body]	Move the DOM view cache
+	 */
 	init : function(options) {
 		options = options || {};
 		if (this.initialized!==true) {
@@ -35,19 +50,27 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
+
+	/**	Teardown and cleanup the manager. */
 	destroy : function() {
 		if (this.initialized===true) {
 			this.initialized = false;
-			// ...
+			try {
+				this.cacheBase.remove();
+			} catch(err) {}
 		}
 	},
 	
+
+	/**	@private */
 	log : function(msg, data) {
 		if (this.logging===true) {
 			puredom.log('ViewManager :: ' + msg, data);
 		}
 	},
 	
+
+	/**	Register a named view. */
 	addView : function(name, view) {
 		if (puredom.typeOf(view)==='string') {
 			this._htmlViews[(name+'').toLowerCase()] = view;
@@ -57,10 +80,16 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
+
+	/**	Check if a named view is registered. */
 	exists : function(name) {
 		return this._htmlViews.hasOwnProperty((name+'').toLowerCase());
 	},
 	
+
+	/**	Load a view and immediately template it. <br />
+	 *	See {@link puredom.ViewManager#load}
+	 */
 	template : function(name, fields, insertInto, insertBefore) {
 		var ui, template;
 		name = (name+'').toLowerCase();
@@ -73,6 +102,15 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return ui || false;
 	},
 	
+
+	/**	Load a view.
+	 *	@param {String} name					The named view to load
+	 *	@param {HTMLElement} [insertInto]		Immediately insert the view into an parent
+	 *	@param {HTMLElement} [insertBefore]		Inject view into the parent of this node, before this node.
+	 *	@param {Boolean} [cloneOriginal=true]	Set this to false to hijack previously rendered DOM views.
+	 *	@param {Boolean} [caching=true]			Set this to false to turn off view caching.
+	 *	@returns {puredom.NodeSelection} view, or false on error.
+	 */
 	load : function(name, insertInto, insertBefore, cloneOriginal, caching) {
 		var ui, lookup, cached, origName=name;
 		if (name) {
@@ -107,18 +145,6 @@ puredom.extend(puredom.ViewManager.prototype, {
 			}
 		}
 		
-		/*
-		if (window.console) {
-			console.log('views.'+(name || '[untitled]'), {
-				orig_name : origName,
-				'ui' : ui+'',
-				'ui.parent' : ui && ui.parent()+'',
-				'insertBefore' : insertBefore+'',
-				'insertInto' : insertInto+''
-			});
-		}
-		*/
-		
 		if (ui && ui.exists()) {
 			if (name) {
 				this.log('View "'+name+'" loaded.');
@@ -149,6 +175,8 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
+
+	/**	Destroy a view. */
 	unload : function(ui, unCache) {
 		if (ui && ui.destroy) {
 			ui.destroy();
@@ -159,8 +187,9 @@ puredom.extend(puredom.ViewManager.prototype, {
 	/** @private */
 	_postProcessors : [],
 	
-	/** @public Add a post-processor function that will be run on all loaded views. 
-	 *	The function gets passed the view base as a {puredom#NodeSelection} object.
+
+	/**	Register a post-processor function that will be run on all loaded views. <br />
+	 *	The function gets passed the view base as a {@link puredom.NodeSelection}.
 	 */
 	addViewPostProcessor : function(callback) {
 		var i, exists=false;
@@ -175,7 +204,10 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
-	/** @public Process a view after it has loaded.  Automatically called by load() */
+
+	/**	Process a view after it has loaded.  Automatically called by load().
+	 *	@private
+	 */
 	postProcessView : function(ui) {
 		for (var i=0; i<this._postProcessors.length; i++) {
 			this._postProcessors[i](ui);
@@ -183,6 +215,7 @@ puredom.extend(puredom.ViewManager.prototype, {
 	},
 	
 	
+	/**	@private */
 	getViewFromDOM : function(def, customPrefix) {
 		var el;
 		customPrefix = customPrefix || this.viewDomPrefix;
@@ -201,6 +234,7 @@ puredom.extend(puredom.ViewManager.prototype, {
 	},
 	
 	
+	/**	@private */
 	buildViewFromHTML : function(html) {
 		var node = puredom.el({
 			innerHTML : html
@@ -210,6 +244,8 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return node.exists() && node || false;
 	},
 	
+	
+	/**	@private */
 	buildViewFromObj : function(obj) {
 		var node;
 		if (puredom.isArray(obj)) {
@@ -227,7 +263,9 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 		return node.exists() && node || false;
 	},
+
 	
+	/**	@private */
 	buildViewFromDOM : function(domNodes, clone) {
 		var node, html;
 		domNodes = puredom.el(domNodes);
@@ -235,37 +273,32 @@ puredom.extend(puredom.ViewManager.prototype, {
 			return domNodes;
 		}
 		node = domNodes.clone(true);			// deep, no parent
-		/*
-		if (document.filters) {
-			html = '';
-			domNodes.each(function(node) {
-				html += node.html();
-			});
-			node = this.buildViewFromHTML(html);
-		}
-		else {
-			node = domNodes.clone(true);			// deep, no parent
-		}
-		*/
 		return node.exists() && node || false;
 	},
 	
 	
+	/**	@private */
 	_htmlViews : {},
 	
 	
-	/** Old Reference-Based Caching */
-	
-	/** @private The root node where cached DOM nodes are stored */
+	/** The root node where cached DOM nodes are stored
+	 *	@private
+	 */
 	cacheBase : null,
 	
-	/** @private Attempt to retrieve a cached view */
+
+	/**	Attempt to retrieve a cached view
+	 *	@private
+	 */
 	getCachedView : function(name) {
 		var view = this.cacheBase.query('[data-viewname="'+name+'"]').first();
 		return view.exists() && view || false;
 	},
 	
-	/** @private Build a view from the cache, optionally retrieving it if not passed a reference */
+
+	/** Build a view from the cache, optionally retrieving it if not passed a reference.
+	 *	@private
+	 */
 	buildCachedView : function(cached) {
 		var view;
 		if (puredom.typeOf(cached)==='string') {
@@ -278,7 +311,10 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return view;
 	},
 	
-	/** @private Cache a view for future use */
+
+	/** Cache a view for future use.
+	 *	@private
+	 */
 	cacheView : function(name, ui, copy) {
 		/*
 		if (copy===true) {
@@ -293,10 +329,4 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return false;
 	}
 	
-	
 });
-
-
-puredom.inherits(puredom.ViewManager, puredom.EventEmitter);
-
-

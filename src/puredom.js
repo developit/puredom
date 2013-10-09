@@ -2073,9 +2073,11 @@ if (typeof(Date.now)!=='function') {
 	};
 	
 	
-	/**	Create or retrieve one or more elements based on a query
-	 *	@param query {String|Object}	If query begins with "<" or is an object, a new element is contructed based on that information. If the query is a CSS selector, DOM nodes matching that selector are returned.
-	 *	@returns selection {puredom.NodeSelection}		A puredom {NodeSelection} object containing the created/retrieved nodes.
+	/**	Create or retrieve one or more elements based on a query. <br />
+	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
+	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
+	 *	@param {String|Object} query	A CSS selector (retrieval), or a DOM description (creation).
+	 *	@returns {puredom.NodeSelection} selection
 	 */
 	self.el = function(query, log) {
 		var results, type;

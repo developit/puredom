@@ -1,8 +1,8 @@
 
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
- *	@param options {Object}		A hash of options to be given to the instance.
+ *	@constructor Creates a new ControllerManager instance.
+ *	@param {Object} [options]		Hash of options to be given to the instance.
  */
-
 puredom.ControllerManager = function(options) {
 	puredom.EventEmitter.call(this);
 	
@@ -25,8 +25,10 @@ puredom.ControllerManager = function(options) {
 };
 
 puredom.extend(puredom.ControllerManager.prototype, {
-	/** public: */
+
+	/** @public */
 	controllerOptions : {},
+
 	
 	restoreState : function(state) {
 		if (this.initialized!==true) {
@@ -41,13 +43,16 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			}
 		}
 	},
+
 	
 	doStateUpdate : function(state, options) {
 		if (this.updateState) {
 			this.updateState(state, options);
 		}
 	},
+
 	
+	/**	Initialize the registry. */
 	init : function(options) {
 		var autoRestore = true;
 		if (this.initialized!==true) {
@@ -78,7 +83,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			}
 		}
 	},
+
 	
+	/**	Destroy the registry. */
 	destroy : function() {
 		var current, x;
 		// supress errors for destructors to avoid chained memory leaks
@@ -100,7 +107,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		this._messageListeners = [];
 		this._current = null;
 	},
+
 	
+	/**	Register a named module. */
 	register : function(name, controller) {
 		controller = controller || {};
 		if (puredom.typeOf(name)==='string') {
@@ -113,6 +122,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 
 		this._fireEvent('add', [this.getIdFromName(controller.name)]);
 	},
+
+
+	/**	Load the given named module. */
 	load : function(name, options) {
 		var sandboxController, previousController, params, newController, eventResponse, response, loadResponse, unloadResponse;
 		
@@ -126,10 +138,6 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			return true;
 		}
 		
-		//if (window.console && window.console.log) {
-		//	window.console.log('Loading controller:', name);
-		//}
-		
 		sandboxController = this._createControllerSandbox(name);
 		params = puredom.extend({
 				previousController : previousController
@@ -141,9 +149,6 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		newController = name && this.get(name);
 		
 		if (newController) {
-			//function SandboxedController(){}
-			//puredom.extend(SandboxedController.prototype, sandboxController.sandbox);
-			//newController = this._controllers[this.getIdFromName(name)] = puredom.extend(new SandboxedController(), newController);
 			puredom.extend(newController, sandboxController.sandbox);
 			if (this.singular===true) {
 				unloadResponse = this._unloadCurrent();
@@ -151,17 +156,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 					return false;
 				}
 			}
-			/*
-			if (this.singular===true && params.previousController && params.previousController.unload) {
-				this._previousController = params.previousController.name;
-				params.previousController.unload();
-				this._fireEvent('unload', [this.getIdFromName(params.previousController.name)]);
-			}
-			*/
 			response = newController;
 			if (newController.load) {
 				eventResponse = this._fireEvent('beforeload', [newController.name]);
-				//console.log('controller options: ', params);
 				if (eventResponse===false || (eventResponse.falsey && !eventResponse.truthy)) {
 					return false;
 				}
@@ -195,6 +192,11 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return false;
 	},
+
+
+	/**	Load the default module (the module with isDefault=true).
+	 *	@returns {Boolean} defaultWasLoaded
+	 */
 	loadDefault : function(options) {
 		for (var x=this._controllers.length; x--; ) {
 			if (this._controllers[x].isDefault===true) {
@@ -203,15 +205,25 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return false;
 	},
-	/** NOTE: Implement history for controllers. */
+
+
+	/** Load the controller that was previously loaded. <br />
+	 *	<strong>Note:</strong> This is not actual history, it only remembers one item.
+	 */
 	loadPrevious : function(options) {
 		if (this._previousController) {
 			this.load(this._previousController, options);
 		}
 	},
+	
+
+	/**	Unload the current controller if one exists. */
 	none : function() {
 		this._unloadCurrent();
 	},
+
+
+	/**	Reload the current controller if one exists. */
 	reloadCurrent : function() {
 		var current = this.current();
 		
@@ -220,6 +232,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			this.load(current.name, this.controllerOptions);
 		}
 	},
+
+
+	/**	@private */
 	_unloadCurrent : function() {
 		var current = this.current(),
 			time, ret;
@@ -228,19 +243,20 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			if (ret===false || (ret.falsey && !ret.truthy)) {
 				return false;
 			}
-			//time = new Date().getTime();
 			ret = current.unload();
 			if (ret===false) {
 				return false;
 			}
-			//time = new Date().getTime()-time;
-			//if (time>150) {
-			//	puredom.log('Warning: the view "'+current.name+'" took '+time+'ms to unload.');
-			//}
 			this._fireEvent('unload', [current.name]);
 			this._current = null;
 		}
 	},
+	
+
+	/**	Get the definition for a given named controller.
+	 *	@param {String} name					The controller name to find
+	 *	@param {Boolean} [returnIndex=false]	If true, returns the index instead of a reference.
+	 */
 	get : function(name, returnIndex) {
 		name = (name+'').toLowerCase();
 		for (var x=this._controllers.length; x--; ) {
@@ -250,16 +266,23 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return false;
 	},
+	
+
+	/**	Post a message to the current controller if it exists. */
 	postMessage : function(type, msgObj) {
 		var current = this.current();
 		if (current && current.onmessage) {
-			// security risk...
 			//this._fireEvent('postMessage', [type, msgObj]);
 			current.onmessage(type, msgObj);
 			return true;
 		}
 		return false;
 	},
+
+
+	/**	Handle a message from a controller.
+	 *	@private
+	 */
 	onMessage : function(type, handler, controller) {
 		var obj = {
 			type : (type+'').toLowerCase().replace(/^on/gim,''),
@@ -275,9 +298,10 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		this._messageListeners.push(obj);
 	},
-	/** @public
-	 *	Get a list of registered controllers
-	 *	@param properties {Array}	Other properties to include in the list from each controller.
+
+
+	/** Get a list of registered controllers
+	 *	@param {Array} [properties]		Other properties to include in the list from each controller.
 	 *	@returns {Array} controllerList
 	 */
 	getList : function(properties) {
@@ -295,18 +319,28 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return map;
 	},
-	getIdFromName : function(name) {
-		return this.get(name, true);
-	},
-	getNameFromId : function(id) {
-		var controller = puredom.typeOf(id)==='number' && this._controllers[id];
-		return controller && controller.name || false;
-	},
+
+
+	/**	Get a reference to the current controller if it exists. */
 	current : function() {
 		return puredom.typeOf(this._current)==='number' && this._controllers[this._current] || false;
 	},
 	
-	/** private: */
+
+	/**	@private */
+	getIdFromName : function(name) {
+		return this.get(name, true);
+	},
+
+
+	/**	@private */
+	getNameFromId : function(id) {
+		var controller = puredom.typeOf(id)==='number' && this._controllers[id];
+		return controller && controller.name || false;
+	},
+
+
+	/** @private */
 	_createControllerSandbox : function(name) {
 		var controllerManager = this,
 			sandbox,
@@ -387,11 +421,19 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		
 		return sandboxController;
 	},
+
+
+	/** @private */
 	_postMessageFromController : function(type, msgObj) {
 	},
 	
+	/** @private */
 	_controllers : [],
+	
+	/** @private */
 	_messageListeners : [],
+
+	/** @private */
 	_current : null
 });
 

@@ -1,21 +1,27 @@
-puredom.LocalStorage.addAdapter('UserData', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.UserData
+ */
+puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adapters.UserData */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
 	
-	/** @public This adapter is a mediocre storage mechanism, so it gets a low rating. */
+	
+	/**	This adapter is a mediocre storage mechanism, so it gets a low rating. */
 	rating : 20,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/**	Test if this adapter will work in the current environment */
 	test : function(storage) {
 		// IE 6 and below crashes without an error description. Block it for now:
 		if ((/\bMSIE\s[1-6](\.[0-9]*)?/gim).test(navigator.userAgent+'')) {
 			return false;
 		}
-		return typeof(document.body.addBehavior)!=='undefined';
+		return typeof document.body.addBehavior!=='undefined';
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/**	Load the persisted DB */
 	load : function(storage, callback) {
 		var key = this._getKey(storage),
 			store = this._getStore(key),
@@ -32,7 +38,8 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return data;
 	},
 	
-	/** @public Save the DB to cookies */
+	
+	/**	Save the DB to UserData */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage),
 			store = this._getStore(key),
@@ -40,7 +47,6 @@ puredom.LocalStorage.addAdapter('UserData', {
 			value,
 			saved = false;
 		if (store && ('save' in store)) {
-			//console.log('saving', puredom.json.stringify(data));
 			if (data===undefined) {
 				if (store.removeAttribute) {
 					store.removeAttribute(attr);
@@ -61,6 +67,8 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return saved;
 	},
 	
+	
+	/**	@private */
 	_getStore : function(key) {
 		var s;
 		if (!this.stores) {
@@ -71,8 +79,6 @@ puredom.LocalStorage.addAdapter('UserData', {
 			s = this.stores[key] = document.getElementById(key);
 			if (!s) {
 				s = this.stores[key] = document.createElement('span');
-				//s.setAttribute('id', key);
-				//s.style.cssText = "position:absolute; top:-100px; left:0;";
 				s.style.position = 'absolute';
 				s.style.top = '-100px';
 				s.style.left = '0';
@@ -87,7 +93,10 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return s;
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/** Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return 'ieud' + (storage.id || this.defaultName || '') + '';
 	}

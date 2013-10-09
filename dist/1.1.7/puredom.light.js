@@ -2073,9 +2073,11 @@ if (typeof(Date.now)!=='function') {
 	};
 	
 	
-	/**	Create or retrieve one or more elements based on a query
-	 *	@param query {String|Object}	If query begins with "<" or is an object, a new element is contructed based on that information. If the query is a CSS selector, DOM nodes matching that selector are returned.
-	 *	@returns selection {puredom.NodeSelection}		A puredom {NodeSelection} object containing the created/retrieved nodes.
+	/**	Create or retrieve one or more elements based on a query. <br />
+	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
+	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
+	 *	@param {String|Object} query	A CSS selector (retrieval), or a DOM description (creation).
+	 *	@returns {puredom.NodeSelection} selection
 	 */
 	self.el = function(query, log) {
 		var results, type;
@@ -4999,11 +5001,12 @@ window.puredom = window.puredom || {};
 /** @namespace Networking functionality. */
 puredom.net = /** @lends puredom.net */ {
 	
-	/**	Represents an HTTP request.
+	/**	@class Represents an HTTP request.
 	 *	The raw XMLHttpRequest object is accessible through a *request* property.
-	 *	@class
 	 */
-	HttpRequest : function HttpRequest(o){puredom.extend(this,o);},
+	HttpRequest : function HttpRequest(options){
+		puredom.extend(this, options);
+	},
 	
 	
 	/**	Make an HTTP GET request. This is a convenience wrapper around {@link puredom.net.request}.
@@ -5247,9 +5250,9 @@ puredom.net = /** @lends puredom.net */ {
 	 *		<tr><td>{Number}</td><td><b>timeout</b></td><td>Maximum number of seconds to wait before assuming failure. Default is 10.</td></tr>
 	 *		</tbody></table>
 	 *	@function
-	 *	@param url {String}			The service URL, including querystring parameters.
-	 *	@param options {Object}		A hash of available options.
-	 *	@param callback {Function}	A function that gets called when the request returns.
+	 *	@param {String} url			The service URL, including querystring parameters.
+	 *	@param {Object} options		A hash of available options.
+	 *	@param {Function} callback	A function that gets called when the request returns.
 	 *	@returns {Boolean} Was the request initiated?
 	 */
 	jsonp : (function() {
@@ -5298,7 +5301,6 @@ puredom.net = /** @lends puredom.net */ {
 			(function(jsonp, reqIndex) {
 				window[options.callback] = function(data) {
 					var e;
-					//console.log(callbackId+'(', data, ');');
 					if (callback) {
 						try {
 							callback(data);
@@ -5307,7 +5309,6 @@ puredom.net = /** @lends puredom.net */ {
 						}
 						callback = null;
 					}
-					//puredom.log('JSONp['+callbackId+'].close');
 					if (requestObj) {
 						requestObj.stop();
 						requestObj = null;
@@ -5317,7 +5318,6 @@ puredom.net = /** @lends puredom.net */ {
 					}
 				};
 			}());
-			//puredom.log('JSONp['+callbackId+'].open');
 			
 			if (url.indexOf('{!callback}')>-1) {
 				url = url.replace('{!callback}', callbackId);
@@ -5338,7 +5338,6 @@ puredom.net = /** @lends puredom.net */ {
 					async	: 'async',
 					type	: 'text/javascript'
 				},
-				//async : true,
 				parent : this._head || document.body
 			});
 			
@@ -5406,21 +5405,16 @@ puredom.net = /** @lends puredom.net */ {
 			if (domain && domain!==location.hostname) {
 				isCrossDomain = true;
 				document.domain = location.hostname.match(/[^.]+\.[^.]+$/gim)[0];
-				//frame = this._freeIframes.length>0 && this._freeIframes.splice(0,1)[0];
 				for (i=0; i<this._freeIframes.length; i++) {
-					//console.log(this._freeIframes[i].getAttribute('data-xhr-domain'), domain);
 					if (this._freeIframes[i].getAttribute('data-xhr-domain')===domain) {
 						frame = this._freeIframes.splice(i,1)[0];
 						break;
 					}
 				}
-				//return;
 				if (frame) {
-					//console.log('Re-using old cross-domain proxy frame.');
 					callback(self._createXHRObj(frame.contentWindow, frame));
 				}
 				else {
-					//console.log('Creating new cross-domain proxy frame.');
 					frame = document.createElement('iframe');
 					frame.style.cssText = "position:absolute; left:0; top:-1000px; width:1px; height:1px; border:none; overflow:hidden;";
 					/** @inner */
@@ -5729,7 +5723,7 @@ puredom.LocalStorage.prototype.setValue = function(key, value) {
 };
 
 /** Remove a key and (its stored value) from the collection.
- *	@param key {String}		A key, specified in dot-notation.
+ *	@param {String} key		A key, specified in dot-notation.
  *	@returns {this}
  */
 puredom.LocalStorage.prototype.removeKey = function(key) {
@@ -5913,15 +5907,16 @@ puredom.extend(puredom.LocalStorage.adapters.none.prototype, /** @lends puredom.
 
 /**	@class Storage adapter that persists data into browser cookies.
  *	@name puredom.LocalStorage.adapters.cookie
- *	@augments puredom.LocalStorage.adapters.none
  */
 puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapters.cookie */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
 	
+	
 	/** This adapter can only store a few Kilobytes of data, so its rating is 5. */
 	rating : 5,
+	
 	
 	/** Test if this adapter will work in the current environment. */
 	test : function(storage) {
@@ -5930,6 +5925,7 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 		}
 		return false;
 	},
+	
 	
 	/** Load the DB from cookies. */
 	load : function(storage, callback) {
@@ -5944,6 +5940,7 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 		return obj;
 	},
 	
+	
 	/** Save the DB to cookies. */
 	save : function(storage, data, callback) {
 		puredom.cookies.set(
@@ -5956,17 +5953,22 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 	}
 	
 });
-puredom.LocalStorage.addAdapter('LocalStorage', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.LocalStorage
+ */
+puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.adapters.LocalStorage */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/**	The default root key ID to use for accessing localStorage */
 	defaultName : 'db',
 	
-	/** @public This adapter is a very good storage mechanism, so its rating is 60. */
+	
+	/**	This adapter is a very good storage mechanism, so its rating is 60. */
 	rating : 60,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/**	Test if this adapter will work in the current environment */
 	test : function(storage) {
-		var available = ('localStorage' in window) && typeof(window.localStorage.hasOwnProperty)==='function',
+		var available = ('localStorage' in window) && typeof window.localStorage.hasOwnProperty==='function',
 			prev,
 			val = puredom.json({a:'a',b:4/3,c:true,d:null});
 		if (available) {
@@ -5987,7 +5989,8 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return available;
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/**	Load the persisted DB */
 	load : function(storage, callback) {
 		var key = this._getKey(storage),
 			data;
@@ -6000,7 +6003,7 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return data;
 	},
 	
-	/** @public Save the DB to cookies */
+	/**	Save the DB to localStorage */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage);
 		if (data===undefined) {
@@ -6015,30 +6018,39 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return true;
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/**	Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return (storage.id || this.defaultName || '') + '';
 	}
 	
 });
-puredom.LocalStorage.addAdapter('UserData', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.UserData
+ */
+puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adapters.UserData */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
 	
-	/** @public This adapter is a mediocre storage mechanism, so it gets a low rating. */
+	
+	/**	This adapter is a mediocre storage mechanism, so it gets a low rating. */
 	rating : 20,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/**	Test if this adapter will work in the current environment */
 	test : function(storage) {
 		// IE 6 and below crashes without an error description. Block it for now:
 		if ((/\bMSIE\s[1-6](\.[0-9]*)?/gim).test(navigator.userAgent+'')) {
 			return false;
 		}
-		return typeof(document.body.addBehavior)!=='undefined';
+		return typeof document.body.addBehavior!=='undefined';
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/**	Load the persisted DB */
 	load : function(storage, callback) {
 		var key = this._getKey(storage),
 			store = this._getStore(key),
@@ -6055,7 +6067,8 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return data;
 	},
 	
-	/** @public Save the DB to cookies */
+	
+	/**	Save the DB to UserData */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage),
 			store = this._getStore(key),
@@ -6063,7 +6076,6 @@ puredom.LocalStorage.addAdapter('UserData', {
 			value,
 			saved = false;
 		if (store && ('save' in store)) {
-			//console.log('saving', puredom.json.stringify(data));
 			if (data===undefined) {
 				if (store.removeAttribute) {
 					store.removeAttribute(attr);
@@ -6084,6 +6096,8 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return saved;
 	},
 	
+	
+	/**	@private */
 	_getStore : function(key) {
 		var s;
 		if (!this.stores) {
@@ -6094,8 +6108,6 @@ puredom.LocalStorage.addAdapter('UserData', {
 			s = this.stores[key] = document.getElementById(key);
 			if (!s) {
 				s = this.stores[key] = document.createElement('span');
-				//s.setAttribute('id', key);
-				//s.style.cssText = "position:absolute; top:-100px; left:0;";
 				s.style.position = 'absolute';
 				s.style.top = '-100px';
 				s.style.left = '0';
@@ -6110,7 +6122,10 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return s;
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/** Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return 'ieud' + (storage.id || this.defaultName || '') + '';
 	}

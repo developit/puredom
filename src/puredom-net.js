@@ -5,11 +5,12 @@ window.puredom = window.puredom || {};
 /** @namespace Networking functionality. */
 puredom.net = /** @lends puredom.net */ {
 	
-	/**	Represents an HTTP request.
+	/**	@class Represents an HTTP request.
 	 *	The raw XMLHttpRequest object is accessible through a *request* property.
-	 *	@class
 	 */
-	HttpRequest : function HttpRequest(o){puredom.extend(this,o);},
+	HttpRequest : function HttpRequest(options){
+		puredom.extend(this, options);
+	},
 	
 	
 	/**	Make an HTTP GET request. This is a convenience wrapper around {@link puredom.net.request}.
@@ -253,9 +254,9 @@ puredom.net = /** @lends puredom.net */ {
 	 *		<tr><td>{Number}</td><td><b>timeout</b></td><td>Maximum number of seconds to wait before assuming failure. Default is 10.</td></tr>
 	 *		</tbody></table>
 	 *	@function
-	 *	@param url {String}			The service URL, including querystring parameters.
-	 *	@param options {Object}		A hash of available options.
-	 *	@param callback {Function}	A function that gets called when the request returns.
+	 *	@param {String} url			The service URL, including querystring parameters.
+	 *	@param {Object} options		A hash of available options.
+	 *	@param {Function} callback	A function that gets called when the request returns.
 	 *	@returns {Boolean} Was the request initiated?
 	 */
 	jsonp : (function() {
@@ -304,7 +305,6 @@ puredom.net = /** @lends puredom.net */ {
 			(function(jsonp, reqIndex) {
 				window[options.callback] = function(data) {
 					var e;
-					//console.log(callbackId+'(', data, ');');
 					if (callback) {
 						try {
 							callback(data);
@@ -313,7 +313,6 @@ puredom.net = /** @lends puredom.net */ {
 						}
 						callback = null;
 					}
-					//puredom.log('JSONp['+callbackId+'].close');
 					if (requestObj) {
 						requestObj.stop();
 						requestObj = null;
@@ -323,7 +322,6 @@ puredom.net = /** @lends puredom.net */ {
 					}
 				};
 			}());
-			//puredom.log('JSONp['+callbackId+'].open');
 			
 			if (url.indexOf('{!callback}')>-1) {
 				url = url.replace('{!callback}', callbackId);
@@ -344,7 +342,6 @@ puredom.net = /** @lends puredom.net */ {
 					async	: 'async',
 					type	: 'text/javascript'
 				},
-				//async : true,
 				parent : this._head || document.body
 			});
 			
@@ -412,21 +409,16 @@ puredom.net = /** @lends puredom.net */ {
 			if (domain && domain!==location.hostname) {
 				isCrossDomain = true;
 				document.domain = location.hostname.match(/[^.]+\.[^.]+$/gim)[0];
-				//frame = this._freeIframes.length>0 && this._freeIframes.splice(0,1)[0];
 				for (i=0; i<this._freeIframes.length; i++) {
-					//console.log(this._freeIframes[i].getAttribute('data-xhr-domain'), domain);
 					if (this._freeIframes[i].getAttribute('data-xhr-domain')===domain) {
 						frame = this._freeIframes.splice(i,1)[0];
 						break;
 					}
 				}
-				//return;
 				if (frame) {
-					//console.log('Re-using old cross-domain proxy frame.');
 					callback(self._createXHRObj(frame.contentWindow, frame));
 				}
 				else {
-					//console.log('Creating new cross-domain proxy frame.');
 					frame = document.createElement('iframe');
 					frame.style.cssText = "position:absolute; left:0; top:-1000px; width:1px; height:1px; border:none; overflow:hidden;";
 					/** @inner */

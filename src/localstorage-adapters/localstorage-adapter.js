@@ -1,14 +1,19 @@
-puredom.LocalStorage.addAdapter('LocalStorage', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.LocalStorage
+ */
+puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.adapters.LocalStorage */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/**	The default root key ID to use for accessing localStorage */
 	defaultName : 'db',
 	
-	/** @public This adapter is a very good storage mechanism, so its rating is 60. */
+	
+	/**	This adapter is a very good storage mechanism, so its rating is 60. */
 	rating : 60,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/**	Test if this adapter will work in the current environment */
 	test : function(storage) {
-		var available = ('localStorage' in window) && typeof(window.localStorage.hasOwnProperty)==='function',
+		var available = ('localStorage' in window) && typeof window.localStorage.hasOwnProperty==='function',
 			prev,
 			val = puredom.json({a:'a',b:4/3,c:true,d:null});
 		if (available) {
@@ -29,7 +34,8 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return available;
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/**	Load the persisted DB */
 	load : function(storage, callback) {
 		var key = this._getKey(storage),
 			data;
@@ -42,7 +48,7 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return data;
 	},
 	
-	/** @public Save the DB to cookies */
+	/**	Save the DB to localStorage */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage);
 		if (data===undefined) {
@@ -57,7 +63,10 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return true;
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/**	Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return (storage.id || this.defaultName || '') + '';
 	}

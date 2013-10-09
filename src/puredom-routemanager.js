@@ -1,11 +1,14 @@
-
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
- *	@param options {Object}		A hash of options to be given to the instance.
- *	@inherits {puredom#ControllerManager}
+ *	@constructor Creates a new RouteManager instance.
+ *	@param {Object} [options]	Hashmap of options to be given to the instance.
+ *	@param {Boolean} [options.allowTemplateFallback=false]		If no URL templates match, attempt to load by name.
+ *	@param {Boolean} [options.useBest=false]					If no URL templates match, attempt to load by name.
+ *	@param {Boolean} [options.allowPartialUrlFallback=false]	Use the longest URL template match, even if it isn't a perfect match.
+ *	@inherits {puredom.ControllerManager}
  */
-
 puredom.RouteManager = function(options) {
 	var self = this;
+	options = options || {};
 	puredom.ControllerManager.call(this);
 	
 	this.allowTemplateFallback = options.allowTemplateFallback===true || options.useBest===true;
@@ -16,12 +19,14 @@ puredom.RouteManager = function(options) {
 	};
 };
 
-puredom.extend(puredom.RouteManager.prototype, {
+
+puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# */ {
 	
-	/** @public RouteManagers are singular by default, because a browser can only navigate to one URL at a time. */
+	/** RouteManagers are singular by default, because a browser can only navigate to one URL at a time. */
 	singular : true,
 	
-	/** @public  */
+
+	/** @public */
 	rewrites : [
 		/*
 		{
@@ -34,12 +39,13 @@ puredom.extend(puredom.RouteManager.prototype, {
 		*/
 	],
 	
+
+	/**	For use with StateManager */
 	restoreState : function(state) {
 		if (this.initialized!==true) {
 			this._initState = state;
 		}
 		else {
-			//puredom.log('RouteManager::restoreState('+puredom.json(state)+')');
 			if (state && state.current_url) {
 				this.route(state.current_url);
 			}
@@ -49,6 +55,8 @@ puredom.extend(puredom.RouteManager.prototype, {
 		}
 	},
 	
+
+	/**	For use with StateManager */
 	doStateUpdate : function(state, options) {
 		var controller,
 			templatedUrl;
@@ -60,23 +68,20 @@ puredom.extend(puredom.RouteManager.prototype, {
 			if (templatedUrl.substring(0,1)!=='/') {
 				templatedUrl = '/' + templatedUrl;
 			}
-			//console.log(templatedUrl);
 			state.current_url = templatedUrl;
 		}
-		//puredom.log('RouteManager::updateState('+puredom.json(state)+')');
 		this.updateState(state, options);
 	},
 	
 	
 	/** @override */
 	register : function(name, controller) {
-		//controller.setState = this._controllerSetState;
 		controller.updateState = this._controllerUpdateState;
 		return puredom.ControllerManager.prototype.register.call(this, name, controller);
 	},
 	
 	
-	/** @public Attempt to route the given URL to a controller. */
+	/** Attempt to route the given URL to a controller. */
 	route : function(url) {
 		var list = this._controllers,
 			normUrl = url.replace(/^[#!\/]+/gm,'').replace(/#.+$/gm,''),
@@ -88,7 +93,6 @@ puredom.extend(puredom.RouteManager.prototype, {
 			urlTemplate = item.customUrl || item.urlTemplate || item.name;
 			matches = {};
 			if (this._checkUrlMatch(urlTemplate, url, matches)===true) {
-				//puredom.log('Controller["'+item.name+'"].tpl = "'+urlTemplate+'" --> true');
 				params = {};
 				for (p in matches) {
 					if ((p+'').substring(0,7)==='params.') {
@@ -100,11 +104,7 @@ puredom.extend(puredom.RouteManager.prototype, {
 				});
 			}
 			else if (this.allowPartialUrlFallback===true && this._checkUrlMatch(urlTemplate, url, matches, {partial:true})===true) {
-				//puredom.log('Controller["'+item.name+'"].tpl = "'+urlTemplate+'" --> PARTIAL');
 				partialMatchName = item.name;
-			}
-			else {
-				//puredom.log('Controller["'+item.name+'"].tpl = "'+urlTemplate+'" --> false');
 			}
 		}
 		
@@ -129,7 +129,8 @@ puredom.extend(puredom.RouteManager.prototype, {
 		return false;
 	},
 	
-	/** @public Load a controller */
+
+	/** Load a controller */
 	/*
 	load : function(name, options) {
 		this.__super.prototype.load.apply(this, arguments);
@@ -138,26 +139,31 @@ puredom.extend(puredom.RouteManager.prototype, {
 	},
 	*/
 	
-	/** @public Attempt to route the given URL to a controller. */
+
+	/** Attempt to route the given URL to a controller. */
 	routeDefault : function(url) {
 		return this.loadDefault();
 	},
 	
-	/** @private Template a URL using values from the current controller. Non-matched fields are left unchanged.
-	 *	@param tpl {String}				The URL template
-	 *	@param [controller {Object}]	Optional explicit controller reference. Defaults to current()
-	 *	@returns {String}				The templated URL
+
+	/** Template a URL using values from the current controller. Non-matched fields are left unchanged.
+	 *	@private
+	 *	@param {String} tpl						The URL template
+	 *	@param {Object} [controller=current]	Explicit controller reference.
+	 *	@returns {String} templatedUrl
 	 */
 	_templateUrl : function(tpl, controller) {
 		controller = controller || this.current();
 		return puredom.template(tpl, controller, false);
 	},
+
 	
-	/** @private Check if a URL template matches the given URL.
-	 *	@param urlTemplate {String}		A URL template, as used in Controller.customUrl
-	 *	@param url {String}				The URL to test
-	 *	@param &matches {Object}		Optional PBR Object, populated with the matched segments
-	 *	@returns {Boolean}
+	/** Check if a URL template matches the given URL.
+	 *	@private
+	 *	@param {String} urlTemplate		A URL template, as used in Controller.customUrl
+	 *	@param {String} url				The URL to test
+	 *	@param {Object} matches			Optional Object to populate with the matched URL segments
+	 *	@returns {Boolean} didMatch
 	 */
 	_checkUrlMatch : function(urlTemplate, url, matches, options) {
 		var templateSegments = this._getUrlSegments(urlTemplate),
@@ -192,10 +198,11 @@ puredom.extend(puredom.RouteManager.prototype, {
 		return isMatch;
 	},
 	
-	/** @private Normalize a URL for comparison */
+
+	/**	Normalize a URL for comparison
+	 *	@private
+	 */
 	_getUrlSegments : function(url) {
-		//var reg = new RegExp('^\\/\*?(.*?)\/\*?$', 'gim');
-		//return (url+'').replace(reg, '').split('/');
 		var segs = (url+'').split('/'),
 			i;
 		for (i=segs.length; i--; ) {

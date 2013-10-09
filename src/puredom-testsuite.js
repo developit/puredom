@@ -1,18 +1,18 @@
-
 /**	Manages views, providing methods for loading, templating, caching and swapping.
- *	@param options {Object}		A hash of options to be given to the instance.
+ *	@constructor Creates a new TestSuite instance.
+ *	@param {Object} options		Hashmap of options to be given to the instance.
  */
-
 puredom.TestSuite = function(options) {
 	puredom.EventEmitter.call(this);
 	this.list = {};
 };
 
-puredom.extend(puredom.TestSuite.prototype, {
+
+puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 	
-	/** @public Add a test to the suite.
-	 *	@param name {String}	A human-readable name for the test
-	 *	@param test {Object}	The test definition
+	/** Add a test to the suite.
+	 *	@param {String} name	A human-readable name for the test
+	 *	@param {Object} test	The test definition
 	 *	@example:
 	 *		suite.add("Example", {
 	 *			prepare : function(test){},
@@ -32,8 +32,9 @@ puredom.extend(puredom.TestSuite.prototype, {
 		};
 	},
 	
-	/** @public Run the test that matches <name>.
-	 *	@param name {String}	The name of a registered test to run
+
+	/** Run the test that matches <name>.
+	 *	@param {String} name	The name of a registered test to run
 	 */
 	run : function(name, callback, messageHandler) {
 		var ob = this.get(name),
@@ -99,15 +100,17 @@ puredom.extend(puredom.TestSuite.prototype, {
 		}
 	},
 	
-	/** @public Retrieve the test that matches <name>.
-	 *	@param name {String}	The name of a registered test to find
+
+	/** Retrieve the test that matches <name>.
+	 *	@param {String} name	The name of a registered test to find
 	 */
 	get : function(name) {
 		var id = this._getIdFromName(name);
 		return this.list.hasOwnProperty(id) && this.list[id] || false;
 	},
 	
-	/** @public Get a list of test names available in the suite. */
+
+	/** Get a list of test names available in the suite. */
 	getList : function() {
 		var names = [],
 			i;
@@ -119,15 +122,19 @@ puredom.extend(puredom.TestSuite.prototype, {
 		return names;
 	},
 	
+
 	/** @private */
 	_getIdFromName : function(name) {
 		return (name+'').toLowerCase().replace(/[^a-z0-9_]+/gm,'');
 	},
 	
+
 	/** @private */
 	_createSandboxController : function(testObj) {
+		/**	@exports sandbox as puredom.TestSuite.test# */
 		var self = this,
 			controller = {},
+			/**	@name puredom.TestSuite.test */
 			sandbox = {};
 		
 		controller.getSandbox = function() {
@@ -190,6 +197,8 @@ puredom.extend(puredom.TestSuite.prototype, {
 		return controller;
 	},
 	
+
 	/** @private */
 	list : {}
+
 });

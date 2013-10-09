@@ -2073,9 +2073,11 @@ if (typeof(Date.now)!=='function') {
 	};
 	
 	
-	/**	Create or retrieve one or more elements based on a query
-	 *	@param query {String|Object}	If query begins with "<" or is an object, a new element is contructed based on that information. If the query is a CSS selector, DOM nodes matching that selector are returned.
-	 *	@returns selection {puredom.NodeSelection}		A puredom {NodeSelection} object containing the created/retrieved nodes.
+	/**	Create or retrieve one or more elements based on a query. <br />
+	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
+	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
+	 *	@param {String|Object} query	A CSS selector (retrieval), or a DOM description (creation).
+	 *	@returns {puredom.NodeSelection} selection
 	 */
 	self.el = function(query, log) {
 		var results, type;
@@ -4782,9 +4784,9 @@ puredom.EventEmitter.prototype._fireEvent = puredom.EventEmitter.prototype.fireE
 
 
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
- *	@param options {Object}		A hash of options to be given to the instance.
+ *	@constructor Creates a new ControllerManager instance.
+ *	@param {Object} [options]		Hash of options to be given to the instance.
  */
-
 puredom.ControllerManager = function(options) {
 	puredom.EventEmitter.call(this);
 	
@@ -4807,8 +4809,10 @@ puredom.ControllerManager = function(options) {
 };
 
 puredom.extend(puredom.ControllerManager.prototype, {
-	/** public: */
+
+	/** @public */
 	controllerOptions : {},
+
 	
 	restoreState : function(state) {
 		if (this.initialized!==true) {
@@ -4823,13 +4827,16 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			}
 		}
 	},
+
 	
 	doStateUpdate : function(state, options) {
 		if (this.updateState) {
 			this.updateState(state, options);
 		}
 	},
+
 	
+	/**	Initialize the registry. */
 	init : function(options) {
 		var autoRestore = true;
 		if (this.initialized!==true) {
@@ -4860,7 +4867,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			}
 		}
 	},
+
 	
+	/**	Destroy the registry. */
 	destroy : function() {
 		var current, x;
 		// supress errors for destructors to avoid chained memory leaks
@@ -4882,7 +4891,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		this._messageListeners = [];
 		this._current = null;
 	},
+
 	
+	/**	Register a named module. */
 	register : function(name, controller) {
 		controller = controller || {};
 		if (puredom.typeOf(name)==='string') {
@@ -4895,6 +4906,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 
 		this._fireEvent('add', [this.getIdFromName(controller.name)]);
 	},
+
+
+	/**	Load the given named module. */
 	load : function(name, options) {
 		var sandboxController, previousController, params, newController, eventResponse, response, loadResponse, unloadResponse;
 		
@@ -4908,10 +4922,6 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			return true;
 		}
 		
-		//if (window.console && window.console.log) {
-		//	window.console.log('Loading controller:', name);
-		//}
-		
 		sandboxController = this._createControllerSandbox(name);
 		params = puredom.extend({
 				previousController : previousController
@@ -4923,9 +4933,6 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		newController = name && this.get(name);
 		
 		if (newController) {
-			//function SandboxedController(){}
-			//puredom.extend(SandboxedController.prototype, sandboxController.sandbox);
-			//newController = this._controllers[this.getIdFromName(name)] = puredom.extend(new SandboxedController(), newController);
 			puredom.extend(newController, sandboxController.sandbox);
 			if (this.singular===true) {
 				unloadResponse = this._unloadCurrent();
@@ -4933,17 +4940,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 					return false;
 				}
 			}
-			/*
-			if (this.singular===true && params.previousController && params.previousController.unload) {
-				this._previousController = params.previousController.name;
-				params.previousController.unload();
-				this._fireEvent('unload', [this.getIdFromName(params.previousController.name)]);
-			}
-			*/
 			response = newController;
 			if (newController.load) {
 				eventResponse = this._fireEvent('beforeload', [newController.name]);
-				//console.log('controller options: ', params);
 				if (eventResponse===false || (eventResponse.falsey && !eventResponse.truthy)) {
 					return false;
 				}
@@ -4977,6 +4976,11 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return false;
 	},
+
+
+	/**	Load the default module (the module with isDefault=true).
+	 *	@returns {Boolean} defaultWasLoaded
+	 */
 	loadDefault : function(options) {
 		for (var x=this._controllers.length; x--; ) {
 			if (this._controllers[x].isDefault===true) {
@@ -4985,15 +4989,25 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return false;
 	},
-	/** NOTE: Implement history for controllers. */
+
+
+	/** Load the controller that was previously loaded. <br />
+	 *	<strong>Note:</strong> This is not actual history, it only remembers one item.
+	 */
 	loadPrevious : function(options) {
 		if (this._previousController) {
 			this.load(this._previousController, options);
 		}
 	},
+	
+
+	/**	Unload the current controller if one exists. */
 	none : function() {
 		this._unloadCurrent();
 	},
+
+
+	/**	Reload the current controller if one exists. */
 	reloadCurrent : function() {
 		var current = this.current();
 		
@@ -5002,6 +5016,9 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			this.load(current.name, this.controllerOptions);
 		}
 	},
+
+
+	/**	@private */
 	_unloadCurrent : function() {
 		var current = this.current(),
 			time, ret;
@@ -5010,19 +5027,20 @@ puredom.extend(puredom.ControllerManager.prototype, {
 			if (ret===false || (ret.falsey && !ret.truthy)) {
 				return false;
 			}
-			//time = new Date().getTime();
 			ret = current.unload();
 			if (ret===false) {
 				return false;
 			}
-			//time = new Date().getTime()-time;
-			//if (time>150) {
-			//	puredom.log('Warning: the view "'+current.name+'" took '+time+'ms to unload.');
-			//}
 			this._fireEvent('unload', [current.name]);
 			this._current = null;
 		}
 	},
+	
+
+	/**	Get the definition for a given named controller.
+	 *	@param {String} name					The controller name to find
+	 *	@param {Boolean} [returnIndex=false]	If true, returns the index instead of a reference.
+	 */
 	get : function(name, returnIndex) {
 		name = (name+'').toLowerCase();
 		for (var x=this._controllers.length; x--; ) {
@@ -5032,16 +5050,23 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return false;
 	},
+	
+
+	/**	Post a message to the current controller if it exists. */
 	postMessage : function(type, msgObj) {
 		var current = this.current();
 		if (current && current.onmessage) {
-			// security risk...
 			//this._fireEvent('postMessage', [type, msgObj]);
 			current.onmessage(type, msgObj);
 			return true;
 		}
 		return false;
 	},
+
+
+	/**	Handle a message from a controller.
+	 *	@private
+	 */
 	onMessage : function(type, handler, controller) {
 		var obj = {
 			type : (type+'').toLowerCase().replace(/^on/gim,''),
@@ -5057,9 +5082,10 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		this._messageListeners.push(obj);
 	},
-	/** @public
-	 *	Get a list of registered controllers
-	 *	@param properties {Array}	Other properties to include in the list from each controller.
+
+
+	/** Get a list of registered controllers
+	 *	@param {Array} [properties]		Other properties to include in the list from each controller.
 	 *	@returns {Array} controllerList
 	 */
 	getList : function(properties) {
@@ -5077,18 +5103,28 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		}
 		return map;
 	},
-	getIdFromName : function(name) {
-		return this.get(name, true);
-	},
-	getNameFromId : function(id) {
-		var controller = puredom.typeOf(id)==='number' && this._controllers[id];
-		return controller && controller.name || false;
-	},
+
+
+	/**	Get a reference to the current controller if it exists. */
 	current : function() {
 		return puredom.typeOf(this._current)==='number' && this._controllers[this._current] || false;
 	},
 	
-	/** private: */
+
+	/**	@private */
+	getIdFromName : function(name) {
+		return this.get(name, true);
+	},
+
+
+	/**	@private */
+	getNameFromId : function(id) {
+		var controller = puredom.typeOf(id)==='number' && this._controllers[id];
+		return controller && controller.name || false;
+	},
+
+
+	/** @private */
 	_createControllerSandbox : function(name) {
 		var controllerManager = this,
 			sandbox,
@@ -5169,11 +5205,19 @@ puredom.extend(puredom.ControllerManager.prototype, {
 		
 		return sandboxController;
 	},
+
+
+	/** @private */
 	_postMessageFromController : function(type, msgObj) {
 	},
 	
+	/** @private */
 	_controllers : [],
+	
+	/** @private */
 	_messageListeners : [],
+
+	/** @private */
 	_current : null
 });
 
@@ -5473,7 +5517,7 @@ puredom.LocalStorage.prototype.setValue = function(key, value) {
 };
 
 /** Remove a key and (its stored value) from the collection.
- *	@param key {String}		A key, specified in dot-notation.
+ *	@param {String} key		A key, specified in dot-notation.
  *	@returns {this}
  */
 puredom.LocalStorage.prototype.removeKey = function(key) {
@@ -5659,15 +5703,16 @@ puredom.extend(puredom.LocalStorage.adapters.none.prototype, /** @lends puredom.
 if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typeof Date.prototype.toJSON!=='function'){/**@ignore*/Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null};/**@ignore*/String.prototype.toJSON=/**@ignore*/Number.prototype.toJSON=/**@ignore*/Boolean.prototype.toJSON=function(key){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+string+'"'}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key)}if(typeof rep==='function'){value=rep.call(holder,key,value)}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null'}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null'}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v}}if(typeof JSON.stringify!=='function'){/**@ignore*/JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' '}}else if(typeof space==='string'){indent=space}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value})}}if(typeof JSON.parse!=='function'){/**@ignore*/JSON.parse=function(text,reviver){var j;/**@ignore*/function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v}else{delete value[k]}}}}return reviver.call(holder,key,value)}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j}throw new SyntaxError('JSON.parse');}}}());
 /**	@class Storage adapter that persists data into browser cookies.
  *	@name puredom.LocalStorage.adapters.cookie
- *	@augments puredom.LocalStorage.adapters.none
  */
 puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapters.cookie */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
 	
+	
 	/** This adapter can only store a few Kilobytes of data, so its rating is 5. */
 	rating : 5,
+	
 	
 	/** Test if this adapter will work in the current environment. */
 	test : function(storage) {
@@ -5676,6 +5721,7 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 		}
 		return false;
 	},
+	
 	
 	/** Load the DB from cookies. */
 	load : function(storage, callback) {
@@ -5690,6 +5736,7 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 		return obj;
 	},
 	
+	
 	/** Save the DB to cookies. */
 	save : function(storage, data, callback) {
 		puredom.cookies.set(
@@ -5702,17 +5749,22 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 	}
 	
 });
-puredom.LocalStorage.addAdapter('LocalStorage', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.LocalStorage
+ */
+puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.adapters.LocalStorage */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/**	The default root key ID to use for accessing localStorage */
 	defaultName : 'db',
 	
-	/** @public This adapter is a very good storage mechanism, so its rating is 60. */
+	
+	/**	This adapter is a very good storage mechanism, so its rating is 60. */
 	rating : 60,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/**	Test if this adapter will work in the current environment */
 	test : function(storage) {
-		var available = ('localStorage' in window) && typeof(window.localStorage.hasOwnProperty)==='function',
+		var available = ('localStorage' in window) && typeof window.localStorage.hasOwnProperty==='function',
 			prev,
 			val = puredom.json({a:'a',b:4/3,c:true,d:null});
 		if (available) {
@@ -5733,7 +5785,8 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return available;
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/**	Load the persisted DB */
 	load : function(storage, callback) {
 		var key = this._getKey(storage),
 			data;
@@ -5746,7 +5799,7 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return data;
 	},
 	
-	/** @public Save the DB to cookies */
+	/**	Save the DB to localStorage */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage);
 		if (data===undefined) {
@@ -5761,30 +5814,39 @@ puredom.LocalStorage.addAdapter('LocalStorage', {
 		return true;
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/**	Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return (storage.id || this.defaultName || '') + '';
 	}
 	
 });
-puredom.LocalStorage.addAdapter('UserData', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.UserData
+ */
+puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adapters.UserData */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
 	
-	/** @public This adapter is a mediocre storage mechanism, so it gets a low rating. */
+	
+	/**	This adapter is a mediocre storage mechanism, so it gets a low rating. */
 	rating : 20,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/**	Test if this adapter will work in the current environment */
 	test : function(storage) {
 		// IE 6 and below crashes without an error description. Block it for now:
 		if ((/\bMSIE\s[1-6](\.[0-9]*)?/gim).test(navigator.userAgent+'')) {
 			return false;
 		}
-		return typeof(document.body.addBehavior)!=='undefined';
+		return typeof document.body.addBehavior!=='undefined';
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/**	Load the persisted DB */
 	load : function(storage, callback) {
 		var key = this._getKey(storage),
 			store = this._getStore(key),
@@ -5801,7 +5863,8 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return data;
 	},
 	
-	/** @public Save the DB to cookies */
+	
+	/**	Save the DB to UserData */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage),
 			store = this._getStore(key),
@@ -5809,7 +5872,6 @@ puredom.LocalStorage.addAdapter('UserData', {
 			value,
 			saved = false;
 		if (store && ('save' in store)) {
-			//console.log('saving', puredom.json.stringify(data));
 			if (data===undefined) {
 				if (store.removeAttribute) {
 					store.removeAttribute(attr);
@@ -5830,6 +5892,8 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return saved;
 	},
 	
+	
+	/**	@private */
 	_getStore : function(key) {
 		var s;
 		if (!this.stores) {
@@ -5840,8 +5904,6 @@ puredom.LocalStorage.addAdapter('UserData', {
 			s = this.stores[key] = document.getElementById(key);
 			if (!s) {
 				s = this.stores[key] = document.createElement('span');
-				//s.setAttribute('id', key);
-				//s.style.cssText = "position:absolute; top:-100px; left:0;";
 				s.style.position = 'absolute';
 				s.style.top = '-100px';
 				s.style.left = '0';
@@ -5856,19 +5918,27 @@ puredom.LocalStorage.addAdapter('UserData', {
 		return s;
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/** Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return 'ieud' + (storage.id || this.defaultName || '') + '';
 	}
 	
 });
-puredom.LocalStorage.addAdapter('WebkitSQLite', {
+/**	@class Storage adapter that persists data into HTML5 LocalStorage.
+ *	@name puredom.LocalStorage.adapters.WebkitSQLite
+ */
+puredom.LocalStorage.addAdapter('WebkitSQLite', /** @lends puredom.LocalStorage.adapters.WebkitSQLite */ {
 	
-	/** @public The default cookie ID to use for database storage */
+	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
 	
+	
+	/**	Default database identification info. */
 	dbInfo : {
-		name : 'PureDOMLocalStorage',
+		name : 'PuredomLocalStorage',
 		table : 'storage',
 		version : '1.0',
 		displayName : 'Cache, Settings and Storage',
@@ -5876,46 +5946,21 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		minimumQuota : 10000			// 10 k
 	},
 	
-	/**	@public This adapter is the fastest storage mechanism for Webkit. 
-	 *	Web SQL has also be discontinued in favour of IndexedDB. Who knew SQL would turn out to be annoying? ...
+	
+	/**	This adapter is the fastest storage mechanism for Webkit. <br />
+	 *	Web SQL has also be discontinued in favour of IndexedDB. Who knew SQL would turn out to be annoying? ... <br />
 	 *	In terms of complexity, clearly LocalStorage is better, but for now this adapter can stay at the top of the list.
 	 */
 	rating : 80,
 	
-	/** @public Test if this adapter will work in the current environment */
+	
+	/** Test if this adapter will work in the current environment */
 	test : function(storage) {
-		/*
-		if (navigator.userAgent.match(/\bandroid\b/gim) && window.WebkitTransitionEvent && ("onorientationchange" in window)) {
-			return false;
-		}
-		*/
 		return !!window.openDatabase;
-		
-		/*
-		if (window.openDatabase && this._getDatabase(storage)) {
-			return true;
-		}
-		return false;
-		*/
-		
-		/*
-		var available = !!(openDatabase in window),
-			prev,
-			table = 'tbl_'+this._getKey(storage),
-			key = 'test_key',
-			val = 'test_value';
-		if (available) {
-			try {
-				openDatabase(this.dbInfo.name, this.dbInfo.version, this.dbInfo.displayName, this.dbInfo.quota);
-			} catch(err) {
-				available = false;
-			}
-		}
-		return available;
-		*/
 	},
 	
-	/** @public Load the persisted DB */
+	
+	/** Load the persisted DB */
 	load : function(storage, callback) {
 		var db = this._getDatabase(storage),
 			key = this._getKey(storage),
@@ -5943,7 +5988,6 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 								rows.push(result.rows.item(x));
 							}
 						}
-						//console.log(rows, rows[0] && puredom.json.parse(rows[0].value));
 						if (rows.length>0) {
 							callback(puredom.json.parse(rows[0].value));
 						}
@@ -5956,32 +6000,11 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 					callback(false);
 				}
 			}, errorCB);
-			//console.log('db', db);
-			// NOTE: It's not necessary to require() the DB here.  If the query fails, it means there is no stored data, which is fine.
-			/*
-			this._requireDatabase(storage, function(db) {
-				if (db) {
-					db.readTransaction(function(tx) {
-						console.log(tx);
-						tx.executeSql('SELECT * FROM '+table+' WHERE key=? LIMIT 1', [key], function(tx, result) {
-							var row = result && result.rows && result.rows[0];
-							console.log('row', row);
-							callback(row!==undefined && puredom.json.parse(row))
-						}, function(tx, error) {
-							puredom.log('puredom.LocalStorage :: WebkitSQLiteAdapter: Query failed ('+(error.code || '-1')+') --> ' + error.message);
-							callback();
-						})
-					});
-				}
-				else {
-					puredom.log('LocalStorage::WebkitSQLiteAdapter --> Error: Could not open database.');
-				}
-			});
-			*/
 		}
 	},
 	
-	/** @public Save the DB to cookies */
+	
+	/** Save the DB to persistence. */
 	save : function(storage, data, callback) {
 		var key = this._getKey(storage),
 			table = this.dbInfo.table;
@@ -5989,7 +6012,7 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		
 		this._requireDatabase(storage, function(db) {
 			var errorCB,
-				jobs = 1,		//2,
+				jobs = 1,
 				jobComplete;
 			if (db) {
 				errorCB = function(error) {
@@ -6009,45 +6032,8 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 				data = puredom.json.stringify(data);
 				
 				db.transaction(function(tx){
-					/*
-					tx.executeSql('DELETE FROM '+table+' WHERE key=?', [key], jobComplete);
-					tx.executeSql('INSERT INTO '+table+' (key,value) VALUES(?,?)', [key,data], jobComplete);
-					*/
 					tx.executeSql('INSERT OR REPLACE INTO '+table+' (key,value) VALUES(?,?)', [key,data], jobComplete);
 				}, errorCB);
-				
-				/*
-				db.readTransaction(function(tx) {
-					tx.executeSql('SELECT * FROM db', [], function(tx, result) {
-						console.log(result, puredom.toArray(result.rows));
-					}, errorCB);
-				}, errorCB);
-				*/
-				
-				/*
-				db.readTransaction(function(tx) {
-					//console.log('tx', tx);
-					//tx.executeSql('SELECT * FROM '+table, [], function(tx, result) {
-					tx.executeSql('SELECT * FROM '+table+' WHERE key=? LIMIT 1', [key], function(tx, result) {
-						console.log('result', result);
-						db.transaction(function(tx) {
-							//console.log('SQLite::SaveTransactionResult = ', result);
-							if (result && result.rows && result.rows.length>0) {
-								tx.executeSql('UPDATE '+table+' SET value=? WHERE key=? LIMIT 1', [data, key]);
-							}
-							else {
-								tx.executeSql('INSERT INTO '+table+' (key,value) VALUES(?,?) LIMIT 1', [key, data]);
-							}
-							if (callback) {
-								callback(true);
-							}
-							key = db = callback = null;
-						});
-					}, function(tx, error) {
-						console.log(error);
-					});
-				});
-				*/
 			}
 			else {
 				callback(false);
@@ -6056,20 +6042,17 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		});
 	},
 	
+	
+	/**	@private */
 	_getDatabase : function(storage) {
 		var quota = this.dbInfo.quota,
 			db;
 		if (this._currentDb) {
-			//console.log('_getDatabase() returning stored DB reference.', this._currentDb);
 			return this._currentDb;
 		}
-		//if (storage._webkitSqlLiteAdapterDB) {
-		//	return storage._webkitSqlLiteAdapterDB;
-		//}
 		while (!db && quota>this.dbInfo.minimumQuota) {
 			try {
 				db = openDatabase(this.dbInfo.name, this.dbInfo.version, this.dbInfo.displayName, quota);
-				//console.log('openDatabase('+this.dbInfo.name+', '+this.dbInfo.version+', '+this.dbInfo.displayName+', '+quota+');  ---> ', db);
 			}catch(err){}
 			if (!db) {
 				quota /= 10;
@@ -6084,6 +6067,8 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		return db || false;
 	},
 	
+	
+	/**	@private */
 	_requireDatabase : function(storage, callback) {
 		var self = this,
 			db = this._getDatabase(storage),
@@ -6091,42 +6076,10 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		callback = callback || this._nullCallback;
 		
 		if (db) {
-			//puredom.log('Create table called.');
 			self._createTable(db, function() {
-				//puredom.log('Create table callback fired.');
 				callback(db);
 				self = callback = storage = db = null;
 			});
-			/*
-			//console.log('start::db('+rnd+')', db);
-			db.readTransaction(function(tx) {
-				//console.log('middle::db('+rnd+')', db);
-				// Check if table exists:
-				tx.executeSql('SELECT COUNT(*) FROM '+table, [], function(tx, result) {
-					var exists = result && result.rows && result.rows.length>0;
-					//console.log(result);
-					//console.log('table_exists_response: ', result, result.rows.item(0));
-					//console.log('end::db('+rnd+')', db);
-					if (exists) {
-						//console.log('CHECKING TABLE EXISTS ---> EXISTS');
-						// it exists
-						callback(db);
-						self = callback = storage = db = null;
-					}
-					else {
-						self._createTable(db, function() {
-							callback(db);
-							self = callback = storage = db = null;
-						});
-					}
-				}, function(tx, error) {
-					self._createTable(db, function() {
-						callback(db);
-						self = callback = storage = db = null;
-					});
-				});
-			});
-			*/
 		}
 		else {
 			callback(db, false);
@@ -6134,18 +6087,17 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		}
 	},
 	
+	
+	/**	@private */
 	_createTable : function(db, callback) {
 		var table = this.dbInfo.table;
 		callback = callback || this._nullCallback;
 		if (db) {
 			db.transaction(function(tx) {
-				//puredom.log('CREATING TABLE');
 				tx.executeSql('CREATE TABLE IF NOT EXISTS '+table+' (key TEXT UNIQUE, value TEXT)', [], function(tx, result) {
-					//puredom.log('CREATING TABLE --> COMPLETE', tx, result);
 					callback(true);
 					callback = db = null;
 				}, function(tx, error) {
-					//puredom.log('Error creating WebkitSQLite table: ' + error.message);
 					callback(false);
 				});
 			});
@@ -6155,11 +6107,16 @@ puredom.LocalStorage.addAdapter('WebkitSQLite', {
 		}
 	},
 	
-	/** @private Get the key for a storage object */
+	
+	/** Get the key for a storage object
+	 *	@private
+	 */
 	_getKey : function(storage) {
 		return (storage.id || this.defaultName || '') + '';
 	},
 	
+	
+	/** @private */
 	_nullCallback : function(){}
 	
 });
@@ -7533,11 +7490,12 @@ window.puredom = window.puredom || {};
 /** @namespace Networking functionality. */
 puredom.net = /** @lends puredom.net */ {
 	
-	/**	Represents an HTTP request.
+	/**	@class Represents an HTTP request.
 	 *	The raw XMLHttpRequest object is accessible through a *request* property.
-	 *	@class
 	 */
-	HttpRequest : function HttpRequest(o){puredom.extend(this,o);},
+	HttpRequest : function HttpRequest(options){
+		puredom.extend(this, options);
+	},
 	
 	
 	/**	Make an HTTP GET request. This is a convenience wrapper around {@link puredom.net.request}.
@@ -7781,9 +7739,9 @@ puredom.net = /** @lends puredom.net */ {
 	 *		<tr><td>{Number}</td><td><b>timeout</b></td><td>Maximum number of seconds to wait before assuming failure. Default is 10.</td></tr>
 	 *		</tbody></table>
 	 *	@function
-	 *	@param url {String}			The service URL, including querystring parameters.
-	 *	@param options {Object}		A hash of available options.
-	 *	@param callback {Function}	A function that gets called when the request returns.
+	 *	@param {String} url			The service URL, including querystring parameters.
+	 *	@param {Object} options		A hash of available options.
+	 *	@param {Function} callback	A function that gets called when the request returns.
 	 *	@returns {Boolean} Was the request initiated?
 	 */
 	jsonp : (function() {
@@ -7832,7 +7790,6 @@ puredom.net = /** @lends puredom.net */ {
 			(function(jsonp, reqIndex) {
 				window[options.callback] = function(data) {
 					var e;
-					//console.log(callbackId+'(', data, ');');
 					if (callback) {
 						try {
 							callback(data);
@@ -7841,7 +7798,6 @@ puredom.net = /** @lends puredom.net */ {
 						}
 						callback = null;
 					}
-					//puredom.log('JSONp['+callbackId+'].close');
 					if (requestObj) {
 						requestObj.stop();
 						requestObj = null;
@@ -7851,7 +7807,6 @@ puredom.net = /** @lends puredom.net */ {
 					}
 				};
 			}());
-			//puredom.log('JSONp['+callbackId+'].open');
 			
 			if (url.indexOf('{!callback}')>-1) {
 				url = url.replace('{!callback}', callbackId);
@@ -7872,7 +7827,6 @@ puredom.net = /** @lends puredom.net */ {
 					async	: 'async',
 					type	: 'text/javascript'
 				},
-				//async : true,
 				parent : this._head || document.body
 			});
 			
@@ -7940,21 +7894,16 @@ puredom.net = /** @lends puredom.net */ {
 			if (domain && domain!==location.hostname) {
 				isCrossDomain = true;
 				document.domain = location.hostname.match(/[^.]+\.[^.]+$/gim)[0];
-				//frame = this._freeIframes.length>0 && this._freeIframes.splice(0,1)[0];
 				for (i=0; i<this._freeIframes.length; i++) {
-					//console.log(this._freeIframes[i].getAttribute('data-xhr-domain'), domain);
 					if (this._freeIframes[i].getAttribute('data-xhr-domain')===domain) {
 						frame = this._freeIframes.splice(i,1)[0];
 						break;
 					}
 				}
-				//return;
 				if (frame) {
-					//console.log('Re-using old cross-domain proxy frame.');
 					callback(self._createXHRObj(frame.contentWindow, frame));
 				}
 				else {
-					//console.log('Creating new cross-domain proxy frame.');
 					frame = document.createElement('iframe');
 					frame.style.cssText = "position:absolute; left:0; top:-1000px; width:1px; height:1px; border:none; overflow:hidden;";
 					/** @inner */
@@ -8206,14 +8155,17 @@ puredom.inherits(puredom.Notifier, puredom.EventEmitter);
 
 
 
-
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
- *	@param options {Object}		A hash of options to be given to the instance.
- *	@inherits {puredom#ControllerManager}
+ *	@constructor Creates a new RouteManager instance.
+ *	@param {Object} [options]	Hashmap of options to be given to the instance.
+ *	@param {Boolean} [options.allowTemplateFallback=false]		If no URL templates match, attempt to load by name.
+ *	@param {Boolean} [options.useBest=false]					If no URL templates match, attempt to load by name.
+ *	@param {Boolean} [options.allowPartialUrlFallback=false]	Use the longest URL template match, even if it isn't a perfect match.
+ *	@inherits {puredom.ControllerManager}
  */
-
 puredom.RouteManager = function(options) {
 	var self = this;
+	options = options || {};
 	puredom.ControllerManager.call(this);
 	
 	this.allowTemplateFallback = options.allowTemplateFallback===true || options.useBest===true;
@@ -8224,12 +8176,14 @@ puredom.RouteManager = function(options) {
 	};
 };
 
-puredom.extend(puredom.RouteManager.prototype, {
+
+puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# */ {
 	
-	/** @public RouteManagers are singular by default, because a browser can only navigate to one URL at a time. */
+	/** RouteManagers are singular by default, because a browser can only navigate to one URL at a time. */
 	singular : true,
 	
-	/** @public  */
+
+	/** @public */
 	rewrites : [
 		/*
 		{
@@ -8242,12 +8196,13 @@ puredom.extend(puredom.RouteManager.prototype, {
 		*/
 	],
 	
+
+	/**	For use with StateManager */
 	restoreState : function(state) {
 		if (this.initialized!==true) {
 			this._initState = state;
 		}
 		else {
-			//puredom.log('RouteManager::restoreState('+puredom.json(state)+')');
 			if (state && state.current_url) {
 				this.route(state.current_url);
 			}
@@ -8257,6 +8212,8 @@ puredom.extend(puredom.RouteManager.prototype, {
 		}
 	},
 	
+
+	/**	For use with StateManager */
 	doStateUpdate : function(state, options) {
 		var controller,
 			templatedUrl;
@@ -8268,23 +8225,20 @@ puredom.extend(puredom.RouteManager.prototype, {
 			if (templatedUrl.substring(0,1)!=='/') {
 				templatedUrl = '/' + templatedUrl;
 			}
-			//console.log(templatedUrl);
 			state.current_url = templatedUrl;
 		}
-		//puredom.log('RouteManager::updateState('+puredom.json(state)+')');
 		this.updateState(state, options);
 	},
 	
 	
 	/** @override */
 	register : function(name, controller) {
-		//controller.setState = this._controllerSetState;
 		controller.updateState = this._controllerUpdateState;
 		return puredom.ControllerManager.prototype.register.call(this, name, controller);
 	},
 	
 	
-	/** @public Attempt to route the given URL to a controller. */
+	/** Attempt to route the given URL to a controller. */
 	route : function(url) {
 		var list = this._controllers,
 			normUrl = url.replace(/^[#!\/]+/gm,'').replace(/#.+$/gm,''),
@@ -8296,7 +8250,6 @@ puredom.extend(puredom.RouteManager.prototype, {
 			urlTemplate = item.customUrl || item.urlTemplate || item.name;
 			matches = {};
 			if (this._checkUrlMatch(urlTemplate, url, matches)===true) {
-				//puredom.log('Controller["'+item.name+'"].tpl = "'+urlTemplate+'" --> true');
 				params = {};
 				for (p in matches) {
 					if ((p+'').substring(0,7)==='params.') {
@@ -8308,11 +8261,7 @@ puredom.extend(puredom.RouteManager.prototype, {
 				});
 			}
 			else if (this.allowPartialUrlFallback===true && this._checkUrlMatch(urlTemplate, url, matches, {partial:true})===true) {
-				//puredom.log('Controller["'+item.name+'"].tpl = "'+urlTemplate+'" --> PARTIAL');
 				partialMatchName = item.name;
-			}
-			else {
-				//puredom.log('Controller["'+item.name+'"].tpl = "'+urlTemplate+'" --> false');
 			}
 		}
 		
@@ -8337,7 +8286,8 @@ puredom.extend(puredom.RouteManager.prototype, {
 		return false;
 	},
 	
-	/** @public Load a controller */
+
+	/** Load a controller */
 	/*
 	load : function(name, options) {
 		this.__super.prototype.load.apply(this, arguments);
@@ -8346,26 +8296,31 @@ puredom.extend(puredom.RouteManager.prototype, {
 	},
 	*/
 	
-	/** @public Attempt to route the given URL to a controller. */
+
+	/** Attempt to route the given URL to a controller. */
 	routeDefault : function(url) {
 		return this.loadDefault();
 	},
 	
-	/** @private Template a URL using values from the current controller. Non-matched fields are left unchanged.
-	 *	@param tpl {String}				The URL template
-	 *	@param [controller {Object}]	Optional explicit controller reference. Defaults to current()
-	 *	@returns {String}				The templated URL
+
+	/** Template a URL using values from the current controller. Non-matched fields are left unchanged.
+	 *	@private
+	 *	@param {String} tpl						The URL template
+	 *	@param {Object} [controller=current]	Explicit controller reference.
+	 *	@returns {String} templatedUrl
 	 */
 	_templateUrl : function(tpl, controller) {
 		controller = controller || this.current();
 		return puredom.template(tpl, controller, false);
 	},
+
 	
-	/** @private Check if a URL template matches the given URL.
-	 *	@param urlTemplate {String}		A URL template, as used in Controller.customUrl
-	 *	@param url {String}				The URL to test
-	 *	@param &matches {Object}		Optional PBR Object, populated with the matched segments
-	 *	@returns {Boolean}
+	/** Check if a URL template matches the given URL.
+	 *	@private
+	 *	@param {String} urlTemplate		A URL template, as used in Controller.customUrl
+	 *	@param {String} url				The URL to test
+	 *	@param {Object} matches			Optional Object to populate with the matched URL segments
+	 *	@returns {Boolean} didMatch
 	 */
 	_checkUrlMatch : function(urlTemplate, url, matches, options) {
 		var templateSegments = this._getUrlSegments(urlTemplate),
@@ -8400,10 +8355,11 @@ puredom.extend(puredom.RouteManager.prototype, {
 		return isMatch;
 	},
 	
-	/** @private Normalize a URL for comparison */
+
+	/**	Normalize a URL for comparison
+	 *	@private
+	 */
 	_getUrlSegments : function(url) {
-		//var reg = new RegExp('^\\/\*?(.*?)\/\*?$', 'gim');
-		//return (url+'').replace(reg, '').split('/');
 		var segs = (url+'').split('/'),
 			i;
 		for (i=segs.length; i--; ) {
@@ -9381,21 +9337,21 @@ puredom.StateManager.prototype.adapters.cookies = {
 		return puredom.json.stringify(state);
 	}
 };
-
 /**	Manages views, providing methods for loading, templating, caching and swapping.
- *	@param options {Object}		A hash of options to be given to the instance.
+ *	@constructor Creates a new TestSuite instance.
+ *	@param {Object} options		Hashmap of options to be given to the instance.
  */
-
 puredom.TestSuite = function(options) {
 	puredom.EventEmitter.call(this);
 	this.list = {};
 };
 
-puredom.extend(puredom.TestSuite.prototype, {
+
+puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
 	
-	/** @public Add a test to the suite.
-	 *	@param name {String}	A human-readable name for the test
-	 *	@param test {Object}	The test definition
+	/** Add a test to the suite.
+	 *	@param {String} name	A human-readable name for the test
+	 *	@param {Object} test	The test definition
 	 *	@example:
 	 *		suite.add("Example", {
 	 *			prepare : function(test){},
@@ -9415,8 +9371,9 @@ puredom.extend(puredom.TestSuite.prototype, {
 		};
 	},
 	
-	/** @public Run the test that matches <name>.
-	 *	@param name {String}	The name of a registered test to run
+
+	/** Run the test that matches <name>.
+	 *	@param {String} name	The name of a registered test to run
 	 */
 	run : function(name, callback, messageHandler) {
 		var ob = this.get(name),
@@ -9482,15 +9439,17 @@ puredom.extend(puredom.TestSuite.prototype, {
 		}
 	},
 	
-	/** @public Retrieve the test that matches <name>.
-	 *	@param name {String}	The name of a registered test to find
+
+	/** Retrieve the test that matches <name>.
+	 *	@param {String} name	The name of a registered test to find
 	 */
 	get : function(name) {
 		var id = this._getIdFromName(name);
 		return this.list.hasOwnProperty(id) && this.list[id] || false;
 	},
 	
-	/** @public Get a list of test names available in the suite. */
+
+	/** Get a list of test names available in the suite. */
 	getList : function() {
 		var names = [],
 			i;
@@ -9502,15 +9461,19 @@ puredom.extend(puredom.TestSuite.prototype, {
 		return names;
 	},
 	
+
 	/** @private */
 	_getIdFromName : function(name) {
 		return (name+'').toLowerCase().replace(/[^a-z0-9_]+/gm,'');
 	},
 	
+
 	/** @private */
 	_createSandboxController : function(testObj) {
+		/**	@exports sandbox as puredom.TestSuite.test# */
 		var self = this,
 			controller = {},
+			/**	@name puredom.TestSuite.test */
 			sandbox = {};
 		
 		controller.getSandbox = function() {
@@ -9573,15 +9536,19 @@ puredom.extend(puredom.TestSuite.prototype, {
 		return controller;
 	},
 	
+
 	/** @private */
 	list : {}
+
 });
-
-
 /**	Manages views, providing methods for loading, templating, caching and swapping.
- *	@param options {Object}		A hash of options to be given to the instance.
+ *	@constructor Creates a new ViewManager instance.
+ *	@augments puredom.EventEmitter
+ *	@param {Object} [options]		Hashmap of options to be given to the instance.
+ *	@param {Object} [options.init=false]				Immediately calls init(options) for you
+ *	@param {Object} [options.viewDomPrefix=views_]		Custom DOM cache ID prefix
+ *	@param {Object} [options.cacheBase=document.body]	Move the DOM view cache
  */
-
 puredom.ViewManager = function(options) {
 	puredom.EventEmitter.call(this);
 	this._htmlViews = {};
@@ -9591,15 +9558,27 @@ puredom.ViewManager = function(options) {
 	}
 };
 
-puredom.extend(puredom.ViewManager.prototype, {
-	/** public: */
-	
+
+puredom.inherits(puredom.ViewManager, puredom.EventEmitter);
+
+
+puredom.extend(puredom.ViewManager.prototype, /** @lends puredom.ViewManager# */ {
+
+	/** ID prefix for view storage. */
 	viewDomPrefix : 'views_',
 	
+
+	/**	@private */
 	_regs : {
 		node : /<(\/?)([a-z][a-z0-9]*)(\s+[a-z0-9._-]+=(['"]).*?\4)*\s*\/?>/gim
 	},
 	
+
+	/**	Initialize the manager.
+	 *	@param {Object} [options]		Hashmap of options.
+	 *	@param {Object} [options.viewDomPrefix=views_]		Custom DOM cache ID prefix
+	 *	@param {Object} [options.cacheBase=document.body]	Move the DOM view cache
+	 */
 	init : function(options) {
 		options = options || {};
 		if (this.initialized!==true) {
@@ -9614,19 +9593,27 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
+
+	/**	Teardown and cleanup the manager. */
 	destroy : function() {
 		if (this.initialized===true) {
 			this.initialized = false;
-			// ...
+			try {
+				this.cacheBase.remove();
+			} catch(err) {}
 		}
 	},
 	
+
+	/**	@private */
 	log : function(msg, data) {
 		if (this.logging===true) {
 			puredom.log('ViewManager :: ' + msg, data);
 		}
 	},
 	
+
+	/**	Register a named view. */
 	addView : function(name, view) {
 		if (puredom.typeOf(view)==='string') {
 			this._htmlViews[(name+'').toLowerCase()] = view;
@@ -9636,10 +9623,16 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
+
+	/**	Check if a named view is registered. */
 	exists : function(name) {
 		return this._htmlViews.hasOwnProperty((name+'').toLowerCase());
 	},
 	
+
+	/**	Load a view and immediately template it. <br />
+	 *	See {@link puredom.ViewManager#load}
+	 */
 	template : function(name, fields, insertInto, insertBefore) {
 		var ui, template;
 		name = (name+'').toLowerCase();
@@ -9652,6 +9645,15 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return ui || false;
 	},
 	
+
+	/**	Load a view.
+	 *	@param {String} name					The named view to load
+	 *	@param {HTMLElement} [insertInto]		Immediately insert the view into an parent
+	 *	@param {HTMLElement} [insertBefore]		Inject view into the parent of this node, before this node.
+	 *	@param {Boolean} [cloneOriginal=true]	Set this to false to hijack previously rendered DOM views.
+	 *	@param {Boolean} [caching=true]			Set this to false to turn off view caching.
+	 *	@returns {puredom.NodeSelection} view, or false on error.
+	 */
 	load : function(name, insertInto, insertBefore, cloneOriginal, caching) {
 		var ui, lookup, cached, origName=name;
 		if (name) {
@@ -9686,18 +9688,6 @@ puredom.extend(puredom.ViewManager.prototype, {
 			}
 		}
 		
-		/*
-		if (window.console) {
-			console.log('views.'+(name || '[untitled]'), {
-				orig_name : origName,
-				'ui' : ui+'',
-				'ui.parent' : ui && ui.parent()+'',
-				'insertBefore' : insertBefore+'',
-				'insertInto' : insertInto+''
-			});
-		}
-		*/
-		
 		if (ui && ui.exists()) {
 			if (name) {
 				this.log('View "'+name+'" loaded.');
@@ -9728,6 +9718,8 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
+
+	/**	Destroy a view. */
 	unload : function(ui, unCache) {
 		if (ui && ui.destroy) {
 			ui.destroy();
@@ -9738,8 +9730,9 @@ puredom.extend(puredom.ViewManager.prototype, {
 	/** @private */
 	_postProcessors : [],
 	
-	/** @public Add a post-processor function that will be run on all loaded views. 
-	 *	The function gets passed the view base as a {puredom#NodeSelection} object.
+
+	/**	Register a post-processor function that will be run on all loaded views. <br />
+	 *	The function gets passed the view base as a {@link puredom.NodeSelection}.
 	 */
 	addViewPostProcessor : function(callback) {
 		var i, exists=false;
@@ -9754,7 +9747,10 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 	},
 	
-	/** @public Process a view after it has loaded.  Automatically called by load() */
+
+	/**	Process a view after it has loaded.  Automatically called by load().
+	 *	@private
+	 */
 	postProcessView : function(ui) {
 		for (var i=0; i<this._postProcessors.length; i++) {
 			this._postProcessors[i](ui);
@@ -9762,6 +9758,7 @@ puredom.extend(puredom.ViewManager.prototype, {
 	},
 	
 	
+	/**	@private */
 	getViewFromDOM : function(def, customPrefix) {
 		var el;
 		customPrefix = customPrefix || this.viewDomPrefix;
@@ -9780,6 +9777,7 @@ puredom.extend(puredom.ViewManager.prototype, {
 	},
 	
 	
+	/**	@private */
 	buildViewFromHTML : function(html) {
 		var node = puredom.el({
 			innerHTML : html
@@ -9789,6 +9787,8 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return node.exists() && node || false;
 	},
 	
+	
+	/**	@private */
 	buildViewFromObj : function(obj) {
 		var node;
 		if (puredom.isArray(obj)) {
@@ -9806,7 +9806,9 @@ puredom.extend(puredom.ViewManager.prototype, {
 		}
 		return node.exists() && node || false;
 	},
+
 	
+	/**	@private */
 	buildViewFromDOM : function(domNodes, clone) {
 		var node, html;
 		domNodes = puredom.el(domNodes);
@@ -9814,37 +9816,32 @@ puredom.extend(puredom.ViewManager.prototype, {
 			return domNodes;
 		}
 		node = domNodes.clone(true);			// deep, no parent
-		/*
-		if (document.filters) {
-			html = '';
-			domNodes.each(function(node) {
-				html += node.html();
-			});
-			node = this.buildViewFromHTML(html);
-		}
-		else {
-			node = domNodes.clone(true);			// deep, no parent
-		}
-		*/
 		return node.exists() && node || false;
 	},
 	
 	
+	/**	@private */
 	_htmlViews : {},
 	
 	
-	/** Old Reference-Based Caching */
-	
-	/** @private The root node where cached DOM nodes are stored */
+	/** The root node where cached DOM nodes are stored
+	 *	@private
+	 */
 	cacheBase : null,
 	
-	/** @private Attempt to retrieve a cached view */
+
+	/**	Attempt to retrieve a cached view
+	 *	@private
+	 */
 	getCachedView : function(name) {
 		var view = this.cacheBase.query('[data-viewname="'+name+'"]').first();
 		return view.exists() && view || false;
 	},
 	
-	/** @private Build a view from the cache, optionally retrieving it if not passed a reference */
+
+	/** Build a view from the cache, optionally retrieving it if not passed a reference.
+	 *	@private
+	 */
 	buildCachedView : function(cached) {
 		var view;
 		if (puredom.typeOf(cached)==='string') {
@@ -9857,7 +9854,10 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return view;
 	},
 	
-	/** @private Cache a view for future use */
+
+	/** Cache a view for future use.
+	 *	@private
+	 */
 	cacheView : function(name, ui, copy) {
 		/*
 		if (copy===true) {
@@ -9872,10 +9872,4 @@ puredom.extend(puredom.ViewManager.prototype, {
 		return false;
 	}
 	
-	
 });
-
-
-puredom.inherits(puredom.ViewManager, puredom.EventEmitter);
-
-

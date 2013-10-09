@@ -248,7 +248,7 @@ puredom.LocalStorage.prototype.setValue = function(key, value) {
 };
 
 /** Remove a key and (its stored value) from the collection.
- *	@param key {String}		A key, specified in dot-notation.
+ *	@param {String} key		A key, specified in dot-notation.
  *	@returns {this}
  */
 puredom.LocalStorage.prototype.removeKey = function(key) {
