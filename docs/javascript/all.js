@@ -342,7 +342,7 @@ doc.controller = (function() {
 	exports.init = function() {
 		
 		priv.urlBase = (location.href.substring(0,location.href.lastIndexOf('/')) || '') + '/' + (puredom('body').attr('data-url-base') || '');
-		priv.urlBase = priv.urlBase.replace(/[^\/]+\/\.\./gim,'').replace(/^(https|http)\:\/\/[^\/]+/gim,'').replace(/\/+$/,'') + '/';
+		priv.urlBase = priv.urlBase.replace(/[^\/]+\/\.\./gim,'').replace(/^(https|http)\:\/\/[^\/]+/gim,'').replace(/(\/*symbols)?\/+$/,'') + '/';
 		
 		priv.onPageLoad();
 		
