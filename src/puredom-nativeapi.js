@@ -67,7 +67,7 @@ puredom.NativeAPI = function(api) {
 	
 	/**	@class Wrapped String/Data pair
 	 *	@name puredom.NativeAPI.MessageStringWithData
-	  */
+	 */
 	self.MessageStringWithData = MessageStringWithData = function MessageStringWithData(data, message){
 		this.message = message || '';
 		shallowObjectCopy(this, data);

@@ -973,8 +973,8 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/** Automatically detects and uses CSS3 transitions.
-		 * 	@private
+		/**	Automatically detects and uses CSS3 transitions.
+		 *	@private
 		 */
 		animateCSS : (function() {
 			var manual, cssTransition, supportsCssTransition, checkCssTransitionSupport;

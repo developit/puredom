@@ -16,6 +16,7 @@ if (typeof(Date.now)!=='function') {
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
+	 *	@version 1.1.7
 	 *	@namespace Top-level puredom namespace.
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
@@ -320,7 +321,7 @@ if (typeof(Date.now)!=='function') {
 	};
 	
 	
-	/** Get the <strong>lowercase</code> type (constructor name) of an object.<br />
+	/** Get the <strong>lowercase</strong> type (constructor name) of an object.<br />
 	 *	<em><strong>Important Note:</strong> Unlike many other typeOf implementations, this method returns the name of an Object's constructor, rather than just "object".</em>
 	 *	@param {Any} what		An object to analyze
 	 *	@returns {String} type
@@ -576,9 +577,9 @@ if (typeof(Date.now)!=='function') {
 	 *	This class is not generally instantiated directly - instead, use the puredom() 
 	 *	function to query for elements or wrap an Array of elements with a selection.
 	 *	@class Represents a collection of DOM Elements. <br />
-	 *	Methods that work with DOM elements generally return an instance of this.
-	 *	@param {Array} nodes		An array of raw DOM nodes to wrap in a selection.
+	 *	Puredom methods that work with DOM elements generally return an instance of this.
 	 *	@name puredom.NodeSelection
+	 *	@param {Array} nodes		An array of raw DOM nodes to wrap in a selection.
 	 */
 	self.NodeSelection = function NodeSelection(nodes) {
 		var x;
@@ -603,22 +604,23 @@ if (typeof(Date.now)!=='function') {
 			}
 		}
 	};
+
 	self.extend(self.NodeSelection.prototype, /** @lends puredom.NodeSelection# */ {
 		
 		/**	@private */
-		_results	: [],
+		_results : [],
 		
 		/**	@private */
-		_nodes		: [],
+		_nodes : [],
 		
 		/**	@private */
-		_animations	: [],
+		_animations : [],
 		
 		
 		/**	Get an Array of String representations of each element in the selection. <br />
 		 *	For a more logging-friendly option, see {@link puredom.NodeSelection#describe}.
 		 */
-		describe	: function() {
+		describe : function() {
 			var p = [];
 			this.each(function(node) {
 				var str = '<' + node.nodeName(),
@@ -647,12 +649,12 @@ if (typeof(Date.now)!=='function') {
 		/**	Get a String representation of the selection's current contents. <br />
 		 *	For the raw Array description, see {@link puredom.NodeSelection#describe}.
 		 */
-		toString	: function() {
+		toString : function() {
 			return this.describe().join(', ');
 		},
 		
 		/**	@private */
-		toSource	: function() {
+		toSource : function() {
 			return this._nodes;
 		},
 		
@@ -662,7 +664,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@param {Number} [reverseIndex=0]		Optionally get an older return value. This value is a 0-based offset.
 		 *	@returns {Any} returnValue, or <code>undefined</code> if no value was returned.
 		 */
-		getResult	: function(reverseIndex) {
+		getResult : function(reverseIndex) {
 			reverseIndex = Math.round(reverseIndex) || 0;
 			return this._results[this._results.length - reverseIndex - 1];
 		},
@@ -723,7 +725,7 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/**	Get the <strong>lower-case</code> nodeName of an element.<br />
+		/**	Get the <strong>lower-case</strong> nodeName of an element.<br />
 		 *	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em> <br />
 		 *	<strong>Note:</strong> In puredom, the <code>window</code> Object is given a nodeName of "#window".
 		 *	@returns {String} nodeName
@@ -894,7 +896,7 @@ if (typeof(Date.now)!=='function') {
 		 *	If the element that is already semi-transparent, it fades from the current opacity. <br />
 		 *	If the element that is hidden but not explicitly transparent, it fades from opacity=0 (hidden). <br />
 		 *	If the element is already 100% opaque (non-transparent), no animation is performed, and the callback is fired after a very small delay (to enforce async). <br />
-		 *	Arguments are interchangeable for backward compatibility reasons.
+		 *	Arguments are interchangeable for backward compatibility.
 		 *	@param {Number|String} tween	A tween value. Can be a <code>{Number} duration</code>, or <code>{String} "duration,easing-method"</code>.
 		 *	@param {Function} [callback]	A function to call once the fade has completed. Gets passed the selection.
 		 *	@returns {this}
@@ -936,8 +938,7 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/**	The opposite function for fadeIn(), also makes several guesses about the desired effect.
-		 */
+		/**	The opposite of fadeIn(). Makes several guesses about the desired effect. */
 		fadeOut : function(tween, callback, andIgnore) {
 			var originalOpacity = parseFloat(this.getStyle('opacity') || '1') || 1;
 			if (self.typeOf(tween)==='function') {
@@ -972,7 +973,9 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		},
 		
-		/** @note: automatically detects and uses CSS3 transitions. */
+		/**	Automatically detects and uses CSS3 transitions.
+		 *	@private
+		 */
 		animateCSS : (function() {
 			var manual, cssTransition, supportsCssTransition, checkCssTransitionSupport;
 			
@@ -1119,6 +1122,7 @@ if (typeof(Date.now)!=='function') {
 				}, 10);
 			};
 			
+			/**	@ignore */
 			checkCssTransitionSupport = function() {
 				supportsCssTransition = document.body.style[vendorCssPrefixJS+'Transition']!==undefined || document.body.style.transition!==undefined;
 				return supportsCssTransition;
@@ -1138,6 +1142,7 @@ if (typeof(Date.now)!=='function') {
 				return this;
 			};
 		}()),
+		
 		animate : function(animator, duration, easing, callback) {
 			if (animator) {
 				var nodeSelection = this,
@@ -1190,6 +1195,8 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	@private */
 		_createAnimationObj : function(animator, duration, easing, callback) {
 			var anim = {
 				animator	: animator,
@@ -1649,18 +1656,42 @@ if (typeof(Date.now)!=='function') {
 				return this.attr('disabled')!=='disabled' && this.prop('disabled')!==true && !this.hasClass('_puredom_disabled');
 			}
 		},
+
+		/**	Register an event handler. <br />
+		 *	When an event of the given type is triggered, the handler function is called.
+		 *	@param {String} eventType		An event type to listen for
+		 *	@param {Function} handler		A handler to call in response to the event
+		 *	@example
+		 *		function clickHandler(e){ alert(e.button); }
+		 *		foo.addEvent("click", clickHandler);
+		 *	@returns {this}
+		 */
 		addEvent : function(eventType, handler, useCapture) {
 			this._each(function(el) {
 				self.addEvent(el, eventType, handler, useCapture);
 			});
 			return this;
 		},
+
+		/**	Un-register an event handler.
+		 *	@param {String} eventType		The event type
+		 *	@param {Function} handler		The handler to remove
+		 *	@example
+		 *		foo.removeEvent("click", clickHandler);
+		 *	@returns {this}
+		 */
 		removeEvent : function(eventType, handler, useCapture) {
 			this._each(function(el) {
 				self.removeEvent(el, eventType, handler, useCapture);
 			});
 			return this;
 		},
+
+		/**	Fire an event on the selection.
+		 *	@param {String} type		An event type
+		 *	@param {Object|Event} e		The event data
+		 *	@returns {this}
+		 */
 		fireEvent : function(type, e) {
 			this._each(function(node) {
 				self.fireEvent(self.extend({}, e || {}, {
@@ -1670,6 +1701,8 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
+
+		/**	@private */
 		_removeAllEvents : function(deep) {
 			var children;
 			this._each(function(node) {
@@ -1682,6 +1715,11 @@ if (typeof(Date.now)!=='function') {
 			children = deep = null;
 			return this;
 		},
+
+		/**	Append an element to the DOM.
+		 *	@param {puredom.NodeSelection|HTMLElement} child	An element or a Selection of elements to append
+		 *	@returns {this}
+		 */
 		appendChild : function(child) {
 			if (child && this._nodes.length>0) {
 				if (child.constructor===this.constructor) {
@@ -1696,6 +1734,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Insert an element into the DOM before a given reference element.
+		 *	@param {puredom.NodeSelection|HTMLElement} child	An element or a Selection of elements to insert
+		 *	@param {puredom.NodeSelection|HTMLElement} before	An element or a Selection to insert <code>child</code> before
+		 *	@returns {this}
+		 */
 		insertBefore : function(child, before) {
 			if (child && this._nodes.length>0) {
 				if (before && before.constructor===this.constructor) {
@@ -1716,6 +1760,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Insert all elements in the Selection into a given parent. <br />
+		 *	Uses document fragments to improve performance when inserting a Selection containing multiple nodes.
+		 *	@param {puredom.NodeSelection|HTMLElement} what		A parent into which the selection should be inserted
+		 *	@returns {this}
+		 */
 		insertInto : function(what) {
 			var frag;
 			if (what && this.count()>0) {
@@ -1739,6 +1789,10 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Remove all elements in the Selection from the DOM.
+		 *	@returns {this}
+		 */
 		remove : function() {
 			this.fireEvent('remove');
 			this._each(function(node) {
@@ -1748,6 +1802,11 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
+
+		/**	Remove all elements in the Selection from the DOM, and <strong>destroy them</strong>. <br />
+		 *	<strong>Note:</strong> This also removes all elements from the Selection.
+		 *	@returns {this}
+		 */
 		destroy : function() {
 			this.remove();
 			this.fireEvent('destroy');
@@ -1755,13 +1814,21 @@ if (typeof(Date.now)!=='function') {
 			this._nodes.splice(0, this._nodes.length);
 			return this;
 		},
-		query : function(search, options) {
+
+		/**	Search for elements within the Selection's tree that match the given CSS selector. <br />
+		 *	<strong>Note:</strong> This is a scoped version of puredom(selector).
+		 *	@param {String} selector	A CSS selector
+		 *	@param {Object} [options]	Options, which get passed to puredom()
+		 *	@returns {puredom.NodeSelection} results
+		 */
+		query : function(selector, options) {
 			var results = [];
 			if (this._nodes.length>0) {
+				options = puredom.extend({}, options || {});
 				this._each(function(node) {
-					var r = self.getElement(search, puredom.extend({}, options || {}, {
-						within : node
-					}));
+					var r;
+					options.within = node;
+					r = self.getElement(selector, options);
 					if (self.isArray(r) && r.length>0) {
 						results = results.concat(r);
 					}
@@ -1769,6 +1836,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return new self.NodeSelection(results);
 		},
+
+		/**	Clone the selection, optionally into a new parent node.
+		 *	@param {Boolean} [deep=true]	Perform a deep clone, which clones all descendent nodes.
+		 *	@param {Object} [newParent]		Optionally inject into a new parentNode. Pass <code>true</code> to clone into the same parent.
+		 *	@returns {puredom.NodeSelection} clonedSelection
+		 */
 		clone : function(deep, newParent) {
 			var sel = [];
 			if (newParent===true) {
@@ -1787,45 +1860,24 @@ if (typeof(Date.now)!=='function') {
 			}
 			return sel;
 		},
+
+		/**	Get the number of elements in the Selection.
+		 *	@returns {Number} count
+		 */
 		count : function() {
 			return this._nodes.length;
 		},
+
+		/**	Check if the selection contains at least one element.
+		 *	@returns {Boolean} exists
+		 */
 		exists : function() {
 			return this.count()>0;
 		},
-		next : function() {
-			var sib = this._nodes[0] && this._nodes[0].nextSibling;
-			while (sib && sib.nodeType===3) {
-				sib = sib.nextSibling;
-			}
-			return new self.NodeSelection(sib && [sib] || null);
-		},
-		prev : function() {
-			var sib = this._nodes[0] && this._nodes[0].previousSibling;
-			while (sib && sib.nodeType===3) {
-				sib = sib.previousSibling;
-			}
-			return new self.NodeSelection(sib && [sib] || null);
-		},
-		previous : function(){ return this.prev.apply(this,arguments); },
-		firstChild : function() {
-			return this.children().first();
-		},
-		lastChild : function() {
-			return this.children().last();
-		},
-		nthChild : function(n) {
-			return this.children().index(n);
-		},
-		first : function(n) {
-			return new self.NodeSelection( this._nodes.slice(0, n || 1) );
-		},
-		last : function(n) {
-			return new self.NodeSelection( this._nodes.slice(this._nodes.length-(n || 1)) );
-		},
-		index : function(i, n) {
-			return new self.NodeSelection(self.typeOf(i)==='number' && this._nodes.slice(i, i + (n || 1)) || null);
-		},
+
+		/**	Get a new Selection containing both the next and previous sibling elements of each element in the current Selection.
+		 *	@returns {puredom.NodeSelection} siblings
+		 */
 		siblings : function() {
 			var newSelection = new self.NodeSelection();
 			this._each(function(node) {
@@ -1844,6 +1896,82 @@ if (typeof(Date.now)!=='function') {
 			});
 			return newSelection;
 		},
+
+		/**	Get a new Selection containing the next sibling elements of each element in the current Selection.
+		 *	@returns {puredom.NodeSelection} nextSiblings
+		 */
+		next : function() {
+			var sib = this._nodes[0] && this._nodes[0].nextSibling;
+			while (sib && sib.nodeType===3) {
+				sib = sib.nextSibling;
+			}
+			return new self.NodeSelection(sib && [sib] || null);
+		},
+
+		/**	Get a new Selection containing the previous sibling elements of each element in the current Selection.
+		 *	@returns {puredom.NodeSelection} previousSiblings
+		 */
+		prev : function() {
+			var sib = this._nodes[0] && this._nodes[0].previousSibling;
+			while (sib && sib.nodeType===3) {
+				sib = sib.previousSibling;
+			}
+			return new self.NodeSelection(sib && [sib] || null);
+		},
+
+		/**	Alais of {@link puredom.NodeSelection#prev} */
+		previous : function() {
+			return this.prev.apply(this,arguments);
+		},
+
+		/**	Get a new Selection containing the first direct child element of the current Selection.
+		 *	@returns {puredom.NodeSelection} firstChild
+		 */
+		firstChild : function() {
+			return this.children().first();
+		},
+
+		/**	Get a new Selection containing the last direct child element of the current Selection.
+		 *	@returns {puredom.NodeSelection} firstChild
+		 */
+		lastChild : function() {
+			return this.children().last();
+		},
+
+		/**	Get a new Selection containing the direct child element of the current Selection at index <code>n</code>.
+		 *	@param {Number} n		A 0-based index.
+		 *	@returns {puredom.NodeSelection} nthChild
+		 */
+		nthChild : function(n) {
+			return this.children().index(n);
+		},
+
+		/**	Get a new Selection containing only the first element in the current Selection.
+		 *	@returns {puredom.NodeSelection} first
+		 */
+		first : function(n) {
+			return new self.NodeSelection( this._nodes.slice(0, n || 1) );
+		},
+
+		/**	Get a new Selection containing only the last element in the current Selection.
+		 *	@returns {puredom.NodeSelection} last
+		 */
+		last : function(n) {
+			return new self.NodeSelection( this._nodes.slice(this._nodes.length-(n || 1)) );
+		},
+
+		/**	Get a new Selection containing only the <code>n</code> element(s) in the current Selection starting at index <code>i</code>.
+		 *	@param {Number} i		A 0-based index of the elements(s) to return
+		 *	@param {Number} [n=1]	The number of elements to return
+		 *	@returns {puredom.NodeSelection} slice
+		 */
+		index : function(i, n) {
+			return new self.NodeSelection(self.typeOf(i)==='number' && this._nodes.slice(i, i + (n || 1)) || null);
+		},
+
+		/**	Get a new Selection containing the de-duped parent elements of the current Selection.
+		 *	@returns {puredom.NodeSelection} parents
+		 */
 		parent : function() {
 			var nodes=[], parent;
 			this._each(function(node) {
@@ -1856,6 +1984,10 @@ if (typeof(Date.now)!=='function') {
 			});
 			return new self.NodeSelection(nodes);
 		},
+
+		/**	Get a new Selection containing all direct child elements of the current Selection.
+		 *	@returns {puredom.NodeSelection} children
+		 */
 		children : function() {
 			var children = [], 
 				x, y;
@@ -1872,8 +2004,12 @@ if (typeof(Date.now)!=='function') {
 			}
 			return new self.NodeSelection(children);
 		},
+
+		/**	Submit any forms in the Selection.
+		 *	@returns {this}
+		 */
 		submit : function() {
-			this._each(function(node) {
+			return this._each(function(node) {
 				var evt = self.fireEvent({
 					type : 'submit',
 					target : node
@@ -1885,7 +2021,13 @@ if (typeof(Date.now)!=='function') {
 				}
 			});
 		},
-		/** @notes: Only affects the first item in the selection. */
+
+		/** Get or set the selected text of an input element. <br />
+		 *	<strong>Note:</strong> This only operates on the first element in the selection.
+		 *	@param {Number} start			A character index at which to start text selection
+		 *	@param {Number} [end=start]		A character index at which to end text selection
+		 *	@returns {Object} An object with <code>start</code>, <code>end</code> and <code>text</code> properties correspdonding to the current selection state.
+		 */
 		selection : function(start, end) {
 			var el = this._nodes[0],
 				value, sel, before, endMax, range;
@@ -1956,6 +2098,16 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
+
+		/**	Template the Selection and all descendants based on <code>data-tpl-id</code> attributes. <br />
+		 *	Each element with a <code>data-tpl-id</code> attribute will have it's contents updated with the corresponding value of that attribute when interpreted as a dot-notated key path within <code>templateFields</code>. <br />
+		 *	<code>data-tpl-id</code> attribute values can optionally include a pipe-separated list of "filters". <br />
+		 *	<strong>Example:</strong> <br />
+		 *		<pre><span data-tpl-id="article.title|ucWords|truncate:byWord,300|htmlEntities"></span></pre> <br />
+		 *	<em><strong>Note:</strong> the "htmlEntities" filter is already added for you where needed.</em>
+		 *	@param {Object} [templateFields={}]		Template data fields. Nested Objects/Arrays are addressable via dot notation.
+		 *	@returns {this}
+		 */
 		template : function(templateFields) {
 			var getFilters;
 			templateFields = templateFields || {};
@@ -4002,676 +4154,660 @@ if (typeof(Date.now)!=='function') {
 		window.define('puredom', self);
 	}
 }());
-/** @ignore */
-window.puredom = window.puredom || {};
+/**	@fileOverview Utilities that just get grafted onto the puredom namespace. */
 
-(function() {
+puredom.extend(puredom, /** @lends puredom */ {
 	
-	var util = /** @lends puredom */ {
+	/** When called as a function, <code>puredom.text()</code> acts as an alias of {@link puredom.text.filter}.
+	 *	@namespace A collection of text utilities and a way to apply them as filters.
+	 *	@function
+	 *	@name puredom.text
+	 *	@param {String} str		The string to modify
+	 *	@param {String|Array}	A pipe-separated String or Array, where each value is a filter. Arguments to a filter can be passed using a colon followed by a CSV of the arguments.
+	 *	@returns {String} The modified string
+	 */
+	text : (function() {
+		/** @exports base as puredom.text */
 		
-		/** When called as a function, <code>puredom.text()</code> acts as an alias of {@link puredom.text.filter}.
-		 *	@namespace A collection of text utilities and a way to apply them as filters.
-		 *	@function
-		 *	@name puredom.text
+		/** @public A collection of text utilities and a way to apply them as filters. <br />
+		 *	<strong>Note:</strong> puredom.text() is a convenient shortcut for this method.
 		 *	@param {String} str		The string to modify
 		 *	@param {String|Array}	A pipe-separated String or Array, where each value is a filter. Arguments to a filter can be passed using a colon followed by a CSV of the arguments.
 		 *	@returns {String} The modified string
-		 */
-		text : (function() {
-			/** @exports base as puredom.text */
-			
-			/** @public A collection of text utilities and a way to apply them as filters. <br />
-			 *	<strong>Note:</strong> puredom.text() is a convenient shortcut for this method.
-			 *	@param {String} str		The string to modify
-			 *	@param {String|Array}	A pipe-separated String or Array, where each value is a filter. Arguments to a filter can be passed using a colon followed by a CSV of the arguments.
-			 *	@returns {String} The modified string
-			 *	@function
-			 */
-			var base = function(){
-					return base.filter.apply(this, arguments);
-				},
-				regexes = {
-					htmlEntities : /[&<>"]/gim,
-					ucWords : /(^|\s)[a-z]/gim,
-					ucFirst : /^[a-z]/gim,
-					nl2br : /\r?\n/g,
-					numbersOnly : /[^0-9.\-]/gim,
-					trim : /^\s*?(.*?)\s*?$/gim
-				};
-			
-			/** Modify a string using a filter to apply any functions available in {@link puredom#text}.
-			 *	@param {String} str				The string to modify
-			 *	@param {String|Array} filters	A bar-separated string or {Array}, where each value is a filter. Arguments to a filter can be passed using a colon followed by a CSV of the arguments.
-			 *	@returns {String} The modified string
-			 *	@example
-			 * puredom.text.filter(" <hi there!> ", 'trim|ucWords|htmlEntities') === "&lt;Hi There!&gt;";
-			 * puredom.text("This string might be too long!", 'truncate:10,byWord') === "This string...";
-			 */
-			base.filter = function(str, filters) {
-				var x, filter, ind, args, i;
-				if (puredom.typeOf(filters)!=='array') {
-					filters = ((filters||'') + '').split('|');
-				}
-				if (arguments.length>2) {
-					for (x=2; x<arguments.length; x++) {
-						if (puredom.typeOf(arguments[x])==='array') {
-							filters = filters.concat(arguments[x]);
-						}
-						else {
-							filters.push(arguments[x]);
-						}
-					}
-				}
-				for (x=0; x<filters.length; x++) {
-					filter = filters[x];
-					args = [str];
-					ind = filter.indexOf(':');
-					if (ind>-1) {
-						filter = filter.substring(0, ind);
-						args = args.concat(filters[x].substring(ind+1).split(','));
-					}
-					for (i in base) {
-						if ((i+'').toLowerCase()===filter.toLowerCase()) {
-							str = base[i].apply(base, args);
-							break;
-						}
-					}
-				}
-				return str;
-			};
-			
-			/**	URL-encode a string. (using encodeURIComponent)
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.escape = function(str) {
-				return encodeURIComponent(str);
-			};
-			
-			/**	URL-decode a string. (using decodeURIComponent)
-			 *	@public
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.unescape = function(str) {
-				return decodeURIComponent(str);
-			};
-			
-			/**	Convert special characters to their HTML-encoded equivalents.
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.htmlEntities = function(str) {
-				var map = {
-					'&' : '&amp;',
-					'<' : '&lt;',
-					'>' : '&gt;',
-					'"' : '&quot;'
-				};
-				return (str+'').replace(regexes.htmlEntities, function(s) {
-					return map[s];
-				});
-			};
-			
-			/**	Convert the first character of each word to uppercase.
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.ucWords = function(str) {
-				return (str+'').toLowerCase().replace(regexes.ucWords, function(s) {
-					return s.toUpperCase();
-				});
-			};
-			
-			/**	Convert the first character of the first word to uppercase.
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.ucFirst = function(str) {
-				return (str+'').toLowerCase().replace(regexes.ucFirst, function(s) {
-					return s.toUpperCase();
-				});
-			};
-			
-			/**	Convert newline characters to HTML <br /> elements.
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.nl2br = function(str) {
-				return (str+'').replace(regexes.nl2br, '<br />');
-			};
-			
-			/**	Strip all non-numeric characters from a string.
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.numbersOnly = function(str) {
-				return (str+'').replace(regexes.numbersOnly, '');
-			};
-			
-			/** Truncate a string, optionally on word boundaries. <br />
-			 *	Optionally adds a textual truncation indicator (eg: "...").
-			 *	@param {String} str						The string to truncate
-			 *	@param {Number} [maxLen=80]				Maximum string length, in characters.
-			 *	@param {Boolean|String} [byWord=false]	Don't truncate in the middle of words. Resultant string may be shorter if set to true.
-			 *	@param {String} [indicatorChars="..."]	Custom indicator characters if truncation occurs. Defaults to "...".
-			 *	@returns {String} The truncated string
-			 */
-			base.truncate = function(str, maxLen, byWord, indicatorChars) {
-				var trimmed = false,
-					origStr = str+'';
-				str = origStr;
-				maxLen = parseInt(maxLen,10) || 80;
-				byWord = byWord===true || byWord==='true' || byWord==='byWord';
-				indicatorChars = indicatorChars || '...';
-				if (str.length>maxLen) {
-					if (byWord) {
-						str = str.substring(0, maxLen);
-						if (!origStr.charAt(maxLen).match(/\s/)) {
-							str = str.replace(/\s[^\s]*$/,'');
-						}
-					}
-					else {
-						str = str.substring(0, maxLen-indicatorChars.length);
-					}
-					trimmed = true;
-				}
-				if (trimmed) {
-					str += indicatorChars;
-				}
-				return str;
-			};
-			
-			/** Fast JS trim implementation across all browsers. <br />
-			 *	<em>Note: Research credit goes to http://blog.stevenlevithan.com/archives/faster-trim-javascript</em>
-			 *	@param {String} str		The string to modify
-			 *	@returns {String} The modified string
-			 */
-			base.trim = function(str) {
-				//return str.replace(regexes.trim, '$1');
-				var ws = /\s/, i;
-				str = str.replace(/^\s\s*/, '');
-				i = str.length;
-				while (ws.test(str.charAt(--i)));
-				return str.slice(0, i + 1);
-			};
-			
-			
-			/** Default/fallback text. <br />
-			 *	Used by templates to provide fallback values for empty fields.
-			 *	@param {String} str		The string to modify
-			 *	@param {String} text	Default text if str is empty.
-			 *	@returns {String} The modified string
-			 */
-			base['default'] = function(str, text) {
-				str = base.trim(str);
-				return str ? str : text;
-			};
-			
-			
-			/** Format a date using whatever i18n module is registered with puredom. <br />
-			 *	<em><strong>Note:</strong> Requires a conversion function to be registered as puredom.i18n() in order to convert dates.</em>
-			 *	@requires puredom.i18n
-			 *	@param {String} str				The string to modify
-			 *	@param {String} [type=date]		A date type to pass to i18n. Defaults to "date".
-			 *	@returns {String} The formatted date string
-			 */
-			base.dateformat = function(str, type) {
-				var i18n = puredom.i18n,
-					d = puredom.date,
-					date;
-				if (d && d.create) {
-					date = d.create(str);
-				}
-				if (!date || (date+'').indexOf('Invalid')>-1) {
-					date = new Date(str);
-					if (!date || (date+'').indexOf('Invalid')>-1) {
-						date = new Date();
-						date.setTime(Math.round(str));
-					}
-				}
-				if (type && type.indexOf('%')>-1) {
-					if (d && d.format) {
-						str = d.format(date, type);
-					}
-				}
-				else if (i18n) {
-					str = i18n(date, null, null, {
-						datetype : type || 'date'
-					}) || (date+'');
-				}
-				return str;
-			};
-			
-			
-			return base;
-		}()),
-		
-		
-		
-		/**	Convert an object to a sequence of URL-encoded key-value parameters.
-		 *		This function is the same as {@link puredom.querystring.stringify}, except that
-		 *		it prepends a '?' to the result by default. (ie: startDelimiter is '?' by default)
-		 *	@name puredom.parameterize
-		 *	@param {Object} obj		The object to serialize
-		 *	@param config			Configuration overrides. See {@link puredom.querystring.stringify}
-		 *	@see puredom.querystring.stringify
-		 *	@deprecated
-		 *	@private
-		 *	@returns {String} The generated querystring
-		 */
-		parameterize : function(obj, customConfig) {
-			var t = [],
-				key, value, x, type,
-				config = puredom.extend({
-					delimiter		: '&',
-					startDelimiter	: '?',
-					assignment		: '=',
-					typeHandlers	: null
-				}, customConfig);
-			
-			for (key in obj) {
-				if (obj.hasOwnProperty(key)) {
-					value = obj[key];
-					type = this.typeOf(value);
-					if (config.typeHandlers && config.typeHandlers.hasOwnProperty(type)) {
-						t.push( config.delimiter + encodeURIComponent(key) + "=" + encodeURIComponent(config.typeHandlers[type](value)) );
-					}
-					else if (type==='array' && config.disableArrayParams!==true) {
-						for (x=0; x<value.length; x++) {
-							t.push( config.delimiter + encodeURIComponent(key) + "[]=" + encodeURIComponent(value[x]) );
-						}
-					}
-					else {
-						switch (type) {
-							case 'boolean':
-								value = value ? 'true' : 'false';
-								break;
-							case 'null':
-							case 'undefined':
-								value = '';
-								break;
-							case 'object':
-								if (config.useJsonForObjects!==false) {
-									// nested objects get serialized as JSON by default:
-									value = this.json(value);
-								}
-								else {
-									// alternatively, they can be serialized by double-encoding:
-									value = this.parameterize(value);
-								}
-								break;
-						}
-						t.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
-					}
-				}
-			}
-			t = t.join(config.delimiter || '&');
-			t = (config.startDelimiter || '') + t;
-			return t;
-		},
-		
-		
-		
-		/** @namespace Handles querystring encoding and decoding.
-		 *	@name puredom.querystring
-		 */
-		querystring : {
-			/** @lends puredom.querystring */
-			
-			/** Parse a querystring and return an {Object} with the key-value pairs as its properties.
-			 *	<em>Note: Preceeding '?' and '&' characters will be stripped. Empty parameters will be returned as empty strings.</em>
-			 *	@param {String} querystring		The querystring to parse.
-			 *	@returns {Object} The key-value parameters as an object.
-			 */
-			parse : function(str) {
-				var parts, i, j, p={};
-				if (str.substring(0,1)==='?') {
-					str = str.substring(1);
-				}
-				parts = str.split('&');
-				for (i=0; i<parts.length; i++) {
-					if (parts[i]) {
-						j = parts[i].indexOf('=');
-						p[decodeURIComponent(parts[i].substring(0,j))] = j<0 ? '' : decodeURIComponent(parts[i].substring(j+1));
-					}
-				}
-				return p;
-			},
-			
-			/** Convert an object into a querystring, optionally with custom separator/delimiter characters.
-			 *	<em>Note: Nested objects are serialized as double-encoded querystring parameters by default. To use JSON for nested objects, set the "useJsonForObjects" flag to true.</em>
-			 *	Available options:
-			 *		{Boolean} useJsonForObjects		Use JSON to serialize nested objects? (uses double-encoding by default)
-			 *		{Boolean} disableArrayParams	Disable PHP-style "array parameters? ex: p[]=foo&p[]=bar
-			 *		{Object} typeHandlers			Specify custom serializers for each data type by setting type:handler. Handlers accept the original data and return the serialized parameter value, *not* URL-encoded.
-			 *		{String} assignment				The key-value separator. Defaults to "=".
-			 *		{String} delimiter				The group separator. Defaults to "&".
-			 *		{String} startDelimiter			A character to insert at the beginning of the string. Defaults to none.
-			 *	@param {Object} parameters		A key-value map of parameters to serialize.
-			 *	@param {Object} [options]		A hashmap of configuration options.
-			 */
-			stringify : function(parameters, options) {
-				options = puredom.extend({ startDelimiter:'' }, options || {});
-				return puredom.parameterize(parameters, options);
-			},
-			build : function(){return puredom.querystring.stringify.apply(puredom.querystring,arguments);}
-		},
-		
-		
-		
-		/**	@namespace Handles storage and retrieval of cookies.
-		 *	@name puredom.cookies
-		 */
-		cookies : (function(){
-			var cache = {};
-			
-			return /** @lends puredom.cookies */ {
-				
-				/**	Set a cookie with name *key* to value *value*
-				 *	@exports set as puredom.cookies.set
-				 *	@param {String} key		The key for storage
-				 *	@param {String} value	A value to store
-				 *	@param {Number} days	The cookie lifetime in number of days.
-				 */
-				set : function (key, value, days, domain, path, secure) {
-					var expires = '',
-						cookie = '',
-						date;
-					path = typeof(path)==='string' ? path : '';
-					if (days) {
-						date = new Date();
-						date.setTime(date.getTime() + days*24*60*60*1000);
-						expires = "; expires="+date.toGMTString();
-					}
-					if(cache.hasOwnProperty(key) && cache[key].expires) {
-						expires = "; expires="+cache[key].expires.toGMTString();
-					}
-					cookie = key + "=" + encodeURIComponent(value) + expires + "; path=/"+path.replace(/^\//,'');
-					if (typeof(domain)==='string' && domain.length>0) {
-						cookie += '; domain=' + domain.replace(/[\;\,]/,'');
-					}
-					if (secure===true) {
-						cookie += '; secure';
-					}
-					//puredom.log('puredom.cookies.set() :: ' + cookie);
-					document.cookie = cookie;
-					cache[key] = {
-						value : value,
-						expires : date
-					};
-				},
-				
-				/**	Get a cookie. Pulls values from cache when possible.
-				 *	@exports get as puredom.cookies.get
-				 *	@param {String} key					The key to lookup
-				 *	@param {Boolean} [useCached=true]	Use cached value if present
-				 *	@returns {String} value				The value, or <code>null</code> if the lookup failed.
-				 */
-				get : function (key, useCached) {
-					if(cache.hasOwnProperty(key) && useCached!==true) {
-						return cache[key].value;
-					}
-					var c, i, ca = document.cookie.split(';');
-					for (i=0; i<ca.length; i++) {
-						c = ca[i].replace(/^\s+/gim,'');
-						if (c.indexOf(key+"=")===0) {
-							return decodeURIComponent(c.substring(key.length+1,c.length));
-						}
-					}
-					return null;
-				},
-				/**	Remove a cookie and any cached values
-				 *	@param {String} key		The key to remove
-				 */
-				remove	: function (key) {
-					this.set(key, "", -1);
-					delete cache[key];
-				},
-				/**	Remove all cookies and cached values */
-				purge	: function () {
-					for (var x in cache) {
-						if(cache.hasOwnProperty(x)) {
-							this.remove(x);
-							delete cache[x];
-						}
-					}
-				},
-				/** Alias of {@link puredom.cookies.get}
-				 *	@see puredom.cookies.get
-				 *	@private
-				 */
-				read : function() {
-					return this.get.apply(this,arguments);
-				},
-				/** Alias of {@link puredom.cookies.set}
-				 *	@see puredom.cookies.set
-				 *	@private
-				 */
-				write : function() {
-					return this.set.apply(this,arguments);
-				}
-			};
-		}()),
-		
-		
-		/**	@ignore */
-		Cache : (function() {
-			/** @class In-memeory cache class with a twist! <br />
-			 *	Set and get work like a normal cache.
-			 *	Creates a new Cache instance.
-			 *	@name puredom.Cache
-			 */
-			function Cache() {
-				if (this.constructor!==arguments.callee && this.constructor!==Cache) {
-					return new Cache();
-				}
-				this.data = {};
-			}
-			
-			puredom.extend(Cache.prototype, /** @lends puredom.Cache# */ {
-				
-				/** The default *type* used for namespacing keys is "_default" */
-				defaultType : '_default',
-				
-				/** Purge all entries from the cache */
-				purge : function() {
-					this.data = {};
-				},
-				
-				/** Get a cached value with optional type. 
-				 *	@param {String} [type]		A type prefix.
-				 *	@param {String|Number} id	The cache entry ID
-				 *	@param {Function} callback	A callback, gets passed the cached value once retrieved.
-				 */
-				get : function(type, id, cb) {
-					var d;
-					if (arguments.length===2) {
-						id = type;
-						cb = id;
-						type = null;
-					}
-					type = (type || this.defaultType)+'';
-					id = id+'';
-					d = this.data.hasOwnProperty(type) && this.data[type][id] || false;
-					if (cb) {
-						if (d) {
-							cb(d);
-						}
-						return !!d;
-					}
-					return d;
-				},
-				
-				/** Get a cached value with optional type. 
-				 *	@param {String} [type]		A type prefix.
-				 *	@param {String|Number} id	The cache entry ID
-				 *	@param value				Any value to cache.
-				 */
-				set : function(type, id, val) {
-					if (arguments.length===2) {
-						id = type;
-						val = id;
-						type = null;
-					}
-					type = (type || this.defaultType)+'';
-					id = id+'';
-					if (!this.data[type]) {
-						this.data[type] = {};
-					}
-					this.data[type][id] = val;
-				},
-				
-				/** Proxy a callback function for automatically caching asynchronous responses.
-				 *	@param {String} [type]		A type prefix.
-				 *	@param {String|Number} id	The cache entry ID
-				 *	@param {Function} callback	The callback function to inject c
-				 *	@param {Number} paramIndex	Which callback parameter to cache (0-based).
-				 *	@returns {Function} The proxied callback function, with the cache set injected.
-				 */
-				proxySet : function(type, id, callback, paramIndex) {
-					var self = this;	//, cb;
-					//cb = function() {
-					return function() {
-						self.set(type, id, arguments[paramIndex || 0]);
-						if (callback) {
-							callback.apply(callback, arguments);
-						}
-						//self = cb = type = id = callback = paramIndex = null;
-					};
-					//return cb;
-				},
-				
-				/** Iterate over all the cache entries.
-				 *	@param {Function} iterator	Gets passed each entry.
-				 */
-				each : function(iterator) {
-					return puredom.foreach(this.data, iterator);
-				}
-			});
-			return Cache;
-		}()),
-		
-		
-		
-		/** @namespace Parse and generate JSON.
-		 *	When called as a function, <code>puredom.json()</code> automatically converts between JSON-Strings and Objects.
 		 *	@function
-		 *	@name puredom.json
-		 *	@param {String|Object|Array} what		If a String is passed, it is parsed as JSON. Otherwise, returns JSON-encoded value of <code>what</code>.
-		 *	@returns {String|Object|Array} jsonStringOrJsonResult
 		 */
-		json : (function() {
-			/** @exports json as puredom.json */
-			
-			/**	@private */
-			var json = function(what) {
-				if (puredom.typeOf(what)==="string") {
-					return json.parse(what);
-				}
-				return json.stringify(what);
+		var base = function(){
+				return base.filter.apply(this, arguments);
+			},
+			regexes = {
+				htmlEntities : /[&<>"]/gim,
+				ucWords : /(^|\s)[a-z]/gim,
+				ucFirst : /^[a-z]/gim,
+				nl2br : /\r?\n/g,
+				numbersOnly : /[^0-9.\-]/gim,
+				trim : /^\s*?(.*?)\s*?$/gim
 			};
-			
-			/** Serialize a JavaScript object structure to a JSON string.<br />
-			 *	<em>Note: Circular references cause this function to fail.</em>
-			 *	@param what			Any object of any type.
-			 *	@returns {String} The JSON-encoded string
-			 */
-			json.stringify = function(what) {
-				var result;
-				try {
-					result = JSON.stringify(what);
-				}catch(err) {
-					puredom.log("puredom.json:: Stringify failed: " + err + " | " + what);
-				}
-				return result;
-			};
-			
-			/** Parse JSON from a {String} and return the resulting object.
-			 *	@param {String} json	A string containing JSON.
-			 *	@returns {Object|Array|String|Number} jsonResult
-			 *	@example
-			 *		var obj = puredom.json.parse('{"items":[{"title":"Example"}]}');
-			 */
-			json.parse = function(what) {
-				var result;
-				if (typeof(what)==='string' && what.length>0) {
-					try {
-						result = JSON.parse(what);
-					}catch(err) {
-						puredom.log("puredom.json:: Parse failed: " + err + " | " + what);
+		
+		/** Modify a string using a filter to apply any functions available in {@link puredom#text}.
+		 *	@param {String} str				The string to modify
+		 *	@param {String|Array} filters	A bar-separated string or {Array}, where each value is a filter. Arguments to a filter can be passed using a colon followed by a CSV of the arguments.
+		 *	@returns {String} The modified string
+		 *	@example
+		 * puredom.text.filter(" <hi there!> ", 'trim|ucWords|htmlEntities') === "&lt;Hi There!&gt;";
+		 * puredom.text("This string might be too long!", 'truncate:10,byWord') === "This string...";
+		 */
+		base.filter = function(str, filters) {
+			var x, filter, ind, args, i;
+			if (puredom.typeOf(filters)!=='array') {
+				filters = ((filters||'') + '').split('|');
+			}
+			if (arguments.length>2) {
+				for (x=2; x<arguments.length; x++) {
+					if (puredom.typeOf(arguments[x])==='array') {
+						filters = filters.concat(arguments[x]);
+					}
+					else {
+						filters.push(arguments[x]);
 					}
 				}
-				return result;
-			};
-			
-			/**	Alias of {@link puredom.json.stringify}
-			 *	@function
-			 *	@deprecated
-			 *	@private
-			 */
-			json.serialize = json.stringify;
-			
-			/**	Alias of {@link puredom.json.parse}
-			 *	@function
-			 *	@deprecated
-			 *	@private
-			 */
-			json.unserialize = json.parse;
-			
-			return json;
-		}()),
+			}
+			for (x=0; x<filters.length; x++) {
+				filter = filters[x];
+				args = [str];
+				ind = filter.indexOf(':');
+				if (ind>-1) {
+					filter = filter.substring(0, ind);
+					args = args.concat(filters[x].substring(ind+1).split(','));
+				}
+				for (i in base) {
+					if ((i+'').toLowerCase()===filter.toLowerCase()) {
+						str = base[i].apply(base, args);
+						break;
+					}
+				}
+			}
+			return str;
+		};
 		
-		
-		
-		/** @namespace Parse and generate XML.
-		 *	@name puredom.xml
+		/**	URL-encode a string. (using encodeURIComponent)
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
 		 */
-		xml : /** @lends puredom.xml */ {
-			
-			/** Parse XML from a string and return the resulting {Document}.
-			 *	@param {String} xmlString		The XML to parse
-			 *	@returns {Document} The XML document.
-			 *	@example
-			 *		var doc = puredom.xml.parse('<items><item><title>Example</title></item></items>');
-			 */
-			parse : function(xmlString) {
-				var xmlDoc;
-				if (window.DOMParser) {
-					xmlDoc = new window.DOMParser().parseFromString(xmlString, "text/xml");
+		base.escape = function(str) {
+			return encodeURIComponent(str);
+		};
+		
+		/**	URL-decode a string. (using decodeURIComponent)
+		 *	@public
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.unescape = function(str) {
+			return decodeURIComponent(str);
+		};
+		
+		/**	Convert special characters to their HTML-encoded equivalents.
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.htmlEntities = function(str) {
+			var map = {
+				'&' : '&amp;',
+				'<' : '&lt;',
+				'>' : '&gt;',
+				'"' : '&quot;'
+			};
+			return (str+'').replace(regexes.htmlEntities, function(s) {
+				return map[s];
+			});
+		};
+		
+		/**	Convert the first character of each word to uppercase.
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.ucWords = function(str) {
+			return (str+'').toLowerCase().replace(regexes.ucWords, function(s) {
+				return s.toUpperCase();
+			});
+		};
+		
+		/**	Convert the first character of the first word to uppercase.
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.ucFirst = function(str) {
+			return (str+'').toLowerCase().replace(regexes.ucFirst, function(s) {
+				return s.toUpperCase();
+			});
+		};
+		
+		/**	Convert newline characters to HTML <br /> elements.
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.nl2br = function(str) {
+			return (str+'').replace(regexes.nl2br, '<br />');
+		};
+		
+		/**	Strip all non-numeric characters from a string.
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.numbersOnly = function(str) {
+			return (str+'').replace(regexes.numbersOnly, '');
+		};
+		
+		/** Truncate a string, optionally on word boundaries. <br />
+		 *	Optionally adds a textual truncation indicator (eg: "...").
+		 *	@param {String} str						The string to truncate
+		 *	@param {Number} [maxLen=80]				Maximum string length, in characters.
+		 *	@param {Boolean|String} [byWord=false]	Don't truncate in the middle of words. Resultant string may be shorter if set to true.
+		 *	@param {String} [indicatorChars="..."]	Custom indicator characters if truncation occurs. Defaults to "...".
+		 *	@returns {String} The truncated string
+		 */
+		base.truncate = function(str, maxLen, byWord, indicatorChars) {
+			var trimmed = false,
+				origStr = str+'';
+			str = origStr;
+			maxLen = parseInt(maxLen,10) || 80;
+			byWord = byWord===true || byWord==='true' || byWord==='byWord';
+			indicatorChars = indicatorChars || '...';
+			if (str.length>maxLen) {
+				if (byWord) {
+					str = str.substring(0, maxLen);
+					if (!origStr.charAt(maxLen).match(/\s/)) {
+						str = str.replace(/\s[^\s]*$/,'');
+					}
 				}
 				else {
-					// Internet Explorer
-					xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
-					xmlDoc.async = "false";
-					xmlDoc.loadXML(xmlString);
+					str = str.substring(0, maxLen-indicatorChars.length);
 				}
-				return xmlDoc;
+				trimmed = true;
+			}
+			if (trimmed) {
+				str += indicatorChars;
+			}
+			return str;
+		};
+		
+		/** Fast JS trim implementation across all browsers. <br />
+		 *	<em>Note: Research credit goes to http://blog.stevenlevithan.com/archives/faster-trim-javascript</em>
+		 *	@param {String} str		The string to modify
+		 *	@returns {String} The modified string
+		 */
+		base.trim = function(str) {
+			//return str.replace(regexes.trim, '$1');
+			var ws = /\s/, i;
+			str = str.replace(/^\s\s*/, '');
+			i = str.length;
+			while (ws.test(str.charAt(--i)));
+			return str.slice(0, i + 1);
+		};
+		
+		
+		/** Default/fallback text. <br />
+		 *	Used by templates to provide fallback values for empty fields.
+		 *	@param {String} str		The string to modify
+		 *	@param {String} text	Default text if str is empty.
+		 *	@returns {String} The modified string
+		 */
+		base['default'] = function(str, text) {
+			str = base.trim(str);
+			return str ? str : text;
+		};
+		
+		
+		/** Format a date using whatever i18n module is registered with puredom. <br />
+		 *	<em><strong>Note:</strong> Requires a conversion function to be registered as puredom.i18n() in order to convert dates.</em>
+		 *	@requires puredom.i18n
+		 *	@param {String} str				The string to modify
+		 *	@param {String} [type=date]		A date type to pass to i18n. Defaults to "date".
+		 *	@returns {String} The formatted date string
+		 */
+		base.dateformat = function(str, type) {
+			var i18n = puredom.i18n,
+				d = puredom.date,
+				date;
+			if (d && d.create) {
+				date = d.create(str);
+			}
+			if (!date || (date+'').indexOf('Invalid')>-1) {
+				date = new Date(str);
+				if (!date || (date+'').indexOf('Invalid')>-1) {
+					date = new Date();
+					date.setTime(Math.round(str));
+				}
+			}
+			if (type && type.indexOf('%')>-1) {
+				if (d && d.format) {
+					str = d.format(date, type);
+				}
+			}
+			else if (i18n) {
+				str = i18n(date, null, null, {
+					datetype : type || 'date'
+				}) || (date+'');
+			}
+			return str;
+		};
+		
+		
+		return base;
+	}()),
+	
+	
+	
+	/**	Convert an object to a sequence of URL-encoded key-value parameters.
+	 *		This function is the same as {@link puredom.querystring.stringify}, except that
+	 *		it prepends a '?' to the result by default. (ie: startDelimiter is '?' by default)
+	 *	@name puredom.parameterize
+	 *	@param {Object} obj		The object to serialize
+	 *	@param config			Configuration overrides. See {@link puredom.querystring.stringify}
+	 *	@see puredom.querystring.stringify
+	 *	@deprecated
+	 *	@private
+	 *	@returns {String} The generated querystring
+	 */
+	parameterize : function(obj, customConfig) {
+		var t = [],
+			key, value, x, type,
+			config = puredom.extend({
+				delimiter		: '&',
+				startDelimiter	: '?',
+				assignment		: '=',
+				typeHandlers	: null
+			}, customConfig);
+		
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				value = obj[key];
+				type = this.typeOf(value);
+				if (config.typeHandlers && config.typeHandlers.hasOwnProperty(type)) {
+					t.push( config.delimiter + encodeURIComponent(key) + "=" + encodeURIComponent(config.typeHandlers[type](value)) );
+				}
+				else if (type==='array' && config.disableArrayParams!==true) {
+					for (x=0; x<value.length; x++) {
+						t.push( config.delimiter + encodeURIComponent(key) + "[]=" + encodeURIComponent(value[x]) );
+					}
+				}
+				else {
+					switch (type) {
+						case 'boolean':
+							value = value ? 'true' : 'false';
+							break;
+						case 'null':
+						case 'undefined':
+							value = '';
+							break;
+						case 'object':
+							if (config.useJsonForObjects!==false) {
+								// nested objects get serialized as JSON by default:
+								value = this.json(value);
+							}
+							else {
+								// alternatively, they can be serialized by double-encoding:
+								value = this.parameterize(value);
+							}
+							break;
+					}
+					t.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
+				}
 			}
 		}
-		
-	};
+		t = t.join(config.delimiter || '&');
+		t = (config.startDelimiter || '') + t;
+		return t;
+	},
 	
-	// copy into puredom
-	for (var x in util) {
-		if (util.hasOwnProperty(x)) {
-			puredom[x] = util[x];
+	
+	
+	/** @namespace Handles querystring encoding and decoding.
+	 *	@name puredom.querystring
+	 */
+	querystring : {
+		/** @lends puredom.querystring */
+		
+		/** Parse a querystring and return an {Object} with the key-value pairs as its properties.
+		 *	<em>Note: Preceeding '?' and '&' characters will be stripped. Empty parameters will be returned as empty strings.</em>
+		 *	@param {String} querystring		The querystring to parse.
+		 *	@returns {Object} The key-value parameters as an object.
+		 */
+		parse : function(str) {
+			var parts, i, j, p={};
+			if (str.substring(0,1)==='?') {
+				str = str.substring(1);
+			}
+			parts = str.split('&');
+			for (i=0; i<parts.length; i++) {
+				if (parts[i]) {
+					j = parts[i].indexOf('=');
+					p[decodeURIComponent(parts[i].substring(0,j))] = j<0 ? '' : decodeURIComponent(parts[i].substring(j+1));
+				}
+			}
+			return p;
+		},
+		
+		/** Convert an object into a querystring, optionally with custom separator/delimiter characters.
+		 *	<em>Note: Nested objects are serialized as double-encoded querystring parameters by default. To use JSON for nested objects, set the "useJsonForObjects" flag to true.</em>
+		 *	Available options:
+		 *		{Boolean} useJsonForObjects		Use JSON to serialize nested objects? (uses double-encoding by default)
+		 *		{Boolean} disableArrayParams	Disable PHP-style "array parameters? ex: p[]=foo&p[]=bar
+		 *		{Object} typeHandlers			Specify custom serializers for each data type by setting type:handler. Handlers accept the original data and return the serialized parameter value, *not* URL-encoded.
+		 *		{String} assignment				The key-value separator. Defaults to "=".
+		 *		{String} delimiter				The group separator. Defaults to "&".
+		 *		{String} startDelimiter			A character to insert at the beginning of the string. Defaults to none.
+		 *	@param {Object} parameters		A key-value map of parameters to serialize.
+		 *	@param {Object} [options]		A hashmap of configuration options.
+		 */
+		stringify : function(parameters, options) {
+			options = puredom.extend({ startDelimiter:'' }, options || {});
+			return puredom.parameterize(parameters, options);
+		},
+		build : function(){return puredom.querystring.stringify.apply(puredom.querystring,arguments);}
+	},
+	
+	
+	
+	/**	@namespace Handles storage and retrieval of cookies.
+	 *	@name puredom.cookies
+	 */
+	cookies : (function(){
+		var cache = {};
+		
+		return /** @lends puredom.cookies */ {
+			
+			/**	Set a cookie with name *key* to value *value*
+			 *	@exports set as puredom.cookies.set
+			 *	@param {String} key		The key for storage
+			 *	@param {String} value	A value to store
+			 *	@param {Number} days	The cookie lifetime in number of days.
+			 */
+			set : function (key, value, days, domain, path, secure) {
+				var expires = '',
+					cookie = '',
+					date;
+				path = typeof(path)==='string' ? path : '';
+				if (days) {
+					date = new Date();
+					date.setTime(date.getTime() + days*24*60*60*1000);
+					expires = "; expires="+date.toGMTString();
+				}
+				if(cache.hasOwnProperty(key) && cache[key].expires) {
+					expires = "; expires="+cache[key].expires.toGMTString();
+				}
+				cookie = key + "=" + encodeURIComponent(value) + expires + "; path=/"+path.replace(/^\//,'');
+				if (typeof(domain)==='string' && domain.length>0) {
+					cookie += '; domain=' + domain.replace(/[\;\,]/,'');
+				}
+				if (secure===true) {
+					cookie += '; secure';
+				}
+				//puredom.log('puredom.cookies.set() :: ' + cookie);
+				document.cookie = cookie;
+				cache[key] = {
+					value : value,
+					expires : date
+				};
+			},
+			
+			/**	Get a cookie. Pulls values from cache when possible.
+			 *	@exports get as puredom.cookies.get
+			 *	@param {String} key					The key to lookup
+			 *	@param {Boolean} [useCached=true]	Use cached value if present
+			 *	@returns {String} value				The value, or <code>null</code> if the lookup failed.
+			 */
+			get : function (key, useCached) {
+				if(cache.hasOwnProperty(key) && useCached!==true) {
+					return cache[key].value;
+				}
+				var c, i, ca = document.cookie.split(';');
+				for (i=0; i<ca.length; i++) {
+					c = ca[i].replace(/^\s+/gim,'');
+					if (c.indexOf(key+"=")===0) {
+						return decodeURIComponent(c.substring(key.length+1,c.length));
+					}
+				}
+				return null;
+			},
+			/**	Remove a cookie and any cached values
+			 *	@param {String} key		The key to remove
+			 */
+			remove	: function (key) {
+				this.set(key, "", -1);
+				delete cache[key];
+			},
+			/**	Remove all cookies and cached values */
+			purge	: function () {
+				for (var x in cache) {
+					if(cache.hasOwnProperty(x)) {
+						this.remove(x);
+						delete cache[x];
+					}
+				}
+			},
+			/** Alias of {@link puredom.cookies.get}
+			 *	@see puredom.cookies.get
+			 *	@private
+			 */
+			read : function() {
+				return this.get.apply(this,arguments);
+			},
+			/** Alias of {@link puredom.cookies.set}
+			 *	@see puredom.cookies.set
+			 *	@private
+			 */
+			write : function() {
+				return this.set.apply(this,arguments);
+			}
+		};
+	}()),
+	
+	
+	/**	@ignore */
+	Cache : (function() {
+		/** @class In-memeory cache class with a twist! <br />
+		 *	Set and get work like a normal cache.
+		 *	Creates a new Cache instance.
+		 *	@name puredom.Cache
+		 */
+		function Cache() {
+			if (this.constructor!==arguments.callee && this.constructor!==Cache) {
+				return new Cache();
+			}
+			this.data = {};
+		}
+		
+		puredom.extend(Cache.prototype, /** @lends puredom.Cache# */ {
+			
+			/** The default *type* used for namespacing keys is "_default" */
+			defaultType : '_default',
+			
+			/** Purge all entries from the cache */
+			purge : function() {
+				this.data = {};
+			},
+			
+			/** Get a cached value with optional type. 
+			 *	@param {String} [type]		A type prefix.
+			 *	@param {String|Number} id	The cache entry ID
+			 *	@param {Function} callback	A callback, gets passed the cached value once retrieved.
+			 */
+			get : function(type, id, cb) {
+				var d;
+				if (arguments.length===2) {
+					id = type;
+					cb = id;
+					type = null;
+				}
+				type = (type || this.defaultType)+'';
+				id = id+'';
+				d = this.data.hasOwnProperty(type) && this.data[type][id] || false;
+				if (cb) {
+					if (d) {
+						cb(d);
+					}
+					return !!d;
+				}
+				return d;
+			},
+			
+			/** Get a cached value with optional type. 
+			 *	@param {String} [type]		A type prefix.
+			 *	@param {String|Number} id	The cache entry ID
+			 *	@param value				Any value to cache.
+			 */
+			set : function(type, id, val) {
+				if (arguments.length===2) {
+					id = type;
+					val = id;
+					type = null;
+				}
+				type = (type || this.defaultType)+'';
+				id = id+'';
+				if (!this.data[type]) {
+					this.data[type] = {};
+				}
+				this.data[type][id] = val;
+			},
+			
+			/** Proxy a callback function for automatically caching asynchronous responses.
+			 *	@param {String} [type]		A type prefix.
+			 *	@param {String|Number} id	The cache entry ID
+			 *	@param {Function} callback	The callback function to inject c
+			 *	@param {Number} paramIndex	Which callback parameter to cache (0-based).
+			 *	@returns {Function} The proxied callback function, with the cache set injected.
+			 */
+			proxySet : function(type, id, callback, paramIndex) {
+				var self = this;	//, cb;
+				//cb = function() {
+				return function() {
+					self.set(type, id, arguments[paramIndex || 0]);
+					if (callback) {
+						callback.apply(callback, arguments);
+					}
+					//self = cb = type = id = callback = paramIndex = null;
+				};
+				//return cb;
+			},
+			
+			/** Iterate over all the cache entries.
+			 *	@param {Function} iterator	Gets passed each entry.
+			 */
+			each : function(iterator) {
+				return puredom.foreach(this.data, iterator);
+			}
+		});
+		return Cache;
+	}()),
+	
+	
+	
+	/** @namespace Parse and generate JSON.
+	 *	When called as a function, <code>puredom.json()</code> automatically converts between JSON-Strings and Objects.
+	 *	@function
+	 *	@name puredom.json
+	 *	@param {String|Object|Array} what		If a String is passed, it is parsed as JSON. Otherwise, returns JSON-encoded value of <code>what</code>.
+	 *	@returns {String|Object|Array} jsonStringOrJsonResult
+	 */
+	json : (function() {
+		/** @exports json as puredom.json */
+		
+		/**	@private */
+		var json = function(what) {
+			if (puredom.typeOf(what)==="string") {
+				return json.parse(what);
+			}
+			return json.stringify(what);
+		};
+		
+		/** Serialize a JavaScript object structure to a JSON string.<br />
+		 *	<em>Note: Circular references cause this function to fail.</em>
+		 *	@param what			Any object of any type.
+		 *	@returns {String} The JSON-encoded string
+		 */
+		json.stringify = function(what) {
+			var result;
+			try {
+				result = JSON.stringify(what);
+			}catch(err) {
+				puredom.log("puredom.json:: Stringify failed: " + err + " | " + what);
+			}
+			return result;
+		};
+		
+		/** Parse JSON from a {String} and return the resulting object.
+		 *	@param {String} json	A string containing JSON.
+		 *	@returns {Object|Array|String|Number} jsonResult
+		 *	@example
+		 *		var obj = puredom.json.parse('{"items":[{"title":"Example"}]}');
+		 */
+		json.parse = function(what) {
+			var result;
+			if (typeof(what)==='string' && what.length>0) {
+				try {
+					result = JSON.parse(what);
+				}catch(err) {
+					puredom.log("puredom.json:: Parse failed: " + err + " | " + what);
+				}
+			}
+			return result;
+		};
+		
+		/**	Alias of {@link puredom.json.stringify}
+		 *	@function
+		 *	@deprecated
+		 *	@private
+		 */
+		json.serialize = json.stringify;
+		
+		/**	Alias of {@link puredom.json.parse}
+		 *	@function
+		 *	@deprecated
+		 *	@private
+		 */
+		json.unserialize = json.parse;
+		
+		return json;
+	}()),
+	
+	
+	
+	/** @namespace Parse and generate XML.
+	 *	@name puredom.xml
+	 */
+	xml : /** @lends puredom.xml */ {
+		
+		/** Parse XML from a string and return the resulting {Document}.
+		 *	@param {String} xmlString		The XML to parse
+		 *	@returns {Document} The XML document.
+		 *	@example
+		 *		var doc = puredom.xml.parse('<items><item><title>Example</title></item></items>');
+		 */
+		parse : function(xmlString) {
+			var xmlDoc;
+			if (window.DOMParser) {
+				xmlDoc = new window.DOMParser().parseFromString(xmlString, "text/xml");
+			}
+			else {
+				// Internet Explorer
+				xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
+				xmlDoc.async = "false";
+				xmlDoc.loadXML(xmlString);
+			}
+			return xmlDoc;
 		}
 	}
-	util = null;
-}());
-
-/** @ignore */
-window.puredom = window.puredom || {};
-
-
-/**	EventEmitter class for puredom. <br />
- *	The name is intentially similar to Node.JS's EventEmitter class.
- *	@class
+	
+});
+/**	Fire events and listen for fired events. <br />
+ *	Let's just assume every framework provides one of these now.
+ *	@constructor Creates a new EventEmitter instance.
  */
 puredom.EventEmitter = function EventEmitter() {
 	this._eventRegistry = [];
 };
+
 
 /** Register an event listener on the instance.
  *	@param {String} type		An event type, or a comma-seprated list of event types.
@@ -4782,18 +4918,10 @@ puredom.EventEmitter.prototype.fireEvent = function(type, args) {
  */
 puredom.EventEmitter.prototype._fireEvent = puredom.EventEmitter.prototype.fireEvent;
 
-/** @name puredom
- *	@namespace
+/**	@namespace Functions for working with dates <br />
+ *	See {@link http://php.net/strftime} for formatting options.
  */
-window.puredom = window.puredom || {};
-
-
-/**	Functions for working with dates.<br />
- *	See http://php.net/strftime for formatting options.
- *	@namespace
- */
-puredom.date = {
-	/** @lends puredom.date */
+puredom.date = /** @lends puredom.date */ {
 	
 	/** Returns the current timestamp, in milliseconds.
 	 *	@function
@@ -4807,6 +4935,7 @@ puredom.date = {
 		}
 	),
 	
+
 	/** Create a date, optionally from a string.<br />
 	 *	This is a wrapper on new Date(str), adding support for more date formats and smoothing out differences between browsers.
 	 *	@param {String} [str=now]	A date string, parsed and used to set the initial date.
@@ -4823,6 +4952,7 @@ puredom.date = {
 		}
 		return date;
 	},
+	
 	
 	/**	Parse a string with the given format into a Date object.
 	 *	@param {String} str						A date string to parse
@@ -4916,12 +5046,15 @@ puredom.date = {
 		
 		return rdate;
 	},
+
+
 	/** Alias of {@link puredom.date.parse}
 	 *	@see puredom.date.parse
 	 *	@deprecated
 	 *	@private
 	 */
 	unformat : function(){return this.parse.apply(this,arguments);},
+	
 	
 	/**	Get a formatted string representation of a Date object.
 	 *	@param {String} date					A date object to convert
@@ -4974,6 +5107,7 @@ puredom.date = {
 		});
 	},
 	
+
 	/** @private */
 	_getMonthIndex : function(m){
 		m = m.substring(0,3).toLowerCase();
@@ -4985,19 +5119,19 @@ puredom.date = {
 		return -1;
 	},
 	
+
 	/** Weekday names
-	 *	@type String[]
+	 *	@type Array(String)
 	 */
 	weekdays : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+
+
 	/** Month names
-	 *	@type String[]
+	 *	@type Array(String)
 	 */
 	months : ["January","February","March","April","May","June","July","August","September","October","November","December"]
+	
 };
-/** @ignore */
-window.puredom = window.puredom || {};
-
-
 /** @namespace Networking functionality. */
 puredom.net = /** @lends puredom.net */ {
 	
@@ -5030,7 +5164,7 @@ puredom.net = /** @lends puredom.net */ {
 	
 	/**	Make an HTTP POST request. This is a convenience wrapper around {@link puredom.net.request}. <br />
 	 *	<strong>Post value type conversion:</strong> <br />
-	 *		Object: Objects get automatically converted to a querystring-encoded Strings through {puredom.querystring.stringify}.
+	 *		Object: Objects get automatically converted to a querystring-encoded Strings through {@link puredom.querystring.stringify}.<br />
 	 *		String: Strings are used as the POST body, without any conversion.
 	 *	@param {String} url				The URL to which a request should be sent.
 	 *	@param {Object|String} post		POST body (see description). If this value is set, the request type will be POST unless overridden via <code>options.type</code>.
@@ -5054,14 +5188,13 @@ puredom.net = /** @lends puredom.net */ {
 	
 	/**	Make multiple HTTP requests in order, firing the callback only when all have completed.
 	 *	<br /><b>Callback Format:</b><br />
-	 *	<code>
+	 *	@example
 	 *	callback(
 	 *		success   // {Boolean} - did *any* requests succeed?
 	 *		responses // {Array}   - responses corresponding to the provided resources.
 	 *		successes // {Number}  - how many requests succeeded (status<400)
 	 *		failures  // {Number}  - how many requests failed (status>=400)
 	 *	);
-	 *	</code>
 	 *	@param {Object[]} resources		An array of resource objects, with format as described in {@link puredom.net.request} options.
 	 *	@param {Function} [callback]	A function to call once all requests have completed, with signature <code>function(success, responses, successes, failures)</code>. [See description]
 	 *	@returns {Boolean} returns false if no resources were provided.
@@ -5135,7 +5268,7 @@ puredom.net = /** @lends puredom.net */ {
 	 *		</tbody></table>
 	 *	@param {Object} options			Define request options
 	 *	@param {Function} [callback]	A callback function, used if options.callback is not set.
-	 *	@returns {puredom.net.HttpRequest}</td><td>An HTTP request object
+	 *	@returns {puredom.net.HttpRequest} An HTTP request object
 	 */
 	request : function(options) {
 		var opt, self;
@@ -5241,19 +5374,10 @@ puredom.net = /** @lends puredom.net */ {
 	},
 	
 	
-	/**	Make a JSONp call (GET-only, works across domains, server must support the JSONp pattern). <br />
-	 *	<strong>Options:</strong> <br />
-	 *		<table class="options"><tbody>
-	 *		<tr><td>{String}</td><td><b>url</b></td><td></td></tr>
-	 *		<tr><td>{Object}</td><td><b>params</b></td><td>Request parameters as an object. Serialized to URL using {@link puredom.querystring.stringify}</td></tr>
-	 *		<tr><td>{Function}</td><td><b>callback</b></td><td>A function to handle the data once received.</td></tr>
-	 *		<tr><td>{Number}</td><td><b>timeout</b></td><td>Maximum number of seconds to wait before assuming failure. Default is 10.</td></tr>
-	 *		</tbody></table>
+	/**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
+	 *	@namespace JSONp Implementation. JSONp is GET-only and works across domains, but the server must support the JSONp pattern.
 	 *	@function
-	 *	@param {String} url			The service URL, including querystring parameters.
-	 *	@param {Object} options		A hash of available options.
-	 *	@param {Function} callback	A function that gets called when the request returns.
-	 *	@returns {Boolean} Was the request initiated?
+	 *	@returns {puredom.net.jsonp.Request} jsonpRequest
 	 */
 	jsonp : (function() {
 		/** @namespace JSONp-related functionality.
@@ -5265,7 +5389,18 @@ puredom.net = /** @lends puredom.net */ {
 			},
 			reqIndex = 0;
 		
-		/** @private */
+		/**	Initiate a JSONp request.
+		 *	@name puredom.net.jsonp.get
+		 *	@function
+		 *	@param {String} url			The service URL, including querystring parameters.
+		 *	@param {Object} [options]		A hash of available options.
+		 *	@param {String} [options.url=url]		The service URL
+		 *	@param {Object} [options.params]		GET parameters as an object.
+		 *	@param {Function} [options.callback]	A function to handle the data once received.
+		 *	@param {Number} [options.timeout=10]	A number of seconds to wait before triggering failure.
+		 *	@param {Function} callback	A function that gets called when the request returns.
+		 *	@returns {puredom.net.jsonp.Request} jsonpRequest
+		 */
 		jsonp.get = function(url, options, callback) {
 			var script, requestObj, callbackId, tmp;
 			
@@ -5299,6 +5434,7 @@ puredom.net = /** @lends puredom.net */ {
 			
 			options.callback = callbackId = "puredom_net_jsonp_"+reqIndex;
 			(function(jsonp, reqIndex) {
+				/**	@ignore */
 				window[options.callback] = function(data) {
 					var e;
 					if (callback) {
@@ -5341,9 +5477,14 @@ puredom.net = /** @lends puredom.net */ {
 				parent : this._head || document.body
 			});
 			
-			requestObj = {
+			/**	@class Represents a JSONp request.
+			 *	@name puredom.net.jsonp.Request
+			 */
+			requestObj = /** @lends puredom.net.jsonp.Request# */ {
+				/**	The request's callback ID */
 				id : callbackId,
-				/** @inner */
+				
+				/**	Attempt to stop the request. */
 				stop : function() {
 					if (requestObj._timer) {
 						clearTimeout(requestObj._timer);
@@ -5472,8 +5613,6 @@ puredom.net = /** @lends puredom.net */ {
 	}
 	
 };
-
-window.puredom = window.puredom || {};
 
 /**	Provides a cross-browser persisted storage layer using various storage adapters.
  *	@constructor Asynchronously creates an instance of LocalStorage.<br />

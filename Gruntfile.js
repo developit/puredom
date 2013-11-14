@@ -68,20 +68,34 @@ module.exports = function(grunt) {
 			afterconcat: [
 				'<%= concat.full.dest %>'
 			]
+		},
+		shell : {
+			compress : {
+				options : {
+					stdout : true
+				},
+				command : [
+					'gzip -9 -f -c "<%= concat.full.dest %>" > "<%= concat.full.dest %>.gz"',
+					'gzip -9 -f -c "<%= concat.light.dest %>" > "<%= concat.light.dest %>.gz"',
+					'zip -9 "dist/<%= pkg.version %>/<%= pkg.name %>.zip" "<%= concat.full.dest %>"',
+					'zip -9 "dist/<%= pkg.version %>/<%= pkg.name %>.light.zip" "<%= concat.light.dest %>"'
+				].join(';')
+			}
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-shell');
 
 	grunt.registerTask('default', [
 		'jshint:beforeconcat',
 		'concat:light',
 		'uglify:light',
 		'concat:full',
-		'uglify:full'
-		//,'jshint:afterconcat'
+		'uglify:full',
+		'shell:compress'
 	]);
 	
 };

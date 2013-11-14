@@ -8,7 +8,7 @@ puredom
 
 What is Puredom?
 ================
-puredom is a fast, chainable, exstensible JavaScript library for web applications.
+puredom is a fast, chainable, extensible JavaScript library for web applications.
 
 In plain english, it makes building developing rich apps using JavaScript, HTML and CSS much easier.
 
@@ -17,9 +17,8 @@ In plain english, it makes building developing rich apps using JavaScript, HTML 
 
 Documentation
 =============
-- For a list of functions you can call on a puredom selection see the simple [selector function list](http://puredom.org/selector-functions.html) (or [PDF](http://puredom.org/selector-functions.pdf)).
-- For class docs, check out the full [puredom documentation](http://puredom.org/docs/). 
->	*Please note some puredom features are not yet available in the documentation.*
+- For a list of functions you can call on a puredom selection see the simple [selector function list](http://puredom.org/selector-functions.html) (or [PDF](http://puredom.org/selector-functions.pdf)).  
+- For class docs, check out the full [puredom documentation](http://puredom.org/docs/).  
 
 
 ---
@@ -110,35 +109,27 @@ puredom Full
 
 Building
 ========
-Puredom is built using Grunt.
->	Both the full and light versions are built at the same time, as light is just a subset of the full library.
+Puredom is built using Grunt.  
+Both the full and light versions are built at the same time, as light is just a subset of the full library.  
 
-**Install Grunt:**
-```bash
-# install grunt
-npm install grunt
+**Install Dependencies:**  
+```
+npm install
+```
 
-# install the CLI globally
+**Install the Grunt CLI and JSHint:**  
+If you haven't already, install grunt-cli and jshint globally  
+```
 sudo npm install -g grunt-cli
-
-# get uglify()
-npm install grunt-contrib-uglify
-
-# get concat()
-npm install grunt-contrib-concat
-
-# get jshint
 sudo npm install -g jshint
-npm install grunt-contrib-jshint
 ```
 
-**Build the library:**
-> One command to build everything.  
-> Runs grunt, then compresses the output.  
-> Grunt details are in the config, Gruntfile.js
-```bash
-./build.sh
+**Build the library:**  
+Just run grunt to build everything.  
 ```
+grunt
+```
+Builds output to `dist/<VERSION>`  
 
 
 ---
