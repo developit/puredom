@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>puredom | JavaScript Library</title>
-		<link type="text/css" rel="stylesheet" href="/style.css" />
+		<meta charset="utf8">
+		<title>puredom - JavaScript Library</title>
+		<link type="text/css" rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/gh-fork-ribbon.css">
+		<!--[if IE]>
+			<link rel="stylesheet" href="/css/gh-fork-ribbon.ie.css" />
+		<![endif]-->
 	</head>
 	<body>
+		
+		<div class="github-fork-ribbon-wrapper right">
+			<div class="github-fork-ribbon">
+				<a href="https://github.com/developit/puredom">Fork me on GitHub</a>
+			</div>
+		</div>
 		
 		<h1>puredom</h1>
 		<h4>Current version: <strong data-tpl-id="version">...</strong></h4>
@@ -25,6 +36,45 @@
 			<h2>Plugins</h2>
 			<p>puredom supports plugins for extending the core selection object.</p>
 			<p>Check out the <a href="/plugins/">available plugins</a> or the <a href="#aww">plugin documentation</a>.</p>
+		</div>
+		
+		<div class="section">
+			<h2>Plugins</h2>
+			
+			<h3>NodeSelection Plugin</h3>
+			
+			<p>Selector Engine plugins extend the CSS selector syntax with new functionality. </p>
+			
+			<pre><code class="JavaScript">// Add a new :log() filter
+puredom.addNodeSelectionPlugin(
+	&quot;someFunctionName&quot;,				// gets pinned to every selection
+	function(args){
+		// &lt;this&gt; is the NodeSelection
+		// arguments passed to the function are passed on to your plugin
+	}
+);
+
+// Use it
+puredom(&quot;.foo&quot;).someFunctionName();	// call your plugin method</code></pre>
+			
+			
+			<h3>Selector Engine Plugin</h3>
+			
+			<p>Selector Engine plugins extend the CSS selector syntax with new functionality. </p>
+			
+			<pre><code class="JavaScript">// Add a new :log() filter
+puredom.selectorEngine.addSelectorFilter(
+	/^\:log\(\)/gim,		// regex to match your rule (similar to a route)
+	function(matches, nodes, config){
+		console.log(nodes);
+		// Returning an Array here overwrites the selection.
+		// To mutate the selection, operate directly on &lt;nodes&gt;.
+	}
+);
+
+// Use it
+puredom(&quot;.foo .bar:log()&gt;div&quot;);	// logs the collection&apos;s contents at the given position</code></pre>
+			
 		</div>
 		
 		<div class="section">
@@ -76,14 +126,22 @@
 			<p id="changelog" data-tpl-id="changelog|nl2br"></p>
 		</div>
 		
-		<script src="/download/latest/puredom.light.js"></script>
+		<script src="/js/puredom.light.js"></script>
+		<script src="/js/hljs.js"></script>
 		<script>
+			hljs.initHighlightingOnLoad();
+			
 			puredom.net.get('/changelog', function(success, body) {
 				var version = body && (/Version (\d+\.\d+\.\d+)/gi).exec(body)[1];
 				puredom(document.body).template({
 					version : version,
 					changelog : body || 'Changelog failed to load.'
 				});
+			});
+			
+			puredom(window).on('scroll', function() {
+				var p = puredom('.github-fork-ribbon-wrapper');
+				p[ document.body.scrollTop>0 ? 'classify' : 'declassify' ]('small');
 			});
 		</script>
 	</body>

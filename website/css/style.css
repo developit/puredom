@@ -33,6 +33,12 @@ h2 {
 	font-weight: 400;
 }
 
+h3 {
+	margin: 0;
+	padding: 8px 5px 3px;
+	color: #124;
+}
+
 h4 {
 	padding: 0;
 	margin: 0;
@@ -50,12 +56,14 @@ p {
 
 .section {
 	margin: 10px;
-	padding: 5px 10px 8px;
-	border: 1px solid #DDD;
+	padding: 15px;
+	border: 1px solid #CCC;
 	background: #FFF;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
-	-o-border-radius: 3px;
 	border-radius: 3px;
 }
 
@@ -67,7 +75,7 @@ pre.block, .license {
 }
 
 #changelog {
-	font: 12px/1.21 'Inconsolata','Consolas','Panic Sans','Menlo','Andale Mono','Courier New',courier,mono;
+	font-family: 'Inconsolata','Consolas','Panic Sans','Menlo','Andale Mono','Courier New',courier,mono;
 }
 
 body .template {
@@ -135,6 +143,7 @@ body .template {
 	border-radius: 5px;
 	box-shadow: 0 2px 10px rgba(0,0,0,0.2), inset 0 1px 0 #FFF;
 	text-align: center;
+	vertical-align: top;
 	cursor: pointer;
 }
 .plugin * {
@@ -183,4 +192,163 @@ body .template {
 	margin: 0;
 	padding: 5px 0 0;
 	color: #AAA;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/**	hljs */
+pre code {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px;
+  color: #111;
+  background: #F8F8FA;
+  border: 1px solid #D0D0DD;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 0 #FFF, 0 0 4px rgba(0,0,0,0.1);
+  tab-size: 4;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic;
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+  color: #000;
+  font-weight: bold;
+}
+
+pre .ruby .keyword {
+  font-weight: normal;
+}
+
+pre .number,
+pre .hexcolor {
+  color: #40a070;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14;
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold;
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+  font-weight: normal;
+}
+
+pre .class .title,
+pre .haskell .label,
+pre .tex .command {
+  color: #458;
+  font-weight: bold;
+}
+
+pre .class .params {
+	color: #000;
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal;
+}
+
+pre .attribute,
+pre .variable,
+pre .instancevar,
+pre .lisp .body {
+  color: #008080;
+}
+
+pre .regexp {
+  color: #009926;
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold;
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .ruby .symbol .keyword,
+pre .ruby .symbol .keymethods,
+pre .lisp .keyword,
+pre .tex .special,
+pre .input_number {
+  color: #0086b3;
+}
+
+pre .ruby .identifier .keyword,
+pre .ruby .identifier .keymethods {
+  color: #0086b3;
+}
+
+pre .ruby .constant {
+  color: #008080;
+}
+
+pre .builtin,
+pre .built_in,
+pre .lisp .title {
+  color: #0086b3;
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold;
+}
+
+pre .deletion {
+  background: #fdd;
+}
+
+pre .addition {
+  background: #dfd;
+}
+
+pre .diff .change {
+  background: #0086b3;
+}
+
+pre .chunk {
+  color: #aaa;
+}
+
+pre .tex .formula {
+  opacity: 0.5;
 }
