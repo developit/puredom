@@ -1,7 +1,6 @@
-
 puredom
 =======
-*Current version:* **1.1.7**
+*Current version:* **1.1.8**
 
 
 ---
@@ -163,6 +162,10 @@ License
 
 Changelog
 =========
+**Version 1.1.8** *(Nov 15th 2013)*
+- Fixed silly "getAnimationCound" error.
+- Documentation, build & website fixes.
+
 **Version 1.1.7** *(Oct 8th 2013)*  
 - Lint, build & website fixes.
 
