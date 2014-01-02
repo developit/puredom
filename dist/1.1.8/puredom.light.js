@@ -4152,8 +4152,8 @@ if (typeof(Date.now)!=='function') {
 	self.toString = function(){return 'function puredom(){}';};
 	
 	window.puredom = self;
-	if (typeof window.define==='function') {
-		window.define('puredom', self);
+	if (typeof window.define==='function' && window.define.amd) {
+		window.define('puredom', function(){ return self; });
 	}
 }());
 /**	@fileOverview Utilities that just get grafted onto the puredom namespace. */
