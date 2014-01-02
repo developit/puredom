@@ -29,6 +29,7 @@ if (typeof(Date.now)!=='function') {
 		/**	@private */
 		baseSelf = {
 			version : '1.1.7',
+			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
 			easingMethods : {
@@ -2109,7 +2110,8 @@ if (typeof(Date.now)!=='function') {
 		 *	@returns {this}
 		 */
 		template : function(templateFields) {
-			var getFilters;
+			var attrName = self.templateAttributeName,
+				getFilters;
 			templateFields = templateFields || {};
 			
 			getFilters = function(value, htmlEntities) {
@@ -2124,9 +2126,9 @@ if (typeof(Date.now)!=='function') {
 				return filters;
 			};
 			
-			this.query('[data-tpl-id]').each(function(node) {
+			this.query('['+attrName+']').each(function(node) {
 				var nodeName = node.nodeName(),
-					tplField = node.attr('data-tpl-id'),
+					tplField = node.attr(attrName),
 					tplValue = tplField,
 					tplFilters,
 					nType;

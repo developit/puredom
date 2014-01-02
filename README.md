@@ -165,6 +165,7 @@ Changelog
 **Version 1.1.8** *(Nov 15th 2013)*
 - Fixed silly "getAnimationCound" error.
 - Documentation, build & website fixes.
+- Added `puredom.templateAttributeName` option, which defaults to `data-tpl-id`
 
 **Version 1.1.7** *(Oct 8th 2013)*  
 - Lint, build & website fixes.
