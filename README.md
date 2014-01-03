@@ -162,6 +162,10 @@ License
 
 Changelog
 =========
+**Version 1.1.9** *(Jan 3rd 2014)*
+- Remove ridiculous blacklist of mobile devices for CSS3 transitions
+- Add automatic vendor prefixing for transform, transition, perspective and box-sizing CSS properties
+
 **Version 1.1.8** *(Nov 15th 2013)*
 - Fixed silly "getAnimationCound" error.
 - Documentation, build & website fixes.
