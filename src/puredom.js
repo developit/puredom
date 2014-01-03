@@ -3805,13 +3805,33 @@ if (typeof(Date.now)!=='function') {
 	
 	
 	
+	/**	@private */
+	var cssPropCache = {};
+	/**	@private */
+	function getPrefixedCssProperty(prop) {
+		var ret = prop,
+			p = cssPropCache[prop];
+		if (p) {
+			return p;
+		}
+		if (vendorCssPrefixJS && prop.substring(0, vendorCssPrefixJS.length)!==vendorCssPrefixJS) {
+			p = vendorCssPrefixJS + prop.charAt(0).toUpperCase() + prop.substring(1);
+			if (p in document.body.style) {
+				ret = p;
+			}
+		}
+		cssPropCache[prop] = ret;
+		return ret;
+	}
+	
+	
 	/**	Apply key-value CSS styles to an element.
 	 *	@param {HTMLElement} el		An element whose style should be updated.
 	 *	@param {Object} properties	An Object where keys are CSS properties and values are the corresponding CSS values to apply.
 	 *	@private
 	 */
 	self.applyCss = function(el, properties) {
-		var x, cx, d, p, ieOpac;
+		var x, cx, d, p, ieOpac, vp;
 		properties = properties || {};
 		for (x in properties) {
 			if (properties.hasOwnProperty(x)) {
@@ -3819,6 +3839,7 @@ if (typeof(Date.now)!=='function') {
 					cx = self.getStyleAsCSS(x);
 					cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
 					cx = self.getStyleAsProperty(cx);
+					cx = getPrefixedCssProperty(cx);
 					if (cx==='opacity' && priv.support.filters) {
 						ieOpac = Math.round( parseFloat(properties[x])*100 );
 						if (ieOpac<100) {
@@ -3844,11 +3865,6 @@ if (typeof(Date.now)!=='function') {
 					}
 					else {
 						el.style[cx] = properties[x];
-						if (cx==="boxShadow" || cx==="textShadow" || cx==="borderRadius") {
-							if (vendorCssPrefixJS) {
-								el.style[vendorCssPrefixJS + cx] = properties[x];
-							}
-						}
 					}
 				}catch(err){}
 			}
