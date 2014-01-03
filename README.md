@@ -179,3 +179,7 @@ Changelog
 **Version 1.1.4** *(Feb 25th 2013)*  
 - Feature: .css() now accepts CSS strings. sel.css('left:5px','fast');
 - Bugfix: CSS animation of -vendor-transform is correctly turned off after completion.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/developit/puredom/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
