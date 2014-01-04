@@ -1,6 +1,7 @@
 Version 1.1.9 (Jan 3rd 2014)
 - Remove ridiculous blacklist of mobile devices for CSS3 transitions
 - Add automatic vendor prefixing for transform, transition, perspective and box-sizing CSS properties
+- Add support for passing HTML to the puredom() function to create a node.
 
 Version 1.1.8 (Nov 15th 2013)
 - Fixed silly "getAnimationCound" error.

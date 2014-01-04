@@ -491,6 +491,19 @@ if (typeof(Date.now)!=='function') {
 	 */
 	self.createElement = function(options, parent) {
 		var el, x, i, childFrag, processProp, insertedBefore;
+		if (typeof options==='string') {
+			childFrag = document.createElement('div');
+			childFrag.innerHTML = options;
+			for (i=0; i<childFrag.childNodes.length; i++) {
+				el = childFrag.childNodes[i];
+				if (el.nodeType===1) {
+					if (parent) {
+						parent.appendChild(el);
+					}
+				}
+			}
+			return el;
+		}
 		options = options || {};
 		el = document.createElement(options.type || "div");
 		parent = parent || options.parent;
