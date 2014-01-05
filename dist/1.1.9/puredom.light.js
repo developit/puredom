@@ -1527,7 +1527,9 @@ if (typeof(Date.now)!=='function') {
 					if (name==='input' && (type==='checkbox' || type==='radio')) {
 						node.checked = !!newValue;
 					}
-					node.value = newValue;
+					else {
+						node.value = newValue;
+					}
 					
 					if (options.fireChange!==false) {
 						self.fireEvent({
