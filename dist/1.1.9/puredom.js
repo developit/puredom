@@ -8446,7 +8446,7 @@ puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# 
 	
 	/** @override */
 	register : function(name, controller) {
-		controller.updateState = this._controllerUpdateState;
+		controller.updateState = controller.updateRouterState = this._controllerUpdateState;
 		return puredom.ControllerManager.prototype.register.call(this, name, controller);
 	},
 	
