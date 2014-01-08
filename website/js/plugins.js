@@ -18,6 +18,7 @@
 					item = tpl.clone(true).insertInto(base).fadeIn('slow');
 				}
 				repo.ownerUrl = puredom.template(ownerUrl, repo);
+				repo.libName = repo.name.replace(/^puredom\./g, '');
 				repo.url = repo.url || puredom.template(repoUrl, repo);
 				item.template(repo)
 					.attr('data-url', repo.url)
