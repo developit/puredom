@@ -1,7 +1,7 @@
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.LocalStorage
+ *	@name puredom.LocalStorage.adapters.LocalStorageAdapter
  */
-puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.adapters.LocalStorage */ {
+puredom.LocalStorage.addAdapter('LocalStorageAdapter', /** @lends puredom.LocalStorage.adapters.LocalStorageAdapter */ {
 	
 	/**	The default root key ID to use for accessing localStorage */
 	defaultName : 'db',

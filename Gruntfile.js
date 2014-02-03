@@ -2,36 +2,43 @@ module.exports = function(grunt) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+
 		concat: {
 			options: {
 				separator: '\n'
 			},
 			full : {
 				src: [
+					'src/json2.js',
 					'src/puredom.js',
-					'src/puredom-utils.js',
-					'src/puredom-eventemitter.js',
-					'src/puredom-controllermanager.js',
-					'src/puredom-localstorage.js',
-					'src/**/*.js'
+					'src/puredom/utils.js',
+					'src/puredom/EventEmitter.js',
+					'src/puredom/ControllerManager.js',
+					'src/puredom/LocalStorage.js',
+					'src/puredom/*.js',
+					'src/puredom/LocalStorage/*.js',
+					'src/puredom/net/jsonp.js'
 				],
 				dest: 'dist/<%= pkg.version %>/<%= pkg.name %>.js'
 			},
 			light : {
 				src: [
 					'src/puredom.js',
-					'src/puredom-utils.js',
-					'src/puredom-eventemitter.js',
-					'src/puredom-date.js',
-					'src/puredom-net.js',
-					'src/puredom-localstorage.js',
-					'src/localstorage-adapters/cookie-adapter.js',
-					'src/localstorage-adapters/localstorage-adapter.js',
-					'src/localstorage-adapters/userdata-adapter.js'
+					'src/puredom/utils.js',
+					'src/puredom/EventEmitter.js',
+					'src/puredom/date.js',
+					'src/puredom/net.js',
+					'src/puredom/net/jsonp.js',
+					'src/puredom/LocalStorage.js',
+					'src/puredom/LocalStorage/CookieAdapter.js',
+					'src/puredom/LocalStorage/LocalStorageAdapter.js',
+					'src/puredom/LocalStorage/UserDataAdapter.js'
 				],
 				dest: 'dist/<%= pkg.version %>/<%= pkg.name %>.light.js'
 			}
 		},
+
+
 		uglify: {
 			full : {
 				options: {
@@ -50,6 +57,8 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+
+
 		jshint : {
 			options : {
 				browser : true,
@@ -59,16 +68,18 @@ module.exports = function(grunt) {
 			},
 			beforeconcat : [
 				'src/puredom.js',
-				'src/puredom-utils.js',
-				'src/puredom-eventemitter.js',
-				'src/puredom-controllermanager.js',
-				'src/puredom-localstorage.js',
+				'src/utils.js',
+				'src/EventEmitter.js',
+				'src/Controllermanager.js',
+				'src/LocalStorage.js',
 				'src/**/*.js'
 			],
 			afterconcat: [
 				'<%= concat.full.dest %>'
 			]
 		},
+
+
 		shell : {
 			compress : {
 				options : {

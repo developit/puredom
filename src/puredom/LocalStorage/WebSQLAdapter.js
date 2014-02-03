@@ -1,7 +1,7 @@
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.WebkitSQLite
+ *	@name puredom.LocalStorage.adapters.WebSQLAdapter
  */
-puredom.LocalStorage.addAdapter('WebkitSQLite', /** @lends puredom.LocalStorage.adapters.WebkitSQLite */ {
+puredom.LocalStorage.addAdapter('WebSQLAdapter', /** @lends puredom.LocalStorage.adapters.WebSQLAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',

@@ -1,7 +1,7 @@
 /**	@class Storage adapter that persists data into browser cookies.
- *	@name puredom.LocalStorage.adapters.cookie
+ *	@name puredom.LocalStorage.adapters.CookieAdapter
  */
-puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapters.cookie */ {
+puredom.LocalStorage.addAdapter('CookieAdapter', /** @lends puredom.LocalStorage.adapters.CookieAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',

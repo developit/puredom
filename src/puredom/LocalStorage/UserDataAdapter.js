@@ -1,7 +1,7 @@
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.UserData
+ *	@name puredom.LocalStorage.adapters.UserDataAdapter
  */
-puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adapters.UserData */ {
+puredom.LocalStorage.addAdapter('UserDataAdapter', /** @lends puredom.LocalStorage.adapters.UserDataAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',

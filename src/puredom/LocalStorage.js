@@ -1,15 +1,10 @@
 /**	Provides a cross-browser persisted storage layer using various storage adapters.
- *	@constructor Asynchronously creates an instance of LocalStorage.<br />
- *	<strong>Available Options:</strong><br />
- *	<table class="options"><thead>
- *		<tr><td>Option</td><td>Type</td><td>Default Value</td><td>Description</td></tr>
- *	</thead><tbody>
- *		<tr><td>adapter</td><td>String</td><td><em>auto-detect</em></td><td>Attempt to use a specific adapter. If unset, the best adapter is automatically used (useBest=true).</td></tr>
- *		<tr><td>useBest</td><td>Boolean</td><td>true</td><td>Attempt to use the best adapter available, unless an adapter is manually specified and loads successfully.</td></tr>
- *		<tr><td>restore</td><td>Boolean</td><td>true</td><td>Attempt to restore the data immediately.</td></tr>
- *	</tbody></table>
+ *	@constructor Asynchronously creates an instance of LocalStorage.
  *	@param {String} id				Required identifier for the specific storage instance.
  *	@param {Object} [options]		Hashmap of available config options (see description)
+ *	@param {Object} [options.adapter=auto]		Attempt to use a specific adapter. If unset, the best adapter is automatically used (useBest=true).
+ *	@param {Object} [options.useBest=true]		Attempt to use the best adapter available, unless an adapter is manually specified and loads successfully.
+ *	@param {Object} [options.restore=true]		Attempt to restore the data immediately.
  *	@param {Function} [callback]	Gets passed a reference to the instance after the initial restore() has completed.
  */
 puredom.LocalStorage = function LocalStorage(id, callback, options) {

@@ -28,7 +28,7 @@ if (typeof(Date.now)!=='function') {
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.1.9',
+			version : '1.2.0',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
