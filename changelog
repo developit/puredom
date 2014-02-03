@@ -1,3 +1,7 @@
+Version 1.2.0 (Feb 2nd 2014)
+- Distribution for 1.2.0
+- puredom 1.2.0: rewritten puredom.net and reorganized files.
+
 Version 1.1.9 (Jan 3rd 2014)
 - Remove ridiculous blacklist of mobile devices for CSS3 transitions
 - Add automatic vendor prefixing for transform, transition, perspective and box-sizing CSS properties
