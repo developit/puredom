@@ -61,15 +61,15 @@
 				
 					<li><a href="../symbols/puredom.LocalStorage.adapters.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters</a></li>
 				
-					<li><a href="../symbols/puredom.LocalStorage.adapters.cookie.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>cookie</a></li>
+					<li><a href="../symbols/puredom.LocalStorage.adapters.CookieAdapter.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>CookieAdapter</a></li>
 				
-					<li><a href="../symbols/puredom.LocalStorage.adapters.LocalStorage.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>LocalStorage</a></li>
+					<li><a href="../symbols/puredom.LocalStorage.adapters.LocalStorageAdapter.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>LocalStorageAdapter</a></li>
 				
 					<li><a href="../symbols/puredom.LocalStorage.adapters.none.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>none</a></li>
 				
-					<li><a href="../symbols/puredom.LocalStorage.adapters.UserData.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>UserData</a></li>
+					<li><a href="../symbols/puredom.LocalStorage.adapters.UserDataAdapter.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>UserDataAdapter</a></li>
 				
-					<li><a href="../symbols/puredom.LocalStorage.adapters.WebkitSQLite.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>WebkitSQLite</a></li>
+					<li><a href="../symbols/puredom.LocalStorage.adapters.WebSQLAdapter.html">puredom<span class='break'> </span>.<span class='break'> </span>LocalStorage<span class='break'> </span>.<span class='break'> </span>adapters<span class='break'> </span>.<span class='break'> </span>WebSQLAdapter</a></li>
 				
 					<li><a href="../symbols/puredom.NativeAPI.html">puredom<span class='break'> </span>.<span class='break'> </span>NativeAPI</a></li>
 				
@@ -78,10 +78,6 @@
 					<li><a href="../symbols/puredom.net.html">puredom<span class='break'> </span>.<span class='break'> </span>net</a></li>
 				
 					<li><a href="../symbols/puredom.net.HttpRequest.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>HttpRequest</a></li>
-				
-					<li><a href="../symbols/puredom.net.jsonp.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>jsonp</a></li>
-				
-					<li><a href="../symbols/puredom.net.jsonp.Request.html">puredom<span class='break'> </span>.<span class='break'> </span>net<span class='break'> </span>.<span class='break'> </span>jsonp<span class='break'> </span>.<span class='break'> </span>Request</a></li>
 				
 					<li><a href="../symbols/puredom.NodeSelection.html">puredom<span class='break'> </span>.<span class='break'> </span>NodeSelection</a></li>
 				
@@ -105,10 +101,10 @@
 		</nav>
 	</div>
 	<div class="fineprint" style="clear:both">
-		&copy;2013<br />
+		&copy;2014<br />
 		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
-		Generated on: 2013-9-9 5:38
+		Generated on: 2014-1-2 23:20
 	</div>
 </div>
 
@@ -193,7 +189,7 @@
 											<b><a href="../symbols/puredom.net.html#.get">get</a></b>
 											(url, callback, options)
 										</div>
-										<div class="description">Make an HTTP GET request.</div>
+										<div class="description">Make a GET request.</div>
 									</td>
 								</tr>
 							
@@ -219,9 +215,9 @@
 										<div class="fixedFont">
 											<span class="methodMemberOf">puredom.net.</span>
 											<b><a href="../symbols/puredom.net.html#.post">post</a></b>
-											(url, post, callback, options)
+											(url, body, callback, options)
 										</div>
-										<div class="description">Make an HTTP POST request.</div>
+										<div class="description">Make a POST request.</div>
 									</td>
 								</tr>
 							
@@ -235,7 +231,7 @@
 											<b><a href="../symbols/puredom.net.html#.request">request</a></b>
 											(options, callback)
 										</div>
-										<div class="description">Construct and send an HTTP request based on a configuration object (options).</div>
+										<div class="description">Construct and send an HTTP request based on the specified options.</div>
 									</td>
 								</tr>
 							
@@ -309,7 +305,8 @@
 								</div>
 								
 								<div class="description">
-									Make an HTTP GET request. This is a convenience wrapper around <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.
+									Make a GET request. <br />
+	This is a convenience wrapper around <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.
 									
 									
 									
@@ -318,9 +315,9 @@
 								
 								
 									
-										<pre class="code">	puredom.net.get("/ajax?f=1", function(success, response) {
-		console.log(success===true, response);
-	});</pre>
+										<pre class="code">		puredom.net.get("/ajax?f=1", function(success, response) {
+			console.log(success===true, response);
+		});</pre>
 									
 								
 								
@@ -332,19 +329,19 @@
 												<span class="light fixedFont paramType">{String}</span> <b>url</b>
 												
 											</dt>
-											<dd>The URL to which a request should be sent.</dd>
+											<dd>URL to request</dd>
 										
 											<dt>
 												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
 												
 											</dt>
-											<dd>A function to be called when the request has completed, with signature: function({Boolean} success, {Object|String|Document} data)</dd>
+											<dd>Called on completion. Gets passed <code>(success, response, request)</code>.</dd>
 										
 											<dt>
 												<span class="light fixedFont paramType">{Object}</span> <b>options</b>
 												<i>Optional</i>
 											</dt>
-											<dd>Additional configuration. See <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.</dd>
+											<dd>Additional configuration. See options for <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.</dd>
 										
 									</dl>
 								
@@ -388,8 +385,16 @@
 								</div>
 								
 								<div class="description">
-									Make multiple HTTP requests in order, firing the callback only when all have completed.
-	<br /><b>Callback Format:</b><br />
+									Make multiple HTTP requests in order, firing the callback only when all have completed. <br />
+	<strong>Callback Format:</strong> <br />
+	<code>
+		callback(
+			success   // {Boolean} - did *any* requests succeed?
+			responses // {Array}   - responses corresponding to the provided resources.
+			successes // {Number}  - how many requests succeeded (status<400)
+			failures  // {Number}  - how many requests failed (status>=400)
+		);
+	</code>
 									
 									
 									
@@ -397,22 +402,13 @@
 								</div>
 								
 								
-									
-										<pre class="code">	callback(
-		success   // {Boolean} - did *any* requests succeed?
-		responses // {Array}   - responses corresponding to the provided resources.
-		successes // {Number}  - how many requests succeeded (status<400)
-		failures  // {Number}  - how many requests failed (status>=400)
-	);</pre>
-									
-								
 								
 								
 									<dl class="detailList params">
 										<dt class="heading">Parameters:</dt>
 										
 											<dt>
-												<span class="light fixedFont paramType">{Object[]}</span> <b>resources</b>
+												<span class="light fixedFont paramType">{Array(Object)}</span> <b>resources</b>
 												
 											</dt>
 											<dd>An array of resource objects, with format as described in <a href="../symbols/puredom.net.html#.request">puredom.net.request</a> options.</dd>
@@ -461,14 +457,12 @@
 									
 									<span class="light methodPropertyType">{<a href="../symbols/puredom.net.HttpRequest.html">puredom.net.HttpRequest</a>}</span>
 									
-									<span class="light methodNamespacePrefix">puredom.net.</span><b>post</b>(url, post, callback, options)
+									<span class="light methodNamespacePrefix">puredom.net.</span><b>post</b>(url, body, callback, options)
 								</div>
 								
 								<div class="description">
-									Make an HTTP POST request. This is a convenience wrapper around <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>. <br />
-	<strong>Post value type conversion:</strong> <br />
-		Object: Objects get automatically converted to a querystring-encoded Strings through <a href="../symbols/puredom.querystring.html#.stringify">puredom.querystring.stringify</a>.<br />
-		String: Strings are used as the POST body, without any conversion.
+									Make a POST request. <br />
+	This is a convenience wrapper around <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.
 									
 									
 									
@@ -477,9 +471,9 @@
 								
 								
 									
-										<pre class="code">	puredom.net.get("/ajax?f=2", { foo:'bar' }, function(s, data) {
-		console.log(s===true, data);
-	});</pre>
+										<pre class="code">		puredom.net.get("/ajax?f=2", { foo:'bar' }, function(success, res, req) {
+			console.log(success===true, res, req.status, req.responseHeaders);
+		});</pre>
 									
 								
 								
@@ -491,25 +485,25 @@
 												<span class="light fixedFont paramType">{String}</span> <b>url</b>
 												
 											</dt>
-											<dd>The URL to which a request should be sent.</dd>
+											<dd>URL to request</dd>
 										
 											<dt>
-												<span class="light fixedFont paramType">{Object|String}</span> <b>post</b>
+												<span class="light fixedFont paramType">{Object|String}</span> <b>body</b>
 												
 											</dt>
-											<dd>POST body (see description). If this value is set, the request type will be POST unless overridden via <code>options.type</code>.</dd>
+											<dd>Request body.  If an <code>Object</code>, will be serialized based on the request's Content-Type (defaulting to form-encoded)</dd>
 										
 											<dt>
 												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
 												
 											</dt>
-											<dd>A function to be called when the request has completed, with signature: function({Boolean} success, {Object|String|Document} data)</dd>
+											<dd>Called on completion. Gets passed <code>(success, response, request)</code>.</dd>
 										
 											<dt>
 												<span class="light fixedFont paramType">{Object}</span> <b>options</b>
 												<i>Optional</i>
 											</dt>
-											<dd>Additional configuration. See <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.</dd>
+											<dd>Additional configuration. See options for <a href="../symbols/puredom.net.html#.request">puredom.net.request</a>.</dd>
 										
 									</dl>
 								
@@ -553,16 +547,7 @@
 								</div>
 								
 								<div class="description">
-									Construct and send an HTTP request based on a configuration object (options). <br />
-	<strong>Options:</strong> <br />
-		<table class="options"><tbody>
-		<tr><td>{String}</td><td><b>url</b></td><td>Required. A URL to which the request should be sent.</td></tr>
-		<tr><td>{String}</td><td><b>type</b></td><td>An explicit request type (HTTP verb). Generally "GET" or "POST". Overrides other methods of setting request type.</td></tr>
-		<tr><td>{Object|String}</td><td><b>post</b></td><td>Post body. {Object}s are converted to a form-encoded body using <a href="../symbols/puredom.html#.parameterize">puredom.parameterize</a>. {String}s are used as the POST body with no manipulation. If this value is set, the request type will be POST unless overridden by *type*.</td></tr>
-		<tr><td>{Function}</td><td><b>callback</b></td><td>A function to be called when the request has completed, with signature: <code>function({Boolean} success, {Object|String|Document} data)</code></td></tr>
-		<tr><td>{Object}</td><td><b>headers</b></td><td>Hashmap of request headers. (key-value)</td></tr>
-		<tr><td>{String}</td><td><b>contentTypeOverride</b></td><td>If set, overrides the *Content-Type* header returned by the server.</td></tr>
-		</tbody></table>
+									Construct and send an HTTP request based on the specified options.
 									
 									
 									
@@ -579,13 +564,57 @@
 												<span class="light fixedFont paramType">{Object}</span> <b>options</b>
 												
 											</dt>
-											<dd>Define request options</dd>
+											<dd>Request options.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>options.url</b>
+												
+											</dt>
+											<dd>URL to request</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>options.method</b>
+												<i>Optional, Default: "GET"</i>
+											</dt>
+											<dd>HTTP method to use</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String|Object}</span> <b>options.body</b>
+												<i>Optional</i>
+											</dt>
+											<dd>Request body. If a <code>String</code> is passed, it is considered pre-serialized.  
+													If an <code>Object</code> is passed, it will be serialized based on the request's 
+													<code>Content-Type</code> header.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Any}</span> <b>options.bodySerialized</b>
+												<i>Optional</i>
+											</dt>
+											<dd>If set, gets assigned unmodified as the request body.  If you're sending something like Blob data, this is for you.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Object}</span> <b>options.headers</b>
+												<i>Optional</i>
+											</dt>
+											<dd>A key-value list of request headers to send.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Object}</span> <b>options.contentTypeOverride</b>
+												<i>Optional</i>
+											</dt>
+											<dd>If set, overrides the response's <code>Content-Type</code> header with the given value.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Object}</span> <b>options.callback</b>
+												<i>Optional</i>
+											</dt>
+											<dd>Alias of <code>callback</code>, a function to call on completion. Gets passed <code>(success, response, request)</code>.</dd>
 										
 											<dt>
 												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
 												<i>Optional</i>
 											</dt>
-											<dd>A callback function, used if options.callback is not set.</dd>
+											<dd>Called on completion. Gets passed <code>(success, response, request)</code>.  If set, takes precidence over <code>options.callback</code>.</dd>
 										
 									</dl>
 								
