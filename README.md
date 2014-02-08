@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.1.9**
+*Current version:* **1.2.0**
 
 
 ---
@@ -26,7 +26,7 @@ Plugins
 =======
 puredom provides a plugin API for extending the core selection object, and for extending the CSS selector engine.
 
-- [Available Plugins](http://puredom.org/plugins/)
+- [Available Plugins](http://puredom.org/plugins/)  
 - [Plugin Documentation](#awww) - *not done yet :(*
 
 
