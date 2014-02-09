@@ -76,7 +76,54 @@ module.exports = function(grunt) {
 			],
 			afterconcat: [
 				'<%= concat.full.dest %>'
-			]
+			],
+			test: {
+				options : {
+					'-W030' : true
+				},
+				src : [
+					'test/**/*.js',
+					'!test/js/**/*.js'
+				]
+			}
+		},
+
+
+		connect : {
+			test : {
+				options : {
+					port : 9091,
+					base : '.'
+				}
+			}
+		},
+
+		/*
+		qunit : {
+			all : {
+				options : {
+					urls : [
+						'http://localhost:9091/'
+					]
+				}
+			}
+		},
+		*/
+
+
+		mocha : {
+			test : {
+				options : {
+					run : true,
+					reporter : 'Spec',
+					mocha : {
+						// grep : 'foo.*'
+					},
+					urls : [
+						'http://localhost:9091/test/index.html'
+					]
+				}
+			}
 		},
 
 
@@ -92,13 +139,39 @@ module.exports = function(grunt) {
 					'zip -9 "dist/<%= pkg.version %>/<%= pkg.name %>.light.zip" "<%= concat.light.dest %>"'
 				].join(';')
 			}
+		},
+
+
+		watch : {
+			src : {
+				files : [
+					'src/**/*.js'
+				],
+				tasks : ['default'],
+				options : {
+					interrupt : true
+				}
+			},
+			test : {
+				files : 'test/**/*',
+				tasks : ['test'],
+				options : {
+					interrupt : true
+				}
+			}
 		}
+
 	});
+
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks('grunt-contrib-connect');
+	grunt.loadNpmTasks('grunt-mocha');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+
 
 	grunt.registerTask('default', [
 		'jshint:beforeconcat',
@@ -108,5 +181,38 @@ module.exports = function(grunt) {
 		'uglify:full',
 		'shell:compress'
 	]);
-	
+
+
+	grunt.registerTask('test', [
+		'jshint:test',
+		'connect:test',
+		'mocha:test'
+	]);
+
+
+	grunt.registerTask('benchmark', 'Run benchmarks in phantomjs.', function() {
+		var phantom = require('grunt-lib-phantomjs').init(grunt),
+			done = this.async();
+
+		phantom.on('error.onError', function(msg, trace) {
+			grunt.log.error('Error: ' + msg + '\n' + trace);
+		});
+
+		phantom.on('fail.load', function(url) {
+			grunt.log.error('Failed to load URL: ' + url);
+		});
+
+		phantom.on('console', function(msg) {
+			grunt.log.writeLn(String(msg));
+			//console.log(msg);
+		});
+
+		phantom.spawn('http://localhost:9091/test/bench/selectors.html', {
+			options : {},
+			done : function() {
+				done(err)
+			}
+		});
+	});
+
 };
