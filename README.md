@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.0**
+*Current version:* **1.2.1**
 
 
 ---
@@ -162,6 +162,9 @@ License
 
 Changelog
 =========
+**Version 1.2.1** *(Feb 9th 2014)*
+- Performance improvements for selectors & selections
+
 **Version 1.2.0** *(Feb 2nd 2014)*
 - Distribution for 1.2.0
 - puredom 1.2.0: rewritten puredom.net and reorganized files.
