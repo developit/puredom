@@ -28,7 +28,7 @@ if (typeof(Date.now)!=='function') {
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.2.0',
+			version : '1.2.1',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -591,24 +591,25 @@ if (typeof(Date.now)!=='function') {
 	self.NodeSelection = function NodeSelection(nodes) {
 		var x;
 		this._results = [];
-		this._nodes = [];
 		this._animations = [];
 		if (nodes) {
 			if (self.isArray(nodes)) {
-				for (x=0; x<nodes.length; x++) {
-					if (nodes[x]) {
-						if (nodes[x].constructor===NodeSelection && nodes[x]._nodes) {
-							this._nodes.push(nodes[x]._nodes[0]);
-						}
-						else {
-							this._nodes.push(nodes[x]);
-						}
+				this._nodes = nodes = nodes.slice();
+				for (x=nodes.length; x--; ) {
+					if (!nodes[x]) {
+						nodes.splice(x, 1);
+					}
+					else if (nodes[x] instanceof NodeSelection) {
+						nodes = nodes.concat(nodes.splice(x, 1)[0]._nodes);
 					}
 				}
 			}
 			else {
-				this._nodes.push(nodes);
+				this._nodes = [nodes];
 			}
+		}
+		else {
+			this._nodes = [];
 		}
 	};
 
@@ -2244,26 +2245,8 @@ if (typeof(Date.now)!=='function') {
 	self.el = function(query, log) {
 		var results, type;
 		if (query) {
-			type = self.typeOf(query);
-			if (type==='array') {
-				results = [];
-				for (var x=0; x<query.length; x++) {
-					Array.prototype.splice.apply(results, [0,0].concat(self.el(query[x])._nodes) );
-				}
-			}
-			if (query.constructor===self.NodeSelection) {
-				if (log===true) {
-					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
-				}
-				return query;
-			}
-			else if ((type==='string' && query.charAt(0)==='<') || (type==='object' && !query.nodeName && query!==window)) {
-				if (log===true) {
-					self.log('query is an HTML fragment', query, type);
-				}
-				results = self.createElement.apply(self, arguments);
-			}
-			else if (type==='string') {
+			type = typeof query;
+			if (type==='string' && query.charAt(0)!=='<') {
 				if (log===true) {
 					self.log('query is a CSS selector', query, type);
 				}
@@ -2276,6 +2259,24 @@ if (typeof(Date.now)!=='function') {
 				else {
 					results = self.getElement(query, arguments[1]);
 				}
+			}
+			else if (self.isArray(query)) {
+				results = [];
+				for (var x=0; x<query.length; x++) {
+					Array.prototype.splice.apply(results, [0,0].concat(self.el(query[x])._nodes) );
+				}
+			}
+			else if (type==='string' || (type==='object' && !query.nodeName && query!==window)) {
+				if (log===true) {
+					self.log('query is an HTML fragment', query, type);
+				}
+				results = self.createElement.apply(self, arguments);
+			}
+			else if (query.constructor===self.NodeSelection) {
+				if (log===true) {
+					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
+				}
+				return query;
 			}
 			else if (query.nodeName || query===window) {
 				if (log===true) {
@@ -2637,6 +2638,20 @@ if (typeof(Date.now)!=='function') {
 		};
 		
 		
+		/**	@ignore */
+		function nativeQuerySelectorAll(selector) {
+			var results;
+			selector = selector.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
+			try {
+				results = baseNode.querySelectorAll(selector);
+				if (results) {
+					results = self.toArray(results);
+				}
+			} catch (err) {}
+			return results || false;
+		}
+		
+		
 		/** The selector engine's interface. Returns an {Array} of elements matching the passed CSS selector query
 		 *	@param {String} search			A CSS selector, or multiple CSS selectors separated by a comma
 		 *	@param {Object} [options]		Optional hash of one-time triggers for the engine:
@@ -2648,7 +2663,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@private
 		 */
 		getElement = function(search, options) {
-			var baseNode = document && document.documentElement || document,
+			var baseNode = getElement.baseNode || (getElement.baseNode = document && document.documentElement || document),
 				currentResults,
 				nodes,
 				nodeName,
@@ -2733,6 +2748,18 @@ if (typeof(Date.now)!=='function') {
 			 *	Selector engine internals
 			 */
 			
+			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById() 
+			// functionality is preserved (only returns one element, the last with that ID).
+			if (search.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
+				currentResults = [
+					(baseNode.getElementById ? baseNode : document).getElementById(search.substring(1))
+				];
+				return currentResults;
+				// skip parse:
+				//useCustomImplementation = false;
+			}
+			
+			
 			nodeName = search.match(nodeNameReg);
 			nodeName = ((nodeName && nodeName[0]) || "").toLowerCase();
 			search = search.substring(nodeName.length);
@@ -2747,20 +2774,9 @@ if (typeof(Date.now)!=='function') {
 				useCustomImplementation = true;
 			}
 			
-			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById() 
-			// functionality is preserved (only returns one element, the last with that ID).
-			if (searchParsed.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
-				currentResults = [
-					(baseNode.getElementById ? baseNode : document).getElementById(searchParsed.substring(1))
-				];
-				// skip parse:
-				useCustomImplementation = false;
-			}
-			else if (priv.support.querySelectorAll && useCustomImplementation!==true) {
-				nativeSearch = originalSearch.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
-				try {
-					currentResults = self.toArray(baseNode.querySelectorAll(nativeSearch) || []);
-				} catch (querySelectorError) {
+			if (priv.support.querySelectorAll && useCustomImplementation!==true) {
+				currentResults = nativeQuerySelectorAll(originalSearch);
+				if (currentResults===false) {
 					self.log('Native querySelectorAll failed for selector: ', nativeSearch, ', error:', querySelectorError.message);
 					currentResults = [];
 					useCustomImplementation = true;
