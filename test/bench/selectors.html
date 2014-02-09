@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Selectors Benchmark</title>
+	</head>
+	
+	<body>
+		<!--<applet code="nano" archive="../js/nano.jar"></applet>-->
+		<script src="../js/lodash.compat.js"></script>
+		<script src="../js/benchmark.js"></script>
+		<script src="../js/benchmark-runner.js"></script>
+
+
+		<!-- source -->
+		<script src="../../src/puredom.js"></script>
+
+
+		<script>
+			Bench.enqueue('#id', {
+				'setup' : function() {
+					this.count = 0;
+
+					for (var i=300, div; i--; ) {
+						div = document.createElement('div');
+						div.setAttribute('id', 'div'+i);
+						document.body.appendChild(div);
+					}
+				},
+
+				'teardown' : function() {
+					for (var i=300, div; i--; ) {
+						div = document.getElementById('div'+i);
+						if (div) {
+							div.parentNode.removeChild(div);
+						}
+					}
+				},
+
+				'puredom.el()' : function() {
+					this.count = (this.count + 1) % 300;
+					puredom.el('#div'+this.count);
+				},
+
+				'querySelectorAll()' : function() {
+					this.count = (this.count + 1) % 300;
+					document.querySelectorAll('#div'+this.count);
+				},
+
+				'getElementById()' : function() {
+					this.count = (this.count + 1) % 300;
+					document.getElementById('div'+this.count);
+				}
+			});
+		</script>
+	</body>
+</html>
