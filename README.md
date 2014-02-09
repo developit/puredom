@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.1**
+*Current version:* **1.2.1**  
 Stable: [![Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)  (master)  
 Beta: [![Build Status](https://travis-ci.org/developit/puredom.png?branch=develop)](https://travis-ci.org/developit/puredom)  (develop)  
 
