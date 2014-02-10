@@ -1,9 +1,12 @@
 puredom
 =======
 *Current version:* **1.2.1**  
-Stable: [![Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)  (master)  
-Beta: [![Build Status](https://travis-ci.org/developit/puredom.png?branch=develop)](https://travis-ci.org/developit/puredom)  (develop)  
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/developit/puredom/trend.png)](https://bitdeli.com/free "Bitdeli Badge")  
+[![Master Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)
+[![Dependency Status](https://david-dm.org/developit/puredom.png)](https://david-dm.org/developit/puredom)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/developit/puredom/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
+develop: [![Build Status](https://travis-ci.org/developit/puredom.png?branch=develop)](https://travis-ci.org/developit/puredom)  
+
 
 
 ---
