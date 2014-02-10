@@ -18,7 +18,7 @@ In plain english, it makes building developing rich apps using JavaScript, HTML 
 
 Documentation
 =============
-- For a list of functions you can call on a puredom selection see the simple [selector function list](http://puredom.org/selector-functions.html) (or [PDF](http://puredom.org/selector-functions.pdf)).  
+- For a list of functions you can call on a puredom selection see the simple [selector function list](http://puredom.org/docs/symbols/puredom.NodeSelection.html).  
 - For class docs, check out the full [puredom documentation](http://puredom.org/docs/).  
 
 
@@ -29,7 +29,7 @@ Plugins
 puredom provides a plugin API for extending the core selection object, and for extending the CSS selector engine.
 
 - [Available Plugins](http://puredom.org/plugins/)  
-- [Plugin Documentation](#awww) - *not done yet :(*
+- [Plugin Documentation](http://puredom.org/building-plugins/) - *not done yet :(*  
 
 
 Example NodeSelection Plugin
