@@ -2643,11 +2643,13 @@ if (typeof(Date.now)!=='function') {
 			var results;
 			selector = selector.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
 			try {
-				results = baseNode.querySelectorAll(selector);
+				results = getElement.baseNode.querySelectorAll(selector);
 				if (results) {
 					results = self.toArray(results);
 				}
-			} catch (err) {}
+			} catch (err) {
+				self.log('Native querySelectorAll failed for selector: '+selector+', error:'+err.message);
+			}
 			return results || false;
 		}
 		
@@ -2777,7 +2779,6 @@ if (typeof(Date.now)!=='function') {
 			if (priv.support.querySelectorAll && useCustomImplementation!==true) {
 				currentResults = nativeQuerySelectorAll(originalSearch);
 				if (currentResults===false) {
-					self.log('Native querySelectorAll failed for selector: ', nativeSearch, ', error:', querySelectorError.message);
 					currentResults = [];
 					useCustomImplementation = true;
 				}
