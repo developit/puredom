@@ -5188,7 +5188,7 @@ puredom.date = /** @lends puredom.date */ {
 	
 };
 /** @namespace Networking functionality. */
-puredom.net = /** @lends puredom.net */ {
+puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net */ {
 	
 	/**	@class Represents an HTTP request.
 	 *	The raw XMLHttpRequest object is accessible through a *request* property.
@@ -5511,8 +5511,7 @@ puredom.net = /** @lends puredom.net */ {
 	}
 	
 	
-};
-
+});
 /**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
  *	@namespace JSONP Implementation. <br />
  *		JSONP only supports GET requests, but works across domains. <br />
