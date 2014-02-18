@@ -2641,11 +2641,12 @@ if (typeof(Date.now)!=='function') {
 		
 		
 		/**	@ignore */
-		function nativeQuerySelectorAll(selector) {
+		function nativeQuerySelectorAll(selector, within) {
 			var results;
+			within = within || getElement.baseNode;
 			selector = selector.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
 			try {
-				results = getElement.baseNode.querySelectorAll(selector);
+				results = within.querySelectorAll(selector);
 				if (results) {
 					results = self.toArray(results);
 				}
@@ -2779,7 +2780,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			
 			if (priv.support.querySelectorAll && useCustomImplementation!==true) {
-				currentResults = nativeQuerySelectorAll(originalSearch);
+				currentResults = nativeQuerySelectorAll(originalSearch, baseNode);
 				if (currentResults===false) {
 					currentResults = [];
 					useCustomImplementation = true;
