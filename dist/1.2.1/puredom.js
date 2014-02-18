@@ -1573,7 +1573,7 @@ if (typeof(Date.now)!=='function') {
 						values.push(node.value);
 					}
 				});
-				return values.length<2 ? (values[0] || null) : values;
+				return values.length<2 ? values[0] : values;
 			}
 		},
 		attr : function(key, value, returnValue) {
