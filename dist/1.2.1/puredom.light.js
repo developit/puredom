@@ -5384,7 +5384,7 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			
 			req.status = xhr.status;
 			req.responseType = 'text';
-			req.responseText = xhr.responseText;
+			req.responseText = req.response = xhr.responseText;
 			
 			req.responseHeaders = {};
 			headerReg.lastIndex = 0;
