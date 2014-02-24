@@ -4,6 +4,8 @@
  *	@returns {Object}	An object with methods corresponding to the API object's method descriptions.
  */
 puredom.NativeAPI = function(api) {
+	/**	@exports self as puredom.NativeAPI */
+	
 	var self = (this instanceof puredom.NativeAPI ? this : api) || {},		/* can be used as a method OR a class */
 		priv = {},
 		globalParameters = {},

@@ -157,10 +157,10 @@ puredom.extend(puredom.FormHandler.prototype, /** @lends puredom.FormHandler# */
 		data = this.getData();
 		this._hasErrors = false;
 		if (data) {
-			eventResponse = this._fireEvent('submit', [data]);
+			eventResponse = this.fireEvent('submit', [data]);
 		}
 		else {
-			eventResponse = this._fireEvent('submitfailed', [data]);
+			eventResponse = this.fireEvent('submitfailed', [data]);
 		}
 		if (!this._hasErrors && (!eventResponse || eventResponse.falsy!==true)) {
 			this.clearErrors();
@@ -175,7 +175,7 @@ puredom.extend(puredom.FormHandler.prototype, /** @lends puredom.FormHandler# */
 		}
 		
 		this.clearErrors();
-		this._fireEvent('cancel');
+		this.fireEvent('cancel');
 		
 		return this;
 	},

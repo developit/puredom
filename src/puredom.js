@@ -16,8 +16,8 @@ if (typeof(Date.now)!=='function') {
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.1.7
-	 *	@namespace Top-level puredom namespace.
+	 *	@version 1.2.2
+	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
 	 *	@name puredom
@@ -28,7 +28,7 @@ if (typeof(Date.now)!=='function') {
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.2.1',
+			version : '1.2.2',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -144,10 +144,11 @@ if (typeof(Date.now)!=='function') {
 	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
 	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
 	 *	@param {Object} props	An Object to copy properties from.
+	 *	@param {Object} [...]	Additional arguments also get copied onto base.
 	 *	@returns {Object} base
 	 *	@example
-	 * var clonedObj = puredom.extend({}, originalObj);
-	 * puredom.extend(MyClass.prototype, prototypeAsHash);
+	 *		var clonedObj = puredom.extend({}, originalObj);
+	 *		puredom.extend(MyClass.prototype, prototypeAsHash);
 	 */
 	self.extend = function(base) {
 		var i, j, ext;
@@ -161,7 +162,7 @@ if (typeof(Date.now)!=='function') {
 								}
 						}
 						// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
-						if (typeof(ext.toString)==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
+						if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
 							base.toString = ext.toString;
 						}
 				}
@@ -171,28 +172,10 @@ if (typeof(Date.now)!=='function') {
 	
 	
 	/** Mixins. Add functionality to an object without modifying it's prototype.<br />
-	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
-	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
-	 *	@param {Object} props	An Object to copy properties from, unless base already has a property of the same name.
-	 *	@returns {Object} base
-	 *	@example
-	 * puredom.mixin(myObj, myDecoratorObj);
+	 *	Alias of {@link puredom.extend extend()}
+	 *	@function
 	 */
-	self.mixin = function(base) {
-		var i, j, ext;
-		base = base || {};
-		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						for (j in ext) {
-								if (ext.hasOwnProperty(j) && !base.hasOwnProperty(j)) {
-										base[j] = ext[j];
-								}
-						}
-				}
-		}
-		return base;
-	};
+	self.mixin = self.extend;
 	
 	
 	/**	Strip an object of all of its properties.<br />
@@ -2240,6 +2223,7 @@ if (typeof(Date.now)!=='function') {
 	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
 	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
 	 *	@param {String|Object} query	A CSS selector (retrieval), or a DOM description (creation).
+	 *	@param {Boolean} [log=false]	If true, query process will be logged to the console.
 	 *	@returns {puredom.NodeSelection} selection
 	 */
 	self.el = function(query, log) {
@@ -3932,7 +3916,9 @@ if (typeof(Date.now)!=='function') {
 		return typeof style==='string' && style.replace(/\-*([A-Z])/gm, '-$1').toLowerCase() || null;
 	};
 	
-	/**	Parse a CSS String and return an Object representation. */
+	/**	Parse a CSS String and return an Object representation.
+	 *	@private
+	 */
 	priv.parseCSS = function(css) {
 		var tokenizer = /\s*([a-z\-]+)\s*:\s*([^;]*?)\s*(?:;|$)/gi,
 			obj, token;

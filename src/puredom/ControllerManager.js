@@ -119,7 +119,7 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 		}
 		this._controllers.push(controller);
 
-		this._fireEvent('add', [this.getIdFromName(controller.name)]);
+		this.fireEvent('add', [this.getIdFromName(controller.name)]);
 	},
 
 
@@ -157,7 +157,7 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 			}
 			response = newController;
 			if (newController.load) {
-				eventResponse = this._fireEvent('beforeload', [newController.name]);
+				eventResponse = this.fireEvent('beforeload', [newController.name]);
 				if (eventResponse===false || (eventResponse.falsey && !eventResponse.truthy)) {
 					return false;
 				}
@@ -168,7 +168,7 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 			}
 			// if the new controller doens't load, go back to the old one
 			if (loadResponse===false) {
-				eventResponse = this._fireEvent('loadcancel', [newController.name]);
+				eventResponse = this.fireEvent('loadcancel', [newController.name]);
 				if (eventResponse===false || (eventResponse.falsey && !eventResponse.truthy)) {
 					return false;
 				}
@@ -181,8 +181,8 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 			}
 			else {
 				this._current = this.getIdFromName(name);
-				this._fireEvent('load', [name]);
-				this._fireEvent('change', [name]);
+				this.fireEvent('load', [name]);
+				this.fireEvent('change', [name]);
 				this.doStateUpdate({
 					current : name
 				});
@@ -238,7 +238,7 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 		var current = this.current(),
 			time, ret;
 		if (current && current.unload) {
-			ret = this._fireEvent('beforeunload', [current.name]);
+			ret = this.fireEvent('beforeunload', [current.name]);
 			if (ret===false || (ret.falsey && !ret.truthy)) {
 				return false;
 			}
@@ -246,7 +246,7 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 			if (ret===false) {
 				return false;
 			}
-			this._fireEvent('unload', [current.name]);
+			this.fireEvent('unload', [current.name]);
 			this._current = null;
 		}
 	},
@@ -271,7 +271,7 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 	postMessage : function(type, msgObj) {
 		var current = this.current();
 		if (current && current.onmessage) {
-			//this._fireEvent('postMessage', [type, msgObj]);
+			//this.fireEvent('postMessage', [type, msgObj]);
 			current.onmessage(type, msgObj);
 			return true;
 		}
@@ -374,8 +374,8 @@ puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.Controlle
 					type		: (type + '').replace(/^on/gim,'')
 				});
 				if (!muted) {
-					controllerManager._fireEvent('message', msgObj);
-					controllerManager._fireEvent(msgObj.type, msgObj);
+					controllerManager.fireEvent('message', msgObj);
+					controllerManager.fireEvent(msgObj.type, msgObj);
 					for (x=0; x<controllerManager._messageListeners.length; x++) {
 						listener = controllerManager._messageListeners[x];
 						if (!listener.controller || listener.controller===name.toLowerCase()) {

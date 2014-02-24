@@ -61,12 +61,12 @@ puredom.LocalStorage.prototype.data = {};
  */
 puredom.LocalStorage.prototype.setAdapter = function(type) {
 	var list = this.constructor.adapters,
-		lcType = (type+'').toLowerCase(),
+		lcType = (type+'').toLowerCase().replace(/adapt[eo]r$/g,''),
 		found = false,
 		foundWorking = false,
 		i;
 	for (i in list) {
-		if (list.hasOwnProperty(i) && (i+'').toLowerCase()===lcType) {
+		if (list.hasOwnProperty(i) && (i+'').toLowerCase().replace(/adapt[eo]r$/g,'')===lcType) {
 			found = true;
 			if (list[i].test(this)===true) {
 				foundWorking = true;

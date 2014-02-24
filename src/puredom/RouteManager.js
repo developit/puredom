@@ -124,7 +124,7 @@ puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# 
 			});
 		}
 		
-		this._fireEvent('routingError', [{
+		this.fireEvent('routingError', [{
 			attemptedFallback : this.allowTemplateFallback!==false,
 			url : url,
 			type : 'RoutingError'

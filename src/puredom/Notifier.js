@@ -194,7 +194,7 @@ puredom.extend(puredom.Notifier.prototype, /** @lends puredom.Notifier# */ {
 		}
 		if (action && notify) {
 			args = [id].concat(args);
-			ret = this._fireEvent(action, args);
+			ret = this.fireEvent(action, args);
 			if (ret!==false) {
 				switch (action.toLowerCase()) {
 					case 'notificationclick':
