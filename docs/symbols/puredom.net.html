@@ -6,7 +6,7 @@
 		<meta name="generator" content="JsDoc Toolkit" />
 		<title>puredom.net | JsDoc Reference</title>
 
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 
 		<meta name="mobileoptimized" content="1" />
 	
 		<link rel="stylesheet" href="../css/all.css" />
@@ -20,8 +20,10 @@
 	</head>
 
 	<body>
+		<div id="bodywrap">
+<a id="menuButton" href="javascript:"><strong>Menu</strong></a>
 
-<div class="index">
+<div class="index indexMenu">
 	<div class="menu">
 		<div class="indexLinks">
 			<a href="../index.html">Classes</a>
@@ -104,7 +106,7 @@
 		&copy;2014<br />
 		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
-		Generated on: 2014-1-9 12:15
+		Generated on: 2014-1-24 0:39
 	</div>
 </div>
 
@@ -118,14 +120,20 @@
 		</h1>
 		
 		<div class="intro">
-			<p class="description summary">
-				Networking functionality.
-			</p>
-				
 			
 				<ul class="summary">
 					
+						<li>
+							<p class="description summary">
+								Networking functionality.
+							</p>
+						</li>
 					
+					
+					
+					
+					
+						<li>Defined in: <a href="../symbols/src/_Users_developit_Projects_puredom_src_puredom_net.js.html">net.js</a></li>
 					
 						
 				</ul>
@@ -200,20 +208,6 @@
 									<td class="nameDescription">
 										<div class="fixedFont">
 											<span class="methodMemberOf">puredom.net.</span>
-											<b><a href="../symbols/puredom.net.html#.multiLoad">multiLoad</a></b>
-											(resources, callback)
-										</div>
-										<div class="description">Make multiple HTTP requests in order, firing the callback only when all have completed.</div>
-									</td>
-								</tr>
-							
-								<tr
-									 class='item2'
-								>
-									<td class="attributes">&lt;static&gt; &nbsp;</td>
-									<td class="nameDescription">
-										<div class="fixedFont">
-											<span class="methodMemberOf">puredom.net.</span>
 											<b><a href="../symbols/puredom.net.html#.post">post</a></b>
 											(url, body, callback, options)
 										</div>
@@ -222,7 +216,7 @@
 								</tr>
 							
 								<tr
-									 class='item3'
+									 class='item2'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -374,82 +368,6 @@
 							<li 
 								 class='item1'
 							>
-								<div class="fixedFont heading nomultiline" id=".multiLoad">
-									<span class='lighter methodModifier'>
-									&lt;static&gt; 
-									</span>
-									
-									<span class="light methodPropertyType">{Boolean}</span>
-									
-									<span class="light methodNamespacePrefix">puredom.net.</span><b>multiLoad</b>(resources, callback)
-								</div>
-								
-								<div class="description">
-									Make multiple HTTP requests in order, firing the callback only when all have completed. <br />
-	<strong>Callback Format:</strong> <br />
-	<code>
-		callback(
-			success   // {Boolean} - did *any* requests succeed?
-			responses // {Array}   - responses corresponding to the provided resources.
-			successes // {Number}  - how many requests succeeded (status<400)
-			failures  // {Number}  - how many requests failed (status>=400)
-		);
-	</code>
-									
-									
-									
-									
-								</div>
-								
-								
-								
-								
-									<dl class="detailList params">
-										<dt class="heading">Parameters:</dt>
-										
-											<dt>
-												<span class="light fixedFont paramType">{Array(Object)}</span> <b>resources</b>
-												
-											</dt>
-											<dd>An array of resource objects, with format as described in <a href="../symbols/puredom.net.html#.request">puredom.net.request</a> options.</dd>
-										
-											<dt>
-												<span class="light fixedFont paramType">{Function}</span> <b>callback</b>
-												<i>Optional</i>
-											</dt>
-											<dd>A function to call once all requests have completed, with signature <code>function(success, responses, successes, failures)</code>. [See description]</dd>
-										
-									</dl>
-								
-								
-								
-									<dl class="detailList nomargin">
-									
-										
-										
-										
-										
-										
-										
-										
-											<dt class="heading">Returns:</dt>
-											
-												<dd><span class="light fixedFont">{Boolean}</span> returns false if no resources were provided.</dd>
-											
-										
-										
-										
-										
-										
-									
-									</dl>
-								
-								<div class="hr"></div>
-							</li>
-						
-							<li 
-								 class='item2'
-							>
 								<div class="fixedFont heading nomultiline" id=".post">
 									<span class='lighter methodModifier'>
 									&lt;static&gt; 
@@ -534,7 +452,7 @@
 							</li>
 						
 							<li 
-								 class='item3'
+								 class='item2'
 							>
 								<div class="fixedFont heading nomultiline" id=".request">
 									<span class='lighter methodModifier'>
@@ -655,6 +573,7 @@
 		
 	</div>
 </div>
+		</div>
 		<script>window.puredom && window.puredom.init();</script>
 	</body>
 </html>

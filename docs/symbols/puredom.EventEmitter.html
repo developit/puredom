@@ -6,7 +6,7 @@
 		<meta name="generator" content="JsDoc Toolkit" />
 		<title>puredom.EventEmitter | JsDoc Reference</title>
 
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 
 		<meta name="mobileoptimized" content="1" />
 	
 		<link rel="stylesheet" href="../css/all.css" />
@@ -20,8 +20,10 @@
 	</head>
 
 	<body>
+		<div id="bodywrap">
+<a id="menuButton" href="javascript:"><strong>Menu</strong></a>
 
-<div class="index">
+<div class="index indexMenu">
 	<div class="menu">
 		<div class="indexLinks">
 			<a href="../index.html">Classes</a>
@@ -104,7 +106,7 @@
 		&copy;2014<br />
 		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
-		Generated on: 2014-1-9 12:15
+		Generated on: 2014-1-24 0:39
 	</div>
 </div>
 
@@ -118,14 +120,20 @@
 		</h1>
 		
 		<div class="intro">
-			<p class="description summary">
-				
-			</p>
-				
 			
 				<ul class="summary">
 					
+						<li>
+							<p class="description summary">
+								Fire events and listen for fired events.
+							</p>
+						</li>
 					
+					
+					
+					
+					
+						<li>Defined in: <a href="../symbols/src/_Users_developit_Projects_puredom_src_puredom_EventEmitter.js.html">EventEmitter.js</a></li>
 					
 						
 				</ul>
@@ -149,7 +157,7 @@
 								<div class="fixedFont">
 									<b><a href="../symbols/puredom.EventEmitter.html#constructor">puredom.EventEmitter</a></b>()
 								</div>
-								<div class="description">Fire events and listen for fired events.</div>
+								<div class="description">Creates a new EventEmitter instance.</div>
 							</td>
 						</tr>
 					</tbody>
@@ -186,10 +194,10 @@
 									<td class="nameDescription">
 										<div class="fixedFont">
 											
-											<b><a href="../symbols/puredom.EventEmitter.html#addEventListener">addEventListener</a></b>
-											(type, handler)
+											<b><a href="../symbols/puredom.EventEmitter.html#emit">emit</a></b>
+											(type, args)
 										</div>
-										<div class="description">Register an event listener on the instance.</div>
+										<div class="description">Fire an event of a given type.</div>
 									</td>
 								</tr>
 							
@@ -200,10 +208,10 @@
 									<td class="nameDescription">
 										<div class="fixedFont">
 											
-											<b><a href="../symbols/puredom.EventEmitter.html#fireEvent">fireEvent</a></b>
-											(type, args)
+											<b><a href="../symbols/puredom.EventEmitter.html#on">on</a></b>
+											(type, handler)
 										</div>
-										<div class="description">Fire an event of a given type.</div>
+										<div class="description">Register an event listener on the instance.</div>
 									</td>
 								</tr>
 							
@@ -214,10 +222,10 @@
 									<td class="nameDescription">
 										<div class="fixedFont">
 											
-											<b><a href="../symbols/puredom.EventEmitter.html#on">on</a></b>
-											()
+											<b><a href="../symbols/puredom.EventEmitter.html#once">once</a></b>
+											(type, handler)
 										</div>
-										<div class="description">Alias of <a href="../symbols/puredom.EventEmitter.html#addEventListener">puredom.EventEmitter#addEventListener</a></div>
+										<div class="description">A version of <a href="../symbols/puredom.EventEmitter.html#on">.on()</a> that removes handlers once they are called.</div>
 									</td>
 								</tr>
 							
@@ -228,7 +236,7 @@
 									<td class="nameDescription">
 										<div class="fixedFont">
 											
-											<b><a href="../symbols/puredom.EventEmitter.html#removeEventListener">removeEventListener</a></b>
+											<b><a href="../symbols/puredom.EventEmitter.html#removeListener">removeListener</a></b>
 											(type, handler)
 										</div>
 										<div class="description">Remove an event listener from the instance.</div>
@@ -262,8 +270,7 @@
 					</div>
 					
 					<div class="description">
-						Fire events and listen for fired events. <br />
-	Let's just assume every framework provides one of these now.
+						Creates a new EventEmitter instance.
 						
 					</div>
 					
@@ -295,14 +302,82 @@
 							<li 
 								 class='item0'
 							>
-								<div class="fixedFont heading nomultiline" id="addEventListener">
+								<div class="fixedFont heading nomultiline" id="emit">
+									<span class='lighter methodModifier'>
+									
+									</span>
+									
+									<span class="light methodPropertyType">{Array}</span>
+									
+									<b>emit</b>(type, args)
+								</div>
+								
+								<div class="description">
+									Fire an event of a given type. <br />
+	Pass a comma-separated list for <code>type</code> to fire multiple events at once.
+									
+									
+									
+									
+								</div>
+								
+								
+								
+								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{String}</span> <b>type</b>
+												
+											</dt>
+											<dd>Event type, or a comma-seprated list of event types.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Array}</span> <b>args</b>
+												<i>Optional</i>
+											</dt>
+											<dd>Arguments to pass to each handler. Non-Array values get auto-boxed into an Array.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{Array}</span> an Array of handler return values. The Array also has "truthy" and "falsey" properties indicating if any handlers returned <code>true</code> or <code>false</code>, respectively.</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
+								
+								<div class="hr"></div>
+							</li>
+						
+							<li 
+								 class='item1'
+							>
+								<div class="fixedFont heading nomultiline" id="on">
 									<span class='lighter methodModifier'>
 									
 									</span>
 									
 									<span class="light methodPropertyType">{this}</span>
 									
-									<b>addEventListener</b>(type, handler)
+									<b>on</b>(type, handler)
 								</div>
 								
 								<div class="description">
@@ -360,21 +435,20 @@
 							</li>
 						
 							<li 
-								 class='item1'
+								 class='item2'
 							>
-								<div class="fixedFont heading nomultiline" id="fireEvent">
+								<div class="fixedFont heading nomultiline" id="once">
 									<span class='lighter methodModifier'>
 									
 									</span>
 									
-									<span class="light methodPropertyType">{Array}</span>
+									<span class="light methodPropertyType">{this}</span>
 									
-									<b>fireEvent</b>(type, args)
+									<b>once</b>(type, handler)
 								</div>
 								
 								<div class="description">
-									Fire an event of a given type. <br />
-	Pass a comma-separated list for <code>type</code> to fire multiple events at once.
+									A version of <a href="../symbols/puredom.EventEmitter.html#on">.on()</a> that removes handlers once they are called.
 									
 									
 									
@@ -394,10 +468,10 @@
 											<dd>An event type, or a comma-seprated list of event types.</dd>
 										
 											<dt>
-												<span class="light fixedFont paramType">{Array}</span> <b>args</b>
+												<span class="light fixedFont paramType">{Function}</span> <b>handler</b>
 												
 											</dt>
-											<dd>An Array of arguments to pass to each handler. Non-Array values get auto-boxed into an Array.</dd>
+											<dd>A function to call in response to events of the given type.  Will only be called once.</dd>
 										
 									</dl>
 								
@@ -414,12 +488,17 @@
 										
 											<dt class="heading">Returns:</dt>
 											
-												<dd><span class="light fixedFont">{Array}</span> an Array of handler return values. The Array also has "truthy" and "falsey" properties indicating if any handlers returned <code>true</code> or <code>false</code>, respectively.</dd>
+												<dd><span class="light fixedFont">{this}</span> </dd>
 											
 										
 										
 										
 										
+										
+											<dt class="heading">See:</dt>
+											
+												<dd><a href="../symbols/puredom.EventEmitter.html#on">puredom.EventEmitter#on</a></dd>
+											
 										
 									
 									</dl>
@@ -428,45 +507,16 @@
 							</li>
 						
 							<li 
-								 class='item2'
-							>
-								<div class="fixedFont heading nomultiline" id="on">
-									<span class='lighter methodModifier'>
-									
-									</span>
-									
-									
-									
-									<b>on</b>()
-								</div>
-								
-								<div class="description">
-									Alias of <a href="../symbols/puredom.EventEmitter.html#addEventListener">puredom.EventEmitter#addEventListener</a>
-									
-									
-									
-									
-								</div>
-								
-								
-								
-								
-								
-								
-								<div class="hr"></div>
-							</li>
-						
-							<li 
 								 class='item3'
 							>
-								<div class="fixedFont heading nomultiline" id="removeEventListener">
+								<div class="fixedFont heading nomultiline" id="removeListener">
 									<span class='lighter methodModifier'>
 									
 									</span>
 									
 									<span class="light methodPropertyType">{this}</span>
 									
-									<b>removeEventListener</b>(type, handler)
+									<b>removeListener</b>(type, handler)
 								</div>
 								
 								<div class="description">
@@ -534,6 +584,7 @@
 		
 	</div>
 </div>
+		</div>
 		<script>window.puredom && window.puredom.init();</script>
 	</body>
 </html>

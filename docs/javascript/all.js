@@ -6,7 +6,7 @@ puredom(function() {
 
 
 
-doc.controller = (function() {
+doc.controller = (function($) {
 	var exports = {},
 		priv = {
 			replaceNonNames : /([^\w\._@-]|[\r\n\s])/gim,
@@ -27,7 +27,7 @@ doc.controller = (function() {
 	
 	priv.getItems = function() {
 		if (!priv.items) {
-			priv.items = puredom.el('#ClassList li, #ClassList2 li, #FileList li, #MethodsList li, #MethodsListInherited dd>a');
+			priv.items = $('#ClassList li, #ClassList2 li, #FileList li, #MethodsList li, #MethodsListInherited dd>a');
 			priv.items.css({position:'relative',overflow:'hidden'}).each(function(item) {
 				var h = item.height();
 				item.height(h);
@@ -50,10 +50,10 @@ doc.controller = (function() {
 	
 	priv.goToAnchor = function(anchor, updateUrl) {
 		var c, target, top, max, t, p, newAnchor;
-		c = puredom('.content');
+		c = $('.content');
 		anchor = anchor || 'top';
 		newAnchor = anchor==='top' ? '' : ('#'+anchor);
-		target = puredom('a[name="'+anchor+'"], [id="'+anchor+'"]').first();
+		target = $('a[name="'+anchor+'"], [id="'+anchor+'"]').first();
 		if (target && target.exists()) {
 			top = 0;
 			t = target;
@@ -94,12 +94,12 @@ doc.controller = (function() {
 	};
 	
 	priv.resized = function() {
-		var index	= puredom('.index').first(),
+		var index	= $('.index').first(),
 			winW	= window.innerWidth || (document.documentElement || document.body).offsetWidth,
 			winH	= index.height(),
 			left	= index.width({margin:true,padding:true,border:false}),
-			top		= puredom('h2.heading1').height();
-		puredom('.content').css({
+			top		= $('h2.heading1').height();
+		$('.content').css({
 			left	: left + 'px',
 			width	: (winW-left) + 'px'
 		});
@@ -158,14 +158,14 @@ doc.controller = (function() {
 			
 			// Update the Classes/Files nav to show current top-level state
 			var filesSection = !!location.href.match(/\/(files\.html|symbols\/src\/.*)$/gim);
-			puredom('.indexLinks a').each(function(a) {
+			$('.indexLinks a').each(function(a) {
 				var f = a.text()==='Files';
 				a.classify(f===filesSection?'current':'noncurrent');
 				a.declassify(f===filesSection?'noncurrent':'current');
 			});
 			
 			// Update the class menu to expand/collapse items based on heirarchy
-			puredom(".menu nav li a").each(function(item) {
+			$(".menu nav li a").each(function(item) {
 				var breakCount = item.query('span.break').count(),
 					dent = Math.round(item.attr('data-indent')) || breakCount,
 					name = item.attr('data-name') || item.text(),
@@ -177,16 +177,16 @@ doc.controller = (function() {
 				if (breakCount) {
 					var basename = item.text().replace(/^.+\.\s*/g,'');
 					item.attr('data-name', name);
-					item.html('<span style="opacity:0.35;">↳</span> '+puredom.text.htmlEntities(basename));
+					item.html('<span style="opacity:0.35;">↳</span> '+$.text.htmlEntities(basename));
 					/*
 					item.text('').appendChild(
-						puredom({
+						$({
 							type : 'span',
 							html : '↳',
 							css : 'opacity:0.5;'
 						})
 					).appendChild(
-						puredom({
+						$({
 							type : 'span',
 							text : basename
 						})
@@ -219,19 +219,19 @@ doc.controller = (function() {
 			});
 			
 			// Add a link to the top of the page
-			var top = puredom({
+			var top = $({
 				type : 'a',
 				attributes : {
 					id : 'top',
 					name : 'top'
 				},
-				insertBefore : puredom('.content>.innerContent').firstChild()
+				insertBefore : $('.content>.innerContent').firstChild()
 			});
 			
 		}
 		
 		
-		puredom("pre,code,div.fixedFont").each(function(c) {
+		$("pre,code,div.fixedFont").each(function(c) {
 			var text = c.text(),
 				html = c.html(),
 				m = html.match(/^\t+/gim),
@@ -246,7 +246,7 @@ doc.controller = (function() {
 			}
 		});
 		
-		puredom("pre.code").each(function(pre) {
+		$("pre.code").each(function(pre) {
 			/*
 			var text = pre.text(),
 				tabs = text.match(/^\t+/gim)[0].replace(/\t/gm,'\\t');
@@ -265,7 +265,7 @@ doc.controller = (function() {
 			b = priv.urlBase.replace(/^\//,'');
 		options = options || {};
 		
-		url = url.replace(/^(https|http)\:\/\/[^\/]+/gim,'').replace(/^\//,'');
+		url = url.replace(/^(https|http)\:\/\/[^\/]+/gim,'').replace(/(^\/|symbols\/)/,'');
 		
 		url = url.replace(/^\.\.\//gm,'');
 		
@@ -277,77 +277,103 @@ doc.controller = (function() {
 		}
 		pageUrl = url.replace(/#.+/gim,'');
 		
+		hideMenu();
+		
 		if (pageUrl===priv.currentUrl.replace(/#.+/gim,'')) {
 			return false;
 		}
 		
-		puredom.net.get(pageUrl, function(success, data) {
-			var doc = HTMLParser.parse(data),
-				puredoc = puredom(doc),
-				html = puredoc.query('div.content').first().html() || puredoc.query('body').first()	.html();
+		try {
+			$.net.get(pageUrl, function(success, data) {
+				var doc = HTMLParser.parse(data),
+					puredoc = $(doc),
+					html = puredoc.query('div.content').first().html() || puredoc.query('body').first()	.html();
 			
-			if (options.pushState!==false) {
-				history.pushState(null, document.title, url);
-			}
-			document.title = puredoc.query('title').first().html();
-			
-			/*
-			var styles = puredom('head style');
-			puredoc.query('head style').each(function(style) {
-				var text = style.text() || style.html(),
-					found = false,
-					g;
-				styles.each(function(s) {
-					var t = s.text() || s.html();
-					if (t===text) {
-						found = true;
-						return false;
-					}
-				});
-				if (!found) {
-					g = puredom.el({
-						type : 'style',
-						attributes : {
-							rel : 'stylesheet',
-							type : 'text/css'
-						},
-						html : text
-					}, puredom('head'));
-					if (!g.html()) {
-						g._nodes[0].appendChild(document.createTextNode(text));
-					}
-					if (g._nodes[0].stylesheet) {
-						g._nodes[0].stylesheet.cssText = text;
-					}
+				if (!data) {
+					location.href = pageUrl;
+					return;
 				}
-			});
-			*/
 			
-			//puredom('div.content').hide().html(html).fadeIn('fast');
+				if (options.pushState!==false) {
+					history.pushState(null, document.title, url);
+				}
+				document.title = puredoc.query('title').first().html();
 			
-			puredom('div.content').first().fadeOut(100, function(c) {
-				c.html(html);
-				priv.onPageLoad();
-				c.wait(100, function() {
-					c.query('>pre').classify('sourceViewBase');
-					this.fadeIn(100);
-					html = puredoc = c = null;
+				/*
+				var styles = $('head style');
+				puredoc.query('head style').each(function(style) {
+					var text = style.text() || style.html(),
+						found = false,
+						g;
+					styles.each(function(s) {
+						var t = s.text() || s.html();
+						if (t===text) {
+							found = true;
+							return false;
+						}
+					});
+					if (!found) {
+						g = $.el({
+							type : 'style',
+							attributes : {
+								rel : 'stylesheet',
+								type : 'text/css'
+							},
+							html : text
+						}, $('head'));
+						if (!g.html()) {
+							g._nodes[0].appendChild(document.createTextNode(text));
+						}
+						if (g._nodes[0].stylesheet) {
+							g._nodes[0].stylesheet.cssText = text;
+						}
+					}
 				});
-			}, false);
-		}, {
-			contentTypeOverride : 'text/plain'
-		});
+				*/
+			
+				//$('div.content').hide().html(html).fadeIn('fast');
+			
+				$('div.content').first().fadeOut(100, function(c) {
+					c.html(html);
+					priv.onPageLoad();
+					c.wait(100, function() {
+						c.query('>pre').classify('sourceViewBase');
+						this.fadeIn(100);
+						html = puredoc = c = null;
+					});
+				}, false);
+			}, {
+				contentTypeOverride : 'text/plain'
+			});
+		}catch(err) {
+			location.href = pageUrl;
+		}
 	};
+	
+	
+	function toggleMenu() {
+		var has = $('body').hasClass('menu-open');
+		$('body')[has?'declassify':'classify']('menu-open');
+	}
+	function showMenu() {
+		$('body').classify('menu-open');
+	}
+	function hideMenu() {
+		$('body').declassify('menu-open');
+	}
+	
 	
 	exports.init = function() {
 		
-		priv.urlBase = (location.href.substring(0,location.href.lastIndexOf('/')) || '') + '/' + (puredom('body').attr('data-url-base') || '');
+		priv.urlBase = (location.href.substring(0,location.href.lastIndexOf('/')) || '') + '/' + ($('body').attr('data-url-base') || '');
 		priv.urlBase = priv.urlBase.replace(/[^\/]+\/\.\./gim,'').replace(/^(https|http)\:\/\/[^\/]+/gim,'').replace(/\/+$/,'') + '/';
+		
+		$('#menuButton').on('click', toggleMenu);
 		
 		priv.onPageLoad();
 		
 		setTimeout(function() {
-			puredom.addEvent(window, 'popState', function() {
+			$.addEvent(window, 'popState', function() {
 				priv.loadPage(location.href, { pushState:false });
 			});
 		}, 100);
@@ -360,10 +386,10 @@ doc.controller = (function() {
 				priv.updateFromUrl();
 			}
 		}, 200);
-		puredom.addEvent(history, 'popstate', priv.updateFromUrl);
-		puredom.addEvent(window, 'hashchange', priv.updateFromUrl);
+		$.addEvent(history, 'popstate', priv.updateFromUrl);
+		$.addEvent(window, 'hashchange', priv.updateFromUrl);
 		
-		puredom('body').on('click', function(e) {
+		$('body').on('click', function(e) {
 			var t=e.target, a, href, c, j, winurl, target, top, max, resolvedHref;
 			winurl = location.href.replace(/#.*$/gim,'');
 			do {
@@ -374,8 +400,9 @@ doc.controller = (function() {
 			} while((t=t.parentNode) && t!==document.body);
 			if (a) {
 				href = a.getAttribute('href');
+				if (href.substring(0,11)==='javascript:') return;
 				resolvedHref = a.href;
-				c = puredom('.content');
+				c = $('.content');
 				j = href.indexOf('#');
 				if (j>=0 && resolvedHref.replace(/#.*$/gim,'')===winurl) {
 					priv.goToAnchor(href.substring(j+1));
@@ -388,16 +415,16 @@ doc.controller = (function() {
 			}
 		});
 		
-		puredom('#ClassFilter').on('keyup,change', function() {
+		$('#ClassFilter').on('keyup,change', function() {
 			priv.filter = this.value;
 			if (priv.filterUpdateTimer) {
 				clearTimeout(priv.filterUpdateTimer);
 			}
 			priv.filterUpdateTimer = setTimeout(priv.updateFilter, 160);
 		});
-		exports.filterClasses(puredom.el('#ClassFilter').value() || '');
+		exports.filterClasses($('#ClassFilter').value() || '');
 		
-		puredom('.indexLinks>a').each(function(n) {
+		$('.indexLinks>a').each(function(n) {
 			var u = (n.attr('href').match(/[^\/]+$/gim) || [])[0],
 				g = (location.href.match(/[^\/]+$/gim) || [])[0];
 			if (u && g) {
@@ -405,12 +432,12 @@ doc.controller = (function() {
 			}
 		})
 		
-		puredom.addEvent(window, 'resize', priv.resized);
+		$.addEvent(window, 'resize', priv.resized);
 		priv.resized();
 	};
 	
 	return exports;
-}());
+}(puredom));
 
 
 

@@ -114,15 +114,15 @@ body .index .menu nav {
 		}
 			.index .menu nav ul li a {
 				display: block;
-				padding: 10px;
+				padding: 5px 10px;
 				margin: 0;
 				overflow: hidden;
 				border: none;
 				border-top: 1px solid #FFF;
-				border-bottom: 1px solid #CCC;
+				border-bottom: 1px solid #DDD;
 				color: #444;
 				font-weight: normal;
-				font-size: 130%;
+				font-size: 120%;
 				text-decoration: none;
 				text-indent: 0;
 				white-space: nowrap;
@@ -146,7 +146,7 @@ body .index .menu nav {
 				background-image:      -o-linear-gradient(top, #AACCFF, #557799); /* Opera 11.10+ */
 				background-image:         linear-gradient(top, #AACCFF, #557799);
 				filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AACCFF', EndColorStr='#557799'); /* IE6-IE9 */
-				border-top-color: #DEF;
+				border-top-color: #AACCFF;
 				border-bottom-color: #456;
 				color: #FFF;
 				-webkit-text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
@@ -206,21 +206,32 @@ div.index ul.classList a + a {
 	margin-left: 0.5em;
 }
 
-div.index div.fineprint {
-	margin: 1em 0 0 15px;
-	color: #777;
-	font-size: 0.9em;
-}
-
-div.index div.fineprint a {
-	color: #777;
+.fineprint {
+	display: none;
 }
 
 div.indexStatic {
-	position: static;
-	min-height: 1em;
+	display: none;
 }
 /* End menu */
+
+
+#menuButton {
+	display: none;
+}
+
+
+#bodywrap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+
+
 
 
 /* Start content */
@@ -230,6 +241,7 @@ div.content {
 	top: 0;
 	width: auto;
 	height: 100%;
+	background: #EEE;
 	overflow: auto;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
@@ -252,11 +264,14 @@ div.content ul.methodDetail {
 }
 	/** a method */
 	div.content ul.methodDetail li {
+		/*
 		border-top: 1px dotted #DDD;
 		border-bottom: 1px dotted #DDD;
 		border-left: 5px solid #EEE;
-		padding: 14px 5px 13px;
-		margin: 0 0 10px;
+		*/
+		border-bottom: 1px dotted #DDD;
+		padding: 14px 5px 35px;
+		margin: 20px 0;
 	}
 		div.content ul.methodDetail li div.hr {
 			display: none;
@@ -276,12 +291,8 @@ div.content ul.methodDetail {
 		}
 			/** title */
 			div.content ul.methodDetail dl.detailList.params dt.heading {
-				/*
-				position: relative;
-				left: -12em;
-				*/
 				position: absolute;
-				left: -12em;
+				left: -14em;
 				top: -26px;
 				margin: 0 0 0 -1px;
 				float: none;
@@ -310,6 +321,7 @@ div.content ul.methodDetail {
 				margin-left: 28em;
 				padding-left: 10px;
 				padding-bottom: 4px;
+				min-height: 1.2em;
 				color: #666;
 			}
 			/** param type */
@@ -321,7 +333,8 @@ div.content ul.methodDetail {
 				width: 14em;
 				padding: 0 5px 0 0;
 				text-align: right;
-				color: #777;
+				color: #BBB;
+				font-style: italic;
 				font-weight: normal;
 			}
 			/** param name */
@@ -329,11 +342,12 @@ div.content ul.methodDetail {
 				display: block;
 				float: left;
 				clear: none;
-				width: 14em;
+				width: 12em;
 				padding: 0 0 0 5px;
 				text-align: left;
 				color: #496;
 				font-weight: bold;
+				font-size: 120%;
 			}
 			/** param optionality */
 			div.content ul.methodDetail dl.detailList.params dt i {
@@ -520,30 +534,36 @@ table.summaryTable tr:last-child td {
 }
 
 table.summaryTable td.attributes {
-	width: 35%;
+	width: 14em;
+	color: #BBB;
+	text-align: right;
 }
-
-	table.summaryTable td.nameDescription {
-		width: 65%
+/*
+table.summaryTable td.nameDescription {
+	width: 65%
+}
+*/
+	.summaryTable td.nameDescription .fixedFont {
+		color: #A0A4A8;
+		font-size: 120%;
+		font-weight: normal;
+		border-left: none;
 	}
-		.summaryTable td.nameDescription .fixedFont {
-			color: #A0A4A8;
-			font-size: 120%;
-			font-weight: normal;
-		}
-		.summaryTable td.nameDescription .fixedFont a {
-			padding: 0 2px;
-			font-weight: bold;
-			border-bottom: 1px dotted #ABC;
-			text-decoration: none;
-		}
-		.summaryTable td.nameDescription .description {
-			padding: 0 0 0 3px;
-			margin: 0 0 0 3px;
-			border-left: 1px dotted #DDD;
-			color: #496;
-			font-size: 100%;
-		}
+	.summaryTable td.nameDescription .fixedFont a {
+		font-weight: bold;
+		margin: 0;
+		border-bottom: 1px dotted #ABC;
+		text-decoration: none;
+	}
+	.summaryTable td.nameDescription .description {
+		padding: 0 0 0 10px;
+		margin: 0;
+		/*
+		border-left: 1px dotted #DDD;
+		*/
+		color: #496;
+		font-size: 100%;
+	}
 
 
 
@@ -651,7 +671,7 @@ ul#ClassList2 li:last-child a {
 			background-image:      -o-linear-gradient(top, #AACCFF, #557799); /* Opera 11.10+ */
 			background-image:         linear-gradient(top, #AACCFF, #557799);
 			filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AACCFF', EndColorStr='#557799'); /* IE6-IE9 */
-			border-top-color: #CDF;
+			border-top-color: #AACCFF;
 			border-bottom-color: #456;
 			color: #FFF;
 		}
@@ -675,13 +695,19 @@ code {
 pre.multiline,
 code.multiline,
 .fixedFont.multiline {
+	/*
 	display: inline-block;
 	*display: table-cell;
+	*/
+	display: block;
+	max-width: 100%;
 	margin: 0 0 0 4px;
 	padding: 0 0 0 4px;
 	background: none;
 	border: none;
 	border-left: 1px solid #CCC;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 body pre.code {
@@ -737,3 +763,244 @@ body pre.code {
  * END MEDIA QUERY CHECK
  */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width:800px) {
+	#bodywrap {
+		position: relative;
+		width: 100%;
+		background: #000;
+		overflow: visible;
+	}
+
+	html, body {
+		background: #EEE;
+		height: auto !important;
+		overflow: auto !important;
+	}
+	
+	/*
+	body #bodywrap,
+	body .content {
+		-webkit-transition: all 300ms ease-in-out;
+		-moz-transition: all 300ms ease-in-out;
+		transition: all 300ms ease-in-out;
+	}
+	
+	body.menu-open #bodywrap {
+		-webkit-transform: translate3d(280px, 0, 0);
+		-moz-transform: translate3d(280px, 0, 0);
+		-ms-transform: translate3d(280px, 0, 0);
+		-o-transform: translate3d(280px, 0, 0);
+		transform: translate3d(280px, 0, 0);
+	}
+	*/
+	
+	body .indexMenu,
+	body.menu-open .content {
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+	}
+	
+	body .indexMenu,
+	body #menuButton,
+	body .content {
+		-webkit-transition: all 300ms ease-in-out;
+		-moz-transition: all 300ms ease-in-out;
+		transition: all 300ms ease-in-out;
+	}
+	
+	body.menu-open .indexMenu,
+	body.menu-open #menuButton,
+	body.menu-open .content {
+		-webkit-transform: translate3d(280px, 0, 0);
+		-moz-transform: translate3d(280px, 0, 0);
+		-ms-transform: translate3d(280px, 0, 0);
+		-o-transform: translate3d(280px, 0, 0);
+		transform: translate3d(280px, 0, 0);
+	}
+	
+	#menuButton {
+		position: fixed;
+		display: inline-block;
+		left: 0;
+		top: 0;
+		padding: 0;
+		margin: 0;
+		text-decoration: none;
+		border: none;
+		z-index: 999;
+		cursor: pointer;
+	}
+	#menuButton strong {
+		position: relative;
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background: #000;
+		color: #000;
+		font-size: 0;
+		font-weight: bold;
+		letter-spacing: 3px;
+		line-height: 36px;
+		text-indent: 10px;
+		-webkit-transform-origin: 50% 50%;
+		transform-origin: 50% 50%;
+		-webkit-transform: rotate(-90deg);
+		transform: rotate(-90deg);
+	}
+	#menuButton strong::before {
+		color: #FFF;
+		font-size: 20px;
+		content: '|||';
+	}
+	
+	body.menu-open #menuButton {
+		width: 100%;
+		height: 100%;
+	}
+	
+	body .indexMenu {
+		position: fixed;
+		left: -280px;
+		top: 0;
+		width: 279px;
+		height: 100%;
+		background: #FFF;
+		overflow: auto;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		z-index: 1000;
+	}
+	
+	body .content {
+		position: relative !important;
+		left: 0 !important;
+		top: 0 !important;
+		width: 100% !important;
+		height: auto !important;
+		padding: 0;
+		overflow: hidden !important;
+		overflow-y: hidden !important;
+		-webkit-overflow-scrolling: none !important;
+	}
+	body.menu-open .content {
+		opacity: 0.15;
+	}
+	
+	body .innerContent {
+		padding: 40px 0 0 !important;
+	}
+	
+	body div.content .classTitle {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-ms-box-sizing: border-box;
+		box-sizing: border-box;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 40px;
+		padding: 2px 5px 2px 45px;
+		margin: 0;
+		letter-spacing: 0;
+		line-height: 16px;
+		background: #333;
+		-webkit-box-shadow: 0 0 3px rgba(0,0,0,0.5);
+		box-shadow: 0 0 3px rgba(0,0,0,0.5);
+		color: #999;
+		font-size: 90%;
+		font-weight: normal;
+		z-index: 800;
+		text-shadow: none;
+		text-align: center;
+	}
+		body div.content .classTitle span {
+			display: block;
+			font-size: 140%;
+			color: #FFF;
+			text-shadow: none;
+			padding: 0;
+			letter-spacing: 0;
+			font-weight: normal;
+		}
+	
+	body thead,
+	body td.attributes {
+		display: none !important;
+	}
+	
+	body div.content div.props {
+		margin-left: 2px;
+		margin-right: 2px;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+	
+	body ul.methodDetail li div.fixedFont.heading {
+		font-size: 120%;
+	}
+	
+	body div.content ul.methodDetail dl.detailList.nomargin dd {
+		padding-left: 0.6em;
+	}
+	
+	div.content ul.methodDetail dl.detailList.params dt,
+	body div.content ul.methodDetail dl.detailList.params dd {
+		float: none !important;
+		padding: 3px 5px !important;
+		margin: 0 !important;
+	}
+	body div.content ul.methodDetail dl.detailList.params dd {
+		border-top: none !important;
+	}
+	body div.content ul.methodDetail dl.detailList.params dt b,
+	body div.content ul.methodDetail dl.detailList.params dt i,
+	body div.content ul.methodDetail dl.detailList.params dt span.light.fixedFont {
+		display: inline-block !important;
+		position: relative !important;
+		top: 0 !important;
+		width: auto !important;
+		float: none !important;
+	}
+	/*
+	body div.content ul.methodDetail dl.detailList.params {
+		border-top: 1px dotted #D5D5D5;
+	}
+	*/
+	
+	/*
+	body pre.code {
+		display: block !important;
+		max-width: 100%;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	*/
+}
