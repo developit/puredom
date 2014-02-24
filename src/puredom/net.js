@@ -227,7 +227,7 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 	},
 
 
-	/** Asynchronously create an XMLHttpRequest object, automatically instantiating it from within an iframe if the TLD matches the page's TLD.
+	/** Asynchronously create an XMLHttpRequest object.
 	 *	@private
 	 */
 	createXHR : function(req, callback, context) {
