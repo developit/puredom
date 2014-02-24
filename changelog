@@ -1,29 +1,33 @@
-Version 1.2.1 (Feb 9th 2014)
-- Performance improvements for selectors & selections
+Version 1.2.2 (Feb 23, 2014)
+- Refactored EventEmitter module.  
+- Fixed issue with textual HTTP responses.  
 
-Version 1.2.0 (Feb 2nd 2014)
+Version 1.2.1 (Feb 9, 2014)
+- Performance improvements for selectors & selections.
+
+Version 1.2.0 (Feb 2, 2014)
 - Distribution for 1.2.0
 - puredom 1.2.0: rewritten puredom.net and reorganized files.
 
-Version 1.1.9 (Jan 3rd 2014)
+Version 1.1.9 (Jan 3, 2014)
 - Remove ridiculous blacklist of mobile devices for CSS3 transitions
 - Add automatic vendor prefixing for transform, transition, perspective and box-sizing CSS properties
 - Add support for passing HTML to the puredom() function to create a node.
 
-Version 1.1.8 (Nov 15th 2013)
+Version 1.1.8 (Nov 15, 2013)
 - Fixed silly "getAnimationCound" error.
 - Documentation, build & website fixes.
 - Added `puredom.templateAttributeName` option, which defaults to `data-tpl-id`
 
-Version 1.1.7 (Oct 8th 2013)
+Version 1.1.7 (Oct 8, 2013)
 - Lint, build & website fixes.
 
-Version 1.1.6 (Mar 3rd 2013)
+Version 1.1.6 (Mar 3, 2013)
 - Make puredom.DOMEvent an actual class. Instance it and pass it to fireEvent for better insight into handler responses.
 
-Version 1.1.5 (Feb 26th 2013)
+Version 1.1.5 (Feb 26, 2013)
 - Accommodate null callback option for .css() [was throwing in Firefox]
 
-Version 1.1.4 (Feb 25th 2013)
+Version 1.1.4 (Feb 25, 2013)
 - Feature:  .css() now accepts CSS strings.  sel.css('left:5px','fast');
 - Bugfix:  CSS animation of -vendor-transform is correctly turned off after completion.
