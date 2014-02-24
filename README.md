@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.1**  
+*Current version:* **1.2.2**  
 [![Master Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)
 [![Dependency Status](https://david-dm.org/developit/puredom.png?theme=shields.io)](https://david-dm.org/developit/puredom)
 [![devDependency Status](https://david-dm.org/developit/puredom/dev-status.png?theme=shields.io)](https://david-dm.org/developit/puredom#info=devDependencies)
@@ -79,34 +79,58 @@ Download
 ========
 Download a pre-built copy of the puredom light or full libraries.
 
-puredom Light
--------------
->	- Puredom Core (selector engine, filters, events, all built-in selection functions)
->	- EventEmitter (add eventing to objects and classes)
->	- Cache (persistence with adapters)
->	- net (http/ajax/jsonp)
->	- date (parse & format)
->	- Utils:
->		- json
->		- xml
->		- text
->		- querystring
->		- cookies
+puredom - Light Version
+-----------------------
+>	**[Core](http://puredom.org/docs/symbols/puredom.html)**  
+>	*Selector engine, filters, events, [NodeSelection](http://puredom.org/docs/symbols/puredom.NodeSelection.html)*  
+>	
+>	**[EventEmitter](http://puredom.org/docs/symbols/puredom.EventEmitter.html)**  
+>	*Add event support to objects and classes*  
+>	
+>	**[LocalStorage](http://puredom.org/docs/symbols/puredom.LocalStorage.html)**  
+>	*Persistent client-side stroage with adapters*  
+>	
+>	**[net](http://puredom.org/docs/symbols/puredom.net.html)**  
+>	*HTTP communication (AJAX and JSONP)*  
+>	
+>	**[date](http://puredom.org/docs/symbols/puredom.date.html)**  
+>	*Parse and format time and date*  
+>	
+>	**Formats**  
+>	*Work with [JSON](http://puredom.org/docs/symbols/puredom.json.html), [XML](http://puredom.org/docs/symbols/puredom.xml.html), [querystrings](http://puredom.org/docs/symbols/puredom.querystring.html),
+>	[text](http://puredom.org/docs/symbols/puredom.text.html) and [cookies](http://puredom.org/docs/symbols/puredom.cookies.html)*  
 
 **Download:** [puredom.light.js](http://puredom.org/download/latest/puredom.light.js)
 
 
-puredom Full
-------------
-*Everything from the light version, plus:*  
->	- ControllerManager (work with controllers in an MVC configuration)
->	- RouteManager (Manage controllers based on URL patterns)
->	- ViewManager (Register, store, load and template HTML, or JSON views)
->	- FormHandler (Manage form population, submission and error handling)
->	- i18n (Internationalization & localization)
->	- NativeAPI (Dynamically create models for APIs using a simple JSON structure)
->	- Notifier (Show stylized notifications within the browser window)
->	- TestSuite (Run & automate asyncronous tests)
+puredom - Full Version
+----------------------
+Includes everything from the light version, plus:
+
+>	**ControllerManager**  
+>	*Work with controllers in an MVC configuration*  
+>	
+>	**RouteManager**  
+>	*Manage controllers based on URL patterns*  
+>	
+>	**ViewManager**  
+>	*Register, store, load and template HTML, or JSON views*  
+>	
+>	**FormHandler**  
+>	*Manage form population, submission and error handling*  
+>	
+>	**i18n**  
+>	*Internationalization & localization*  
+>	
+>	**Notifier**  
+>	*Show stylized notifications within the browser window*  
+>	
+>	**NativeAPI** *(deprecated)*  
+>	*Dynamically create models for APIs using a simple JSON structure*  
+>	*For an alternative, try [puredom.model](http://github.com/developit/puredom.model) or [puredom.rest](http://github.com/developit/puredom.rest)*  
+>	
+>	**TestSuite** *(deprecated)*  
+>	*Run & automate asynchronous tests*  
 
 **Download:** [puredom.js](http://puredom.org/download/latest/puredom.js)
 
@@ -169,32 +193,36 @@ License
 
 Changelog
 =========
-**Version 1.2.1** *(Feb 9th 2014)*
-- Performance improvements for selectors & selections
+**Version 1.2.2** *(Feb 23, 2014)*  
+- Refactored `EventEmitter` module.  
+- Fixed issue with textual HTTP responses.  
 
-**Version 1.2.0** *(Feb 2nd 2014)*
-- Distribution for 1.2.0
-- puredom 1.2.0: rewritten puredom.net and reorganized files.
+**Version 1.2.1** *(Feb 9, 2014)*  
+- Performance improvements for selectors & selections.  
 
-**Version 1.1.9** *(Jan 3rd 2014)*
-- Remove ridiculous blacklist of mobile devices for CSS3 transitions
-- Add automatic vendor prefixing for transform, transition, perspective and box-sizing CSS properties
-- Add support for passing HTML to the puredom() function to create a node.
+**Version 1.2.0** *(Feb 2, 2014)*  
+- Distribution for 1.2.0  
+- puredom 1.2.0: rewritten puredom.net and reorganized files.  
 
-**Version 1.1.8** *(Nov 15th 2013)*
-- Fixed silly "getAnimationCound" error.
-- Documentation, build & website fixes.
-- Added `puredom.templateAttributeName` option, which defaults to `data-tpl-id`
+**Version 1.1.9** *(Jan 3, 2014)*  
+- Remove ridiculous blacklist of mobile devices for CSS3 transitions  
+- Add automatic vendor prefixing for transform, transition, perspective and box-sizing CSS properties  
+- Add support for passing HTML to the puredom() function to create a node.  
 
-**Version 1.1.7** *(Oct 8th 2013)*  
-- Lint, build & website fixes.
+**Version 1.1.8** *(Nov 15, 2013)*  
+- Fixed silly "getAnimationCound" error.  
+- Documentation, build & website fixes.  
+- Added `puredom.templateAttributeName` option, which defaults to `data-tpl-id`  
 
-**Version 1.1.6** *(Mar 3rd 2013)*  
-- Make puredom.DOMEvent an actual class. Instance it and pass it to fireEvent for better insight into handler responses.
+**Version 1.1.7** *(Oct 8, 2013)*  
+- Lint, build & website fixes.  
 
-**Version 1.1.5** *(Feb 26th 2013)*  
-- Accommodate null callback option for .css() [was throwing in Firefox]
+**Version 1.1.6** *(Mar 3, 2013)*  
+- Make puredom.DOMEvent an actual class. Instance it and pass it to fireEvent for better insight into handler responses.  
 
-**Version 1.1.4** *(Feb 25th 2013)*  
-- Feature: .css() now accepts CSS strings. sel.css('left:5px','fast');
-- Bugfix: CSS animation of -vendor-transform is correctly turned off after completion.
+**Version 1.1.5** *(Feb 26, 2013)*  
+- Accommodate null callback option for .css() [was throwing in Firefox]  
+
+**Version 1.1.4** *(Feb 25, 2013)*  
+- Feature: .css() now accepts CSS strings. sel.css('left:5px','fast');  
+- Bugfix: CSS animation of -vendor-transform is correctly turned off after completion.  
