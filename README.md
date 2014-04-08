@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.2**  
+*Current version:* **1.2.3**  
 [![Master Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)
 [![Dependency Status](https://david-dm.org/developit/puredom.png?theme=shields.io)](https://david-dm.org/developit/puredom)
 [![devDependency Status](https://david-dm.org/developit/puredom/dev-status.png?theme=shields.io)](https://david-dm.org/developit/puredom#info=devDependencies)
@@ -193,6 +193,10 @@ License
 
 Changelog
 =========
+**Version 1.2.3** *(Apr 8, 2014)*  
+- Fix exception thrown from net.request()  
+- Passing undefined or null for a header value will now delete the header if it exists  
+
 **Version 1.2.2** *(Feb 23, 2014)*  
 - Refactored `EventEmitter` module.  
 - Fixed issue with textual HTTP responses.  

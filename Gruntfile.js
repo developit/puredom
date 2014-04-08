@@ -68,11 +68,13 @@ module.exports = function(grunt) {
 			},
 			beforeconcat : [
 				'src/puredom.js',
-				'src/utils.js',
-				'src/EventEmitter.js',
-				'src/Controllermanager.js',
-				'src/LocalStorage.js',
-				'src/**/*.js'
+				'src/puredom/utils.js',
+				'src/puredom/EventEmitter.js',
+				'src/puredom/ControllerManager.js',
+				'src/puredom/LocalStorage.js',
+				'src/puredom/*.js',
+				'src/puredom/LocalStorage/*.js',
+				'src/puredom/net/jsonp.js'
 			],
 			afterconcat: [
 				'<%= concat.full.dest %>'

@@ -1,3 +1,7 @@
+Version 1.2.3 (Apr 8, 2014)
+- Fix exception thrown from net.request()
+- Passing undefined or null for a header value will now delete the header if it exists
+
 Version 1.2.2 (Feb 23, 2014)
 - Refactored EventEmitter module.  
 - Fixed issue with textual HTTP responses.  
