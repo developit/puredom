@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.3**  
+*Current version:* **1.2.4**  
 [![Master Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)
 [![Dependency Status](https://david-dm.org/developit/puredom.png?theme=shields.io)](https://david-dm.org/developit/puredom)
 [![devDependency Status](https://david-dm.org/developit/puredom/dev-status.png?theme=shields.io)](https://david-dm.org/developit/puredom#info=devDependencies)
@@ -193,6 +193,9 @@ License
 
 Changelog
 =========
+**Version 1.2.4** *(Apr 8, 2014)*  
+- Account for encoding specified in a Content-Type response header  
+
 **Version 1.2.3** *(Apr 8, 2014)*  
 - Fix exception thrown from net.request()  
 - Passing undefined or null for a header value will now delete the header if it exists  
