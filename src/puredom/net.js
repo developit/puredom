@@ -84,7 +84,7 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 
 		req = new puredom.net.HttpRequest({
 			url			: options.url,
-			type		: options.method || (body ? "POST" : "GET"),
+			type		: options.method || (options.body ? "POST" : "GET"),
 			callback	: callback || options.callback,
 			body		: options.body,
 			headers		: {
@@ -95,7 +95,14 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 
 		if (options.headers) {
 			puredom.forEach(options.headers, function(value, key) {
-				req.headers[String(key).toLowerCase()] = String(value);
+				var h = req.headers;
+				key = String(key).toLowerCase();
+				if (value===undefined || value===null) {
+					delete h[key];
+				}
+				else {
+					h[key] = String(value);
+				}
 			});
 		}
 
