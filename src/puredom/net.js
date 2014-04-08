@@ -145,7 +145,7 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			}
 			else {
 				try {
-					contentType = (xhr.getResponseHeader("Content-Type")).toLowerCase();
+					contentType = (xhr.getResponseHeader("Content-Type")).toLowerCase().split(';')[0];
 				} catch(err) {}
 				contentType = contentType || "";
 			}
