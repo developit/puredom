@@ -3681,62 +3681,91 @@ if (typeof(Date.now)!=='function') {
 	
 	
 	/**	@namespace Shim for HTML5's animationFrame feature.
-	 *	@private
+	 *	@name puredom.animationFrame
+	 *	@public
 	 */
-	self.animationFrame = (function(api) {
-		var self = {
-			manualFramerate : 11
-		};
-		if (window.mozRequestAnimationFrame) {
-			api = 'moz';
+	self.animationFrame = (function() {
+		/** @ignore */
+		var self = /** @lends puredom.animationFrame */ {
+				nativeSupport : true,
+				manualFramerate : 11
+			},
+			perf = window.performance,
+			prefix;
+		
+		if (window.requestAnimationFrame) {
+			prefix = '';
+		}
+		else if (window.mozRequestAnimationFrame) {
+			prefix = 'moz';
 		}
 		else if (window.webkitRequestAnimationFrame) {
-			api = 'webkit';
-		}
-		self.nativeSupport = !!api;
-		if (self.nativeSupport) {
-			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
-			 *	@param {Function} f		A function to call during the next animation frame.
-			 *	@function
-			 *	@private
-			 */
-			self.getTimer = function(f) {
-				return window[api+'RequestAnimationFrame'](f);
-			};
-			/**	Unregister a deferred animation function.
-			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
-			 *	@function
-			 *	@private
-			 */
-			self.cancelTimer = function(t) {
-				window[api+'CancelRequestAnimationFrame'](t);
-			};
-			/**	Get the start time (timestamp, in milliseconds) of the current animation.
-			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
-			 *	@function
-			 *	@private
-			 */
-			self.getStartTime = function(t) {
-				return window[api+'AnimationStartTime'] || new Date().getTime();
-			};
+			prefix = 'webkit';
 		}
 		else {
+			self.nativeSupport = false;
+		}
+		
+		/** @ignore */
+		function now() {
+			if (perf && perf.now) {
+				return perf.now();
+			}
+			return Date.now();
+		}
+		
+		if (self.nativeSupport) {
+			
+			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
+			 *	@param {Function} f		A function to call during the next animation frame.
+			 *	@name puredom.animationFrame.getTimer
+			 *	@function
+			 */
+			self.getTimer = function(f) {
+				return window[ (prefix ? (prefix+'R') : 'r') + 'equestAnimationFrame'](f);
+			};
+			
+			/**	Unregister a deferred animation function.
+			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
+			 *	@name puredom.animationFrame.cancelTimer
+			 *	@function
+			 */
+			self.cancelTimer = function(t) {
+				window[ (prefix ? (prefix+'C') : 'c') + 'ancelRequestAnimationFrame'](t);
+			};
+			
+			/**	Get the start time (timestamp, in milliseconds) of the current animation.
+			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
+			 *	@name puredom.animationFrame.getStartTime
+			 *	@function
+			 */
+			self.getStartTime = function(t) {
+				return window[ (prefix ? (prefix+'A') : 'a') + 'nimationStartTime'] || now();
+			};
+			
+		}
+		else {
+			
 			/**	@ignore */
 			self.getTimer = function(f) {
 				return setTimeout(function() {
-					f(new Date().getTime());
+					f( now() );
 					f = null;
 				}, self.manualFramerate);
 			};
+			
 			/**	@ignore */
 			self.cancelTimer = function(t) {
 				clearTimeout(t);
 			};
+			
 			/**	@ignore */
 			self.getStartTime = function(t) {
-				return new Date().getTime();
+				return now();
 			};
+			
 		}
+		
 		return self;
 	}());
 	
