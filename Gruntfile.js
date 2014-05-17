@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 					'src/puredom/LocalStorage/*.js',
 					'src/puredom/net/jsonp.js'
 				],
-				dest: 'dist/<%= pkg.version %>/<%= pkg.name %>.js'
+				dest: 'dist/<%= pkg.name %>.js'
 			},
 			light : {
 				src: [
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 					'src/puredom/LocalStorage/LocalStorageAdapter.js',
 					'src/puredom/LocalStorage/UserDataAdapter.js'
 				],
-				dest: 'dist/<%= pkg.version %>/<%= pkg.name %>.light.js'
+				dest: 'dist/<%= pkg.name %>.light.js'
 			}
 		},
 
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
 					banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
 				},
 				files: {
-					'dist/<%= pkg.version %>/<%= pkg.name %>.min.js': ['<%= concat.full.dest %>']
+					'dist/<%= pkg.name %>.min.js': ['<%= concat.full.dest %>']
 				}
 			},
 			light : {
@@ -53,7 +53,7 @@ module.exports = function(grunt) {
 					banner: '/*! <%= pkg.name %> light <%= grunt.template.today("dd-mm-yyyy") %> */\n'
 				},
 				files: {
-					'dist/<%= pkg.version %>/<%= pkg.name %>.light.min.js': ['<%= concat.light.dest %>']
+					'dist/<%= pkg.name %>.light.min.js': ['<%= concat.light.dest %>']
 				}
 			}
 		},
@@ -137,8 +137,8 @@ module.exports = function(grunt) {
 				command : [
 					'gzip -9 -f -c "<%= concat.full.dest %>" > "<%= concat.full.dest %>.gz"',
 					'gzip -9 -f -c "<%= concat.light.dest %>" > "<%= concat.light.dest %>.gz"',
-					'zip -9 "dist/<%= pkg.version %>/<%= pkg.name %>.zip" "<%= concat.full.dest %>"',
-					'zip -9 "dist/<%= pkg.version %>/<%= pkg.name %>.light.zip" "<%= concat.light.dest %>"'
+					'zip -9 "dist/<%= pkg.name %>.zip" "<%= concat.full.dest %>"',
+					'zip -9 "dist/<%= pkg.name %>.light.zip" "<%= concat.light.dest %>"'
 				].join(';')
 			}
 		},
@@ -180,8 +180,7 @@ module.exports = function(grunt) {
 		'concat:light',
 		'uglify:light',
 		'concat:full',
-		'uglify:full',
-		'shell:compress'
+		'uglify:full'
 	]);
 
 
@@ -206,7 +205,6 @@ module.exports = function(grunt) {
 
 		phantom.on('console', function(msg) {
 			grunt.log.writeLn(String(msg));
-			//console.log(msg);
 		});
 
 		phantom.spawn('http://localhost:9091/test/bench/selectors.html', {

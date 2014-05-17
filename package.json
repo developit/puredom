@@ -1,6 +1,7 @@
 {
   "name": "puredom",
-  "version": "1.2.4",
+  "version": "1.2.5",
+  "description": "puredom is a fast, chainable, exstensible JavaScript library for web applications. It makes building developing rich apps using JavaScript, HTML and CSS much easier.",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.4",

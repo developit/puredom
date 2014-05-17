@@ -1,0 +1,32 @@
+{
+  "name": "puredom",
+  "version": "1.2.5",
+  "homepage": "http://puredom.org/",
+  "authors": [
+    "Jason Miller <jason@developit.ca>"
+  ],
+  "description": "puredom is a fast, chainable, exstensible JavaScript library for web applications. It makes building developing rich apps using JavaScript, HTML and CSS much easier.",
+  "main": "dist/puredom.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "puredom",
+    "selector",
+    "dom",
+    "ajax",
+    "mvc",
+    "events"
+  ],
+  "license": "BSD 3-Clause",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "website",
+    "docs"
+  ]
+}

@@ -16,8 +16,8 @@ if (typeof(Date.now)!=='function') {
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.1.7
-	 *	@namespace Top-level puredom namespace.
+	 *	@version 1.2.2
+	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
 	 *	@name puredom
@@ -28,7 +28,8 @@ if (typeof(Date.now)!=='function') {
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.1.7',
+			version : '1.2.5',
+			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
 			easingMethods : {
@@ -73,7 +74,7 @@ if (typeof(Date.now)!=='function') {
 				webkitMultitouch : !!("createTouch" in document)
 			},
 			regex : {
-				css3AutoPrefix : /([\s\;\/\*])(box\-shadow|text\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,
+				css3AutoPrefix : /([\s\;\/\*])(transform|transition|perspective|box\-sizing|box\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,		// |text\-shadow
 				css3VendorPrefix : /\b\-(moz|webkit|ms|o|vendor)\-/gim,
 				templateFieldToken : /([^\\]?)\{([a-z0-9A-Z\$_\.]+)(\|[^\}]*?)?\}/gm,
 				parseObjectNameFromString : /^\[object ([^\s]+)\]$/gim,
@@ -86,13 +87,6 @@ if (typeof(Date.now)!=='function') {
 			},
 			noop : function(){}
 		};
-	
-	
-	if (navigator.userAgent.match(/\b(iOS|Android|WebOS|iPhone|iPod|iPad)\b/gim)) {
-		self.allowCssTransitions = false;		// not on mobile, just doesn't work well enough yet.
-		self.baseAnimationInterval = 50;
-		priv.animationTimeScale = 1.5;
-	}
 	
 	
 	if (navigator.userAgent.match(/\b(webkit|applewebkit|chrome|chromium|khtml)\b/gim)) {
@@ -150,10 +144,11 @@ if (typeof(Date.now)!=='function') {
 	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
 	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
 	 *	@param {Object} props	An Object to copy properties from.
+	 *	@param {Object} [...]	Additional arguments also get copied onto base.
 	 *	@returns {Object} base
 	 *	@example
-	 * var clonedObj = puredom.extend({}, originalObj);
-	 * puredom.extend(MyClass.prototype, prototypeAsHash);
+	 *		var clonedObj = puredom.extend({}, originalObj);
+	 *		puredom.extend(MyClass.prototype, prototypeAsHash);
 	 */
 	self.extend = function(base) {
 		var i, j, ext;
@@ -167,7 +162,7 @@ if (typeof(Date.now)!=='function') {
 								}
 						}
 						// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
-						if (typeof(ext.toString)==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
+						if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
 							base.toString = ext.toString;
 						}
 				}
@@ -177,28 +172,10 @@ if (typeof(Date.now)!=='function') {
 	
 	
 	/** Mixins. Add functionality to an object without modifying it's prototype.<br />
-	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
-	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
-	 *	@param {Object} props	An Object to copy properties from, unless base already has a property of the same name.
-	 *	@returns {Object} base
-	 *	@example
-	 * puredom.mixin(myObj, myDecoratorObj);
+	 *	Alias of {@link puredom.extend extend()}
+	 *	@function
 	 */
-	self.mixin = function(base) {
-		var i, j, ext;
-		base = base || {};
-		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						for (j in ext) {
-								if (ext.hasOwnProperty(j) && !base.hasOwnProperty(j)) {
-										base[j] = ext[j];
-								}
-						}
-				}
-		}
-		return base;
-	};
+	self.mixin = self.extend;
 	
 	
 	/**	Strip an object of all of its properties.<br />
@@ -497,6 +474,19 @@ if (typeof(Date.now)!=='function') {
 	 */
 	self.createElement = function(options, parent) {
 		var el, x, i, childFrag, processProp, insertedBefore;
+		if (typeof options==='string') {
+			childFrag = document.createElement('div');
+			childFrag.innerHTML = options;
+			for (i=0; i<childFrag.childNodes.length; i++) {
+				el = childFrag.childNodes[i];
+				if (el.nodeType===1) {
+					if (parent) {
+						parent.appendChild(el);
+					}
+				}
+			}
+			return el;
+		}
 		options = options || {};
 		el = document.createElement(options.type || "div");
 		parent = parent || options.parent;
@@ -584,24 +574,25 @@ if (typeof(Date.now)!=='function') {
 	self.NodeSelection = function NodeSelection(nodes) {
 		var x;
 		this._results = [];
-		this._nodes = [];
 		this._animations = [];
 		if (nodes) {
 			if (self.isArray(nodes)) {
-				for (x=0; x<nodes.length; x++) {
-					if (nodes[x]) {
-						if (nodes[x].constructor===NodeSelection && nodes[x]._nodes) {
-							this._nodes.push(nodes[x]._nodes[0]);
-						}
-						else {
-							this._nodes.push(nodes[x]);
-						}
+				this._nodes = nodes = nodes.slice();
+				for (x=nodes.length; x--; ) {
+					if (!nodes[x]) {
+						nodes.splice(x, 1);
+					}
+					else if (nodes[x] instanceof NodeSelection) {
+						nodes = nodes.concat(nodes.splice(x, 1)[0]._nodes);
 					}
 				}
 			}
 			else {
-				this._nodes.push(nodes);
+				this._nodes = [nodes];
 			}
+		}
+		else {
+			this._nodes = [];
 		}
 	};
 
@@ -1520,7 +1511,9 @@ if (typeof(Date.now)!=='function') {
 					if (name==='input' && (type==='checkbox' || type==='radio')) {
 						node.checked = !!newValue;
 					}
-					node.value = newValue;
+					else {
+						node.value = newValue;
+					}
 					
 					if (options.fireChange!==false) {
 						self.fireEvent({
@@ -1561,7 +1554,7 @@ if (typeof(Date.now)!=='function') {
 						values.push(node.value);
 					}
 				});
-				return values.length<2 ? (values[0] || null) : values;
+				return values.length<2 ? values[0] : values;
 			}
 		},
 		attr : function(key, value, returnValue) {
@@ -2109,7 +2102,8 @@ if (typeof(Date.now)!=='function') {
 		 *	@returns {this}
 		 */
 		template : function(templateFields) {
-			var getFilters;
+			var attrName = self.templateAttributeName,
+				getFilters;
 			templateFields = templateFields || {};
 			
 			getFilters = function(value, htmlEntities) {
@@ -2124,9 +2118,9 @@ if (typeof(Date.now)!=='function') {
 				return filters;
 			};
 			
-			this.query('[data-tpl-id]').each(function(node) {
+			this.query('['+attrName+']').each(function(node) {
 				var nodeName = node.nodeName(),
-					tplField = node.attr('data-tpl-id'),
+					tplField = node.attr(attrName),
 					tplValue = tplField,
 					tplFilters,
 					nType;
@@ -2189,7 +2183,7 @@ if (typeof(Date.now)!=='function') {
 	
 	/**	@private */
 	priv.incrementAnimationCount = function(node) {
-		node._puredom_animationCount = priv.getAnimationCound(node) + 1;
+		node._puredom_animationCount = priv.getAnimationCount(node) + 1;
 		if (node._puredom_animationCount===1) {
 			self.addClass(node, '_puredom_animating');
 		}
@@ -2229,39 +2223,51 @@ if (typeof(Date.now)!=='function') {
 	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
 	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
 	 *	@param {String|Object} query	A CSS selector (retrieval), or a DOM description (creation).
+	 *	@param {Boolean} [log=false]	If true, query process will be logged to the console.
 	 *	@returns {puredom.NodeSelection} selection
 	 */
 	self.el = function(query, log) {
 		var results, type;
 		if (query) {
-			type = self.typeOf(query);
-			if (type==='array') {
+			type = typeof query;
+			if (type==='string' && query.charAt(0)!=='<') {
+				if (log===true) {
+					self.log('query is a CSS selector', query, type);
+				}
+				if (query==='body') {
+					results = document.body;
+				}
+				else if (query==='html') {
+					results = document.documentElement || document;
+				}
+				else {
+					results = self.getElement(query, arguments[1]);
+				}
+			}
+			else if (self.isArray(query)) {
 				results = [];
 				for (var x=0; x<query.length; x++) {
 					Array.prototype.splice.apply(results, [0,0].concat(self.el(query[x])._nodes) );
 				}
 			}
-			if (query.constructor===self.NodeSelection) {
-				if (log===true) {
-					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
-				}
-				return query;
-			}
-			else if ((type==='string' && query.charAt(0)==='<') || (type==='object' && !query.nodeName && query!==window)) {
+			else if (type==='string' || (type==='object' && !query.nodeName && query!==window)) {
 				if (log===true) {
 					self.log('query is an HTML fragment', query, type);
 				}
 				results = self.createElement.apply(self, arguments);
 			}
-			else if (type==='string') {
+			else if (query.constructor===self.NodeSelection) {
 				if (log===true) {
-					self.log('query is a CSS selector', query, type);
+					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
 				}
-				results = self.getElement(query, arguments[1]);
+				return query;
 			}
 			else if (query.nodeName || query===window) {
 				if (log===true) {
 					self.log('query is an HTML element', query, type);
+				}
+				if (query===window) {
+					query = document.documentElement || document;
 				}
 				results = query;
 			}
@@ -2616,6 +2622,23 @@ if (typeof(Date.now)!=='function') {
 		};
 		
 		
+		/**	@ignore */
+		function nativeQuerySelectorAll(selector, within) {
+			var results;
+			within = within || getElement.baseNode;
+			selector = selector.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
+			try {
+				results = within.querySelectorAll(selector);
+				if (results) {
+					results = self.toArray(results);
+				}
+			} catch (err) {
+				self.log('Native querySelectorAll failed for selector: '+selector+', error:'+err.message);
+			}
+			return results || false;
+		}
+		
+		
 		/** The selector engine's interface. Returns an {Array} of elements matching the passed CSS selector query
 		 *	@param {String} search			A CSS selector, or multiple CSS selectors separated by a comma
 		 *	@param {Object} [options]		Optional hash of one-time triggers for the engine:
@@ -2627,7 +2650,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@private
 		 */
 		getElement = function(search, options) {
-			var baseNode = document && document.documentElement || document,
+			var baseNode = getElement.baseNode || (getElement.baseNode = document && document.documentElement || document),
 				currentResults,
 				nodes,
 				nodeName,
@@ -2712,6 +2735,18 @@ if (typeof(Date.now)!=='function') {
 			 *	Selector engine internals
 			 */
 			
+			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById() 
+			// functionality is preserved (only returns one element, the last with that ID).
+			if (search.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
+				currentResults = [
+					(baseNode.getElementById ? baseNode : document).getElementById(search.substring(1))
+				];
+				return currentResults;
+				// skip parse:
+				//useCustomImplementation = false;
+			}
+			
+			
 			nodeName = search.match(nodeNameReg);
 			nodeName = ((nodeName && nodeName[0]) || "").toLowerCase();
 			search = search.substring(nodeName.length);
@@ -2726,21 +2761,9 @@ if (typeof(Date.now)!=='function') {
 				useCustomImplementation = true;
 			}
 			
-			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById() 
-			// functionality is preserved (only returns one element, the last with that ID).
-			if (searchParsed.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
-				currentResults = [
-					(baseNode.getElementById ? baseNode : document).getElementById(searchParsed.substring(1))
-				];
-				// skip parse:
-				useCustomImplementation = false;
-			}
-			else if (priv.support.querySelectorAll && useCustomImplementation!==true) {
-				nativeSearch = originalSearch.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
-				try {
-					currentResults = self.toArray(baseNode.querySelectorAll(nativeSearch) || []);
-				} catch (querySelectorError) {
-					self.log('Native querySelectorAll failed for selector: ', nativeSearch, ', error:', querySelectorError.message);
+			if (priv.support.querySelectorAll && useCustomImplementation!==true) {
+				currentResults = nativeQuerySelectorAll(originalSearch, baseNode);
+				if (currentResults===false) {
 					currentResults = [];
 					useCustomImplementation = true;
 				}
@@ -3573,11 +3596,11 @@ if (typeof(Date.now)!=='function') {
 		if (el===window) {
 			return '_td_autoid_window';
 		}
-		else if (el===document) {
-			return '_td_autoid_document';
+		else if (el===document.documentElement) {
+			return '_td_autoid_html';
 		}
 		else if (el===document.body) {
-			return '_td_autoid_documentbody';
+			return '_td_autoid_body';
 		}
 		search = (/\s_td_autoid_([0-9]+)\s/gm).exec(' ' + el.className + ' ');
 		if (search && search[1]) {
@@ -3602,10 +3625,10 @@ if (typeof(Date.now)!=='function') {
 		if (id==='_td_autoid_window') {
 			return window;
 		}
-		else if (id==='_td_autoid_document') {
-			return document;
+		else if (id==='_td_autoid_html') {
+			return document.documentElement;
 		}
-		else if (id==='_td_autoid_documentbody') {
+		else if (id==='_td_autoid_body') {
 			return document.body;
 		}
 		if (listed) {
@@ -3656,62 +3679,91 @@ if (typeof(Date.now)!=='function') {
 	
 	
 	/**	@namespace Shim for HTML5's animationFrame feature.
-	 *	@private
+	 *	@name puredom.animationFrame
+	 *	@public
 	 */
-	self.animationFrame = (function(api) {
-		var self = {
-			manualFramerate : 11
-		};
-		if (window.mozRequestAnimationFrame) {
-			api = 'moz';
+	self.animationFrame = (function() {
+		/** @ignore */
+		var self = /** @lends puredom.animationFrame */ {
+				nativeSupport : true,
+				manualFramerate : 11
+			},
+			perf = window.performance,
+			prefix;
+		
+		if (window.requestAnimationFrame) {
+			prefix = '';
+		}
+		else if (window.mozRequestAnimationFrame) {
+			prefix = 'moz';
 		}
 		else if (window.webkitRequestAnimationFrame) {
-			api = 'webkit';
-		}
-		self.nativeSupport = !!api;
-		if (self.nativeSupport) {
-			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
-			 *	@param {Function} f		A function to call during the next animation frame.
-			 *	@function
-			 *	@private
-			 */
-			self.getTimer = function(f) {
-				return window[api+'RequestAnimationFrame'](f);
-			};
-			/**	Unregister a deferred animation function.
-			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
-			 *	@function
-			 *	@private
-			 */
-			self.cancelTimer = function(t) {
-				window[api+'CancelRequestAnimationFrame'](t);
-			};
-			/**	Get the start time (timestamp, in milliseconds) of the current animation.
-			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
-			 *	@function
-			 *	@private
-			 */
-			self.getStartTime = function(t) {
-				return window[api+'AnimationStartTime'] || new Date().getTime();
-			};
+			prefix = 'webkit';
 		}
 		else {
+			self.nativeSupport = false;
+		}
+		
+		/** @ignore */
+		function now() {
+			if (perf && perf.now) {
+				return perf.now();
+			}
+			return Date.now();
+		}
+		
+		if (self.nativeSupport) {
+			
+			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
+			 *	@param {Function} f		A function to call during the next animation frame.
+			 *	@name puredom.animationFrame.getTimer
+			 *	@function
+			 */
+			self.getTimer = function(f) {
+				return window[ (prefix ? (prefix+'R') : 'r') + 'equestAnimationFrame'](f);
+			};
+			
+			/**	Unregister a deferred animation function.
+			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
+			 *	@name puredom.animationFrame.cancelTimer
+			 *	@function
+			 */
+			self.cancelTimer = function(t) {
+				window[ (prefix ? (prefix+'C') : 'c') + 'ancelRequestAnimationFrame'](t);
+			};
+			
+			/**	Get the start time (timestamp, in milliseconds) of the current animation.
+			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
+			 *	@name puredom.animationFrame.getStartTime
+			 *	@function
+			 */
+			self.getStartTime = function(t) {
+				return window[ (prefix ? (prefix+'A') : 'a') + 'nimationStartTime'] || now();
+			};
+			
+		}
+		else {
+			
 			/**	@ignore */
 			self.getTimer = function(f) {
 				return setTimeout(function() {
-					f(new Date().getTime());
+					f( now() );
 					f = null;
 				}, self.manualFramerate);
 			};
+			
 			/**	@ignore */
 			self.cancelTimer = function(t) {
 				clearTimeout(t);
 			};
+			
 			/**	@ignore */
 			self.getStartTime = function(t) {
-				return new Date().getTime();
+				return now();
 			};
+			
 		}
+		
 		return self;
 	}());
 	
@@ -3799,13 +3851,33 @@ if (typeof(Date.now)!=='function') {
 	
 	
 	
+	/**	@private */
+	var cssPropCache = {};
+	/**	@private */
+	function getPrefixedCssProperty(prop) {
+		var ret = prop,
+			p = cssPropCache[prop];
+		if (p) {
+			return p;
+		}
+		if (vendorCssPrefixJS && prop.substring(0, vendorCssPrefixJS.length)!==vendorCssPrefixJS) {
+			p = vendorCssPrefixJS + prop.charAt(0).toUpperCase() + prop.substring(1);
+			if (p in document.body.style) {
+				ret = p;
+			}
+		}
+		cssPropCache[prop] = ret;
+		return ret;
+	}
+	
+	
 	/**	Apply key-value CSS styles to an element.
 	 *	@param {HTMLElement} el		An element whose style should be updated.
 	 *	@param {Object} properties	An Object where keys are CSS properties and values are the corresponding CSS values to apply.
 	 *	@private
 	 */
 	self.applyCss = function(el, properties) {
-		var x, cx, d, p, ieOpac;
+		var x, cx, d, p, ieOpac, vp;
 		properties = properties || {};
 		for (x in properties) {
 			if (properties.hasOwnProperty(x)) {
@@ -3813,6 +3885,7 @@ if (typeof(Date.now)!=='function') {
 					cx = self.getStyleAsCSS(x);
 					cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
 					cx = self.getStyleAsProperty(cx);
+					cx = getPrefixedCssProperty(cx);
 					if (cx==='opacity' && priv.support.filters) {
 						ieOpac = Math.round( parseFloat(properties[x])*100 );
 						if (ieOpac<100) {
@@ -3838,11 +3911,6 @@ if (typeof(Date.now)!=='function') {
 					}
 					else {
 						el.style[cx] = properties[x];
-						if (cx==="boxShadow" || cx==="textShadow" || cx==="borderRadius") {
-							if (vendorCssPrefixJS) {
-								el.style[vendorCssPrefixJS + cx] = properties[x];
-							}
-						}
 					}
 				}catch(err){}
 			}
@@ -3877,7 +3945,9 @@ if (typeof(Date.now)!=='function') {
 		return typeof style==='string' && style.replace(/\-*([A-Z])/gm, '-$1').toLowerCase() || null;
 	};
 	
-	/**	Parse a CSS String and return an Object representation. */
+	/**	Parse a CSS String and return an Object representation.
+	 *	@private
+	 */
 	priv.parseCSS = function(css) {
 		var tokenizer = /\s*([a-z\-]+)\s*:\s*([^;]*?)\s*(?:;|$)/gi,
 			obj, token;
@@ -4150,8 +4220,8 @@ if (typeof(Date.now)!=='function') {
 	self.toString = function(){return 'function puredom(){}';};
 	
 	window.puredom = self;
-	if (typeof window.define==='function') {
-		window.define('puredom', self);
+	if (typeof window.define==='function' && window.define.amd) {
+		window.define('puredom', function(){ return self; });
 	}
 }());
 /**	@fileOverview Utilities that just get grafted onto the puredom namespace. */
@@ -4800,620 +4870,817 @@ puredom.extend(puredom, /** @lends puredom */ {
 	}
 	
 });
-/**	Fire events and listen for fired events. <br />
- *	Let's just assume every framework provides one of these now.
- *	@constructor Creates a new EventEmitter instance.
- */
-puredom.EventEmitter = function EventEmitter() {
-	this._eventRegistry = [];
-};
-
-
-/** Register an event listener on the instance.
- *	@param {String} type		An event type, or a comma-seprated list of event types.
- *	@param {Function} handler	A function to call in response to events of the given type.
- *	@returns {this}
- */
-puredom.EventEmitter.prototype.addEventListener = function(type, handler) {
-	var t, i;
-	type = (type + '').toLowerCase().replace(/\s+/gim,'');
-	if (type.indexOf(',')>-1) {
-		t = type.split(',');
-		for (i=0; i<t.length; i++) {
-			this.addEventListener(t[i],handler);
-		}
-		return this;
-	}
-	type = type.replace(/^on/,'');
-	this._eventRegistry.push({
-		type : type,
-		handler : handler
-	});
-	return this;
-};
-
-/**	Alias of {@link puredom.EventEmitter#addEventListener}
- *	@function
- *	@private
- */
-puredom.EventEmitter.prototype.addListener = puredom.EventEmitter.prototype.addEventListener;
-
-/**	Alias of {@link puredom.EventEmitter#addEventListener}
- *	@function
- */
-puredom.EventEmitter.prototype.on = puredom.EventEmitter.prototype.addEventListener;
-
-
-/** Remove an event listener from the instance.
- *	@param {String} type		An event type, or a comma-seprated list of event types.
- *	@param {Function} handler	A reference to the handler, as was originally passed to {puredom.EventEmitter#addEventListener}.
- *	@returns {this}
- */
-puredom.EventEmitter.prototype.removeEventListener = function(type, handler) {
-	var x, r, t, i;
-	type = (type + '').toLowerCase().replace(/\s+/gim,'');
-	if (type.indexOf(',')>-1) {
-		t = type.split(',');
-		for (i=0; i<t.length; i++) {
-			this.removeEventListener(t[i],handler);
-		}
-		return this;
-	}
-	type = type.replace(/^on/,'');
-	for (x=this._eventRegistry.length; x--; ) {
-		r = this._eventRegistry[x];
-		if (r.type===type && r.handler===handler) {
-			this._eventRegistry.splice(x, 1);
-			break;
-		}
-	}
-	return this;
-};
-
-/**	Alias of {@link puredom.EventEmitter#removeEventListener}
- *	@function
- *	@private
- */
-puredom.EventEmitter.prototype.removeListener = puredom.EventEmitter.prototype.removeEventListener;
-
-
-/** Fire an event of a given type. <br />
- *	Pass a comma-separated list for <code>type</code> to fire multiple events at once.
- *	@param {String} type	An event type, or a comma-seprated list of event types.
- *	@param {Array} args		An Array of arguments to pass to each handler. Non-Array values get auto-boxed into an Array.
- *	@returns {Array} an Array of handler return values. The Array also has "truthy" and "falsey" properties indicating if any handlers returned <code>true</code> or <code>false</code>, respectively.
- */
-puredom.EventEmitter.prototype.fireEvent = function(type, args) {
-	var x, r, errors=[], rval, returns=[];
-	type = (type+'').toLowerCase().replace(/^on/,'');
-	if (!puredom.isArray(args)) {
-		args = [args];
-	}
-	for (x=this._eventRegistry.length; x--; ) {
-		r = this._eventRegistry[x];
-		if (r.type===type) {
-			if (returns.length===0) {
-				returns.falsy = returns.falsey = returns.truthy = true;
-			}
-			rval = r.handler.apply(this, args);
-			returns.push(rval);
-			if (rval===true) {
-				returns.falsy = returns.falsey = false;
-			}
-			else if (rval===false) {
-				returns.truthy = false;
-			}
-			if (rval===false) {
-				break;
-			}
-		}
-	}
-	errors = null;
-	return returns;
-};
-
-/**	Alias of {@link puredom.EventEmitter#fireEvent}
- *	@deprecated
- *	@private
- */
-puredom.EventEmitter.prototype._fireEvent = puredom.EventEmitter.prototype.fireEvent;
-
-/**	Manages controllers, providing a means for separating functionality into feature-centric modules.
- *	@constructor Creates a new ControllerManager instance.
- *	@param {Object} [options]		Hash of options to be given to the instance.
- */
-puredom.ControllerManager = function(options) {
-	puredom.EventEmitter.call(this);
+(function($) {
+	/** @exports $ as puredom */
 	
-	this.controllerOptions = puredom.extend({}, this.controllerOptions);
-	this._messageListeners = [];
-	this._controllers = [];
-	this._current = null;
+	/**	Creates a new EventEmitter instance.
+	 *	@class Fire events and listen for fired events.
+	 */
+	$.EventEmitter = function EventEmitter() {
+		this._eventRegistry = [];
+	};
 	
-	if (options) {
-		if (options.controllerOptions) {
-			puredom.extend(this.controllerOptions, options.controllerOptions);
-		}
-		if (puredom.typeOf(options.singular)==='boolean') {
-			this.singular = options.singular;
-		}
-		if (puredom.typeOf(options.allowLoadDefault)==='boolean') {
-			this.allowLoadDefault = options.allowLoadDefault;
-		}
-	}
-};
-
-puredom.extend(puredom.ControllerManager.prototype, /** @lends puredom.ControllerManager#*/ {
-
-	/** Options to pass to every controller. */
-	controllerOptions : {},
-
+	var proto = $.EventEmitter.prototype;
 	
-	restoreState : function(state) {
-		if (this.initialized!==true) {
-			this._initState = state;
-		}
-		else {
-			if (state && state.current) {
-				this.load(state.current);
-			}
-			else {
-				this.loadDefault();
-			}
-		}
-	},
-
-	
-	doStateUpdate : function(state, options) {
-		if (this.updateState) {
-			this.updateState(state, options);
-		}
-	},
-
-	
-	/**	Initialize the registry. */
-	init : function(options) {
-		var autoRestore = true;
-		if (this.initialized!==true) {
-			this.initialized = true;
-			if (options) {
-				if (options.controllerOptions) {
-					puredom.extend(this.controllerOptions, options.controllerOptions);
+	function multi(inst, func, type, handler, collector) {
+		var o = typeof type,
+			t, i, ret;
+		if (o==='object' && type) {
+			for (i in type) {
+				if (type.hasOwnProperty(i)) {
+					ret = inst[func](i, type[i]);
+					if (collector) {
+						collector.push(ret);
+					}
 				}
-				if (puredom.typeOf(options.singular)==='boolean') {
-					this.singular = options.singular;
-				}
-				if (puredom.typeOf(options.allowLoadDefault)==='boolean') {
-					this.allowLoadDefault = options.allowLoadDefault;
-				}
-				if (options.autoRestoreOnInit===false) {
-					autoRestore = false;
-				}
-			}
-			if (this._initState && autoRestore) {
-				this.restoreState(this._initState);
-			}
-			this._initState = null;
-			try {
-				delete this._initState;
-			}catch(err){}
-			if (this.allowLoadDefault!==false && !this.current()) {
-				this.loadDefault();
-			}
-		}
-	},
-
-	
-	/**	Destroy the registry. */
-	destroy : function() {
-		var current, x;
-		// supress errors for destructors to avoid chained memory leaks
-		try {
-			current = this.current();
-			if (current) {
-				if (current.unload) {
-					current.unload();
-				}
-			}
-			for (x=this._controllers.length; x--; ) {
-				if (this._controllers[x].destroy) {
-					this._controllers[x].destroy();
-				}
-			}
-		}catch(err){}
-		this.controllerOptions = {};
-		this._controllers = [];
-		this._messageListeners = [];
-		this._current = null;
-	},
-
-	
-	/**	Register a named module. */
-	register : function(name, controller) {
-		controller = controller || {};
-		if (puredom.typeOf(name)==='string') {
-			controller.name = name;
-		}
-		else {
-			controller = name;
-		}
-		this._controllers.push(controller);
-
-		this._fireEvent('add', [this.getIdFromName(controller.name)]);
-	},
-
-
-	/**	Load the given named module. */
-	load : function(name, options) {
-		var sandboxController, previousController, params, newController, eventResponse, response, loadResponse, unloadResponse;
-		
-		name = (name+'').toLowerCase();
-		previousController = this.singular===true && this.current();
-		
-		if (previousController && previousController.name.toLowerCase()===name) {
-			if (previousController.handleRepeatLoad) {
-				previousController.handleRepeatLoad(options || {});
 			}
 			return true;
 		}
-		
-		sandboxController = this._createControllerSandbox(name);
-		params = puredom.extend({
-				previousController : previousController
-			}, 
-			this.controllerOptions || {}, 
-			options || {},
-			sandboxController.sandbox
-		);
-		newController = name && this.get(name);
-		
-		if (newController) {
-			puredom.extend(newController, sandboxController.sandbox);
-			if (this.singular===true) {
-				unloadResponse = this._unloadCurrent();
-				if (unloadResponse===false) {
-					return false;
+		if (o==='string' && type.indexOf(',')>-1) {
+			t = type.split(',');
+			for (i=0; i<t.length; i++) {
+				ret = inst[func](t[i], handler);
+				if (collector) {
+					collector.push(ret);
 				}
 			}
-			response = newController;
-			if (newController.load) {
-				eventResponse = this._fireEvent('beforeload', [newController.name]);
-				if (eventResponse===false || (eventResponse.falsey && !eventResponse.truthy)) {
-					return false;
-				}
-				loadResponse = newController.load(params);
-				if (loadResponse!==null && loadResponse!==undefined) {
-					response = loadResponse;
-				}
-			}
-			// if the new controller doens't load, go back to the old one
-			if (loadResponse===false) {
-				eventResponse = this._fireEvent('loadcancel', [newController.name]);
-				if (eventResponse===false || (eventResponse.falsey && !eventResponse.truthy)) {
-					return false;
-				}
-				if (this.singular===true && params.previousController) {
-					this.load(params.previousController.name, options);
-				}
-				else {
-					this.loadDefault(options);
-				}
-			}
-			else {
-				this._current = this.getIdFromName(name);
-				this._fireEvent('load', [name]);
-				this._fireEvent('change', [name]);
-				this.doStateUpdate({
-					current : name
+			return true;
+		}
+		return false;
+	}
+	
+	function normalizeType(type) {
+		return String(type).toLowerCase().replace(/(^on|\s+)/gim,'');
+	}
+	
+	$.extend(proto, /** @lends puredom.EventEmitter# */ {
+	
+		/** Register an event listener on the instance.
+		 *	@param {String} type		An event type, or a comma-seprated list of event types.
+		 *	@param {Function} handler	A function to call in response to events of the given type.
+		 *	@returns {this}
+		 */
+		on : function(type, handler) {
+			type = normalizeType(type);
+			if (!multi(this, 'on', type, handler)) {
+				this._eventRegistry.push({
+					type : type,
+					handler : handler
 				});
 			}
-			return response;
-		}
-		return false;
-	},
-
-
-	/**	Load the default module (the module with isDefault=true).
-	 *	@returns {Boolean} defaultWasLoaded
-	 */
-	loadDefault : function(options) {
-		for (var x=this._controllers.length; x--; ) {
-			if (this._controllers[x].isDefault===true) {
-				return this.load(this._controllers[x].name, options);
-			}
-		}
-		return false;
-	},
-
-
-	/** Load the controller that was previously loaded. <br />
-	 *	<strong>Note:</strong> This is not actual history, it only remembers one item.
-	 */
-	loadPrevious : function(options) {
-		if (this._previousController) {
-			this.load(this._previousController, options);
-		}
-	},
-	
-
-	/**	Unload the current controller if one exists. */
-	none : function() {
-		this._unloadCurrent();
-	},
-
-
-	/**	Reload the current controller if one exists. */
-	reloadCurrent : function() {
-		var current = this.current();
+			return this;
+		},
 		
-		if (current) {
-			this._unloadCurrent();
-			this.load(current.name, this.controllerOptions);
-		}
-	},
+		
+		/**	A version of {@link puredom.EventEmitter#on .on()} that removes handlers once they are called. 
+		 *	@see puredom.EventEmitter#on
+		 *	@param {String} type		An event type, or a comma-seprated list of event types.
+		 *	@param {Function} handler	A function to call in response to events of the given type.  Will only be called once.
+		 *	@returns {this}
+		 */
+		once : function(type, handler) {
+			type = normalizeType(type);
+			if (!multi(this, 'once', type, handler)) {
+				this.on(type, function onceProxy() {
+					this.removeListener(type, onceProxy);
+					return handler.apply(this, arguments);
+				});
+			}
+			return this;
+		},
 
 
-	/**	@private */
-	_unloadCurrent : function() {
-		var current = this.current(),
-			time, ret;
-		if (current && current.unload) {
-			ret = this._fireEvent('beforeunload', [current.name]);
-			if (ret===false || (ret.falsey && !ret.truthy)) {
-				return false;
+		/** Remove an event listener from the instance.
+		 *	@param {String} type		An event type, or a comma-seprated list of event types.
+		 *	@param {Function} handler	A reference to the handler, as was originally passed to {puredom.EventEmitter#addEventListener}.
+		 *	@returns {this}
+		 */
+		removeListener : function(type, handler) {
+			var x, r;
+			type = normalizeType(type);
+			if (!multi(this, 'removeListener', type, handler)) {
+				for (x=this._eventRegistry.length; x--; ) {
+					r = this._eventRegistry[x];
+					if (r.type===type && r.handler===handler) {
+						this._eventRegistry.splice(x, 1);
+						break;
+					}
+				}
 			}
-			ret = current.unload();
-			if (ret===false) {
-				return false;
+			return this;
+		},
+
+
+		/** Fire an event of a given type. <br />
+		 *	Pass a comma-separated list for <code>type</code> to fire multiple events at once.
+		 *	@param {String} type	Event type, or a comma-seprated list of event types.
+		 *	@param {Array} [args]	Arguments to pass to each handler. Non-Array values get auto-boxed into an Array.
+		 *	@returns {Array} an Array of handler return values. The Array also has "truthy" and "falsey" properties indicating if any handlers returned <code>true</code> or <code>false</code>, respectively.
+		 */
+		emit : function(type, args) {
+			var returns = [],
+				x, r, rval;
+			type = normalizeType(type);
+			if (!$.isArray(args)) {
+				args = Array.prototype.slice.call(arguments, 1);
 			}
-			this._fireEvent('unload', [current.name]);
-			this._current = null;
+			if (multi(this, 'emit', type, args, returns)) {
+				return Array.prototype.concat.apply([], returns);
+			}
+			for (x=this._eventRegistry.length; x--; ) {
+				r = this._eventRegistry[x];
+				if (r.type===type) {
+					if (returns.length===0) {
+						returns.falsy = returns.falsey = returns.truthy = true;
+					}
+					rval = r.handler.apply(this, args);
+					returns.push(rval);
+					if (rval===true) {
+						returns.falsy = returns.falsey = false;
+					}
+					else if (rval===false) {
+						returns.truthy = false;
+					}
+					if (rval===false) {
+						break;
+					}
+				}
+			}
+			return returns;
 		}
-	},
+
+	});
 	
+	
+	$.forEach(/** @lends puredom.EventEmitter# */{
+		
+		/**	Alias of {@link puredom.EventEmitter#on on()}
+		 *	@function
+		 *	@private
+		 */
+		addListener : 'on',
 
-	/**	Get the definition for a given named controller.
-	 *	@param {String} name					The controller name to find
-	 *	@param {Boolean} [returnIndex=false]	If true, returns the index instead of a reference.
+		/**	Alias of {@link puredom.EventEmitter#on on()}
+		 *	@function
+		 *	@private
+		 */
+		addEventListener : 'on',
+
+		/**	Alias of {@link puredom.EventEmitter#removeListener removeListener()}
+		 *	@function
+		 *	@private
+		 */
+		removeEventListener : 'removeListener',
+
+		/**	Alias of {@link puredom.EventEmitter#emit emit()}
+		 *	@function
+		 *	@private
+		 */
+		trigger : 'emit',
+	
+		/**	Alias of {@link puredom.EventEmitter#emit emit()}
+		 *	@function
+		 *	@private
+		 */
+		fireEvent : 'emit'
+		
+	}, function(alias, key) {
+		proto[key] = proto[alias];
+	});
+	
+}(puredom));
+/**	@namespace Functions for working with dates <br />
+ *	See {@link http://php.net/strftime} for formatting options.
+ */
+puredom.date = /** @lends puredom.date */ {
+	
+	/** Returns the current timestamp, in milliseconds.
+	 *	@function
+	 *	@returns {Number} timestamp
 	 */
-	get : function(name, returnIndex) {
-		name = (name+'').toLowerCase();
-		for (var x=this._controllers.length; x--; ) {
-			if (this._controllers[x].name.toLowerCase()===name) {
-				return returnIndex===true ? x : this._controllers[x];
-			}
+	now : (
+		Date.now ? function() {
+			return Date.now();
+		} : function() {
+			return +new Date();
 		}
-		return false;
-	},
+	),
 	
 
-	/**	Post a message to the current controller if it exists. */
-	postMessage : function(type, msgObj) {
-		var current = this.current();
-		if (current && current.onmessage) {
-			//this._fireEvent('postMessage', [type, msgObj]);
-			current.onmessage(type, msgObj);
-			return true;
+	/** Create a date, optionally from a string.<br />
+	 *	This is a wrapper on new Date(str), adding support for more date formats and smoothing out differences between browsers.
+	 *	@param {String} [str=now]	A date string, parsed and used to set the initial date.
+	 *	@returns {Date} a new date object.
+	 */
+	create : function(str) {
+		var date;
+		if (str) {
+			str = (str+'').replace(/^([0-9]{4})\-([0-9]{2})\-([0-9]{2})T([0-9]{2})\:([0-9]{2})\:([0-9]{2})\.[0-9]{3}Z$/, '$1/$2/$3 $4:$5:$6');
+			date = new Date(str);
 		}
-		return false;
+		else {
+			date = new Date();
+		}
+		return date;
+	},
+	
+	
+	/**	Parse a string with the given format into a Date object.
+	 *	@param {String} str						A date string to parse
+	 *	@param {String} [format="%d/%m/%Y"]		A date format string. See {@link http://php.net/strftime} for available fields.
+	 *	@returns {Date|Boolean}	the date, or false on failure.
+	 */
+	parse : function(str, format) {
+		format = format || "%d/%m/%Y";
+		function setHours(hours, pm) {
+			if (pm===false || pm===true) {
+				temp.pm = pm===true;
+			}
+			if (hours || hours===0) {
+				temp.hours = hours;
+			}
+			hours = temp.hours;
+			if (temp.hours<12 && temp.pm) {
+				hours -= 12;
+			}
+			var i = rdate.getDate();
+			if (temp.hours===12 && temp.pm===false) {
+				if (rdate.getHours()!==0 || typeof pm==='boolean') {
+					rdate.setHours(0);
+				}
+			}
+			else {
+				rdate.setHours(hours);
+				rdate.setDate(i);
+			}
+		}
+		var origStr = str,
+			rdate = new Date(0),
+			temp = {},
+			weekdays = ['mo','tu','we','th','fr','sa','su'],
+			replacers = {
+				H : [/^[0-9]{1,2}/g, function(e){e=Math.round(e);setHours(e);}],
+				I : [/^[0-9]{1,2}/g, function(e){e=Math.round(e);setHours(e);}],
+				p : [/^[AP]M/gi, function(e){setHours(null, e.toLowerCase()==="pm");}],
+				M : [/^[0-9]{1,2}/g, function(e){rdate.setMinutes(Math.round(e));}],
+				a : [/^(Mon|Tue(s?)|Wed|Thu|Fri|Sat|Sun)/i, function(){}],									// dummy
+				A : [/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/i, function(){}],			// dummy
+
+
+				d : [/^[0-9]{1,2}/g, function(e){temp.date=Math.round(e);rdate.setDate(temp.date);}],
+				m : [/^[0-9]{1,2}/g, function(e){temp.month=Math.round(e)-1;rdate.setMonth(temp.month);}],
+				B : [new RegExp('^('+this.months.join("|")+')','gi'), function(e){temp.month=date._getMonthIndex(e);rdate.setMonth(temp.month);}],
+				b : [/^(Jan|Feb|Mar|Apr|May|Jun(e?)|Jul(y?)|Aug|Sep(t?)|Oct|Nov|Dec)/gi, function(e){temp.month=date._getMonthIndex(e);rdate.setMonth(temp.month);}],
+				y : [/^[0-9]{2}/g, function(e){e=Math.round(e)+1900;if(e<1950){e+=100;}rdate.setFullYear(e);}],		// wrap 2-digit dates at 1950/2050
+				Y : [/^[0-9]{4}/g, function(e){temp.year=Math.round(e);rdate.setFullYear(temp.year);}]
+			},
+			index, rep, r;
+		replacers.l = replacers.I;
+		replacers.e = replacers.d;
+		replacers.P = replacers.p;
+		replacers.h = replacers.b;
+		
+		/**	@ignore */
+		function rp(e) {
+			rep[1](e);
+			return '';
+		}
+		
+		for (index=0; index<format.length; index++) {
+			if (format.charAt(index)==="%") {
+				rep = null;
+				if (str.charAt(0)===' ' && format.charAt(index)==='%') {
+					str = str.substring(1);
+				}
+				for (r in replacers) {
+					if (replacers.hasOwnProperty(r) && format.substring(index+1, index+1+r.length)===r) {
+						rep = replacers[r];
+						str = str.replace(rep[0], rp);
+						index += rep.length-1;		// advance past the used symbol in format str
+						break;
+					}
+				}
+			}
+			else {
+				if (str.charAt(0)===format.charAt(index)) {
+					str = str.substring(1);
+				}
+			}
+		}
+		
+		if (temp.month || temp.month===0) {
+			rdate.setMonth(temp.month);
+		}
+		if (temp.year || temp.year===0) {
+			rdate.setFullYear(temp.year);
+		}
+		
+		return rdate;
 	},
 
 
-	/**	Handle a message from a controller.
+	/** Alias of {@link puredom.date.parse}
+	 *	@see puredom.date.parse
+	 *	@deprecated
 	 *	@private
 	 */
-	onMessage : function(type, handler, controller) {
-		var obj = {
-			type : (type+'').toLowerCase().replace(/^on/gim,''),
-			handler : handler
-		};
-		if (controller) {
-			if (puredom.typeOf(controller)==='string') {
-				obj.controller = controller.toLowerCase();
-			}
-			else if (controller.hasOwnProperty('name')) {
-				obj.controller = (controller.name + '').toLowerCase();
-			}
-		}
-		this._messageListeners.push(obj);
-	},
-
-
-	/** Get a list of registered controllers
-	 *	@param {Array} [properties]		Other properties to include in the list from each controller.
-	 *	@returns {Array} controllerList
+	unformat : function(){return this.parse.apply(this,arguments);},
+	
+	
+	/**	Get a formatted string representation of a Date object.
+	 *	@param {String} date					A date object to convert
+	 *	@param {String} [format="%d/%m/%Y"]		A date format string. See {@link http://php.net/strftime} for available fields.
+	 *	@returns {String|Boolean}	the formatted date string, or false on failure.
 	 */
-	getList : function(properties) {
-		var map = [],
-			i, j, ob;
-		properties = (properties || []);
-		for (i=0; i<this._controllers.length; i++) {
-			ob = {
-				name : this._controllers[i].name
-			};
-			for (j=0; j<properties.length; j++) {
-				ob[properties[j]] = this._controllers[i][properties[j]];
-			}
-			map.push(ob);
+	format : function(date, format) {
+		format = format || "%d/%m/%Y";
+		
+		if (!date || date.constructor!==Date || !date.toDateString) {
+			return false;
 		}
-		return map;
-	},
-
-
-	/**	Get a reference to the current controller if it exists. */
-	current : function() {
-		return puredom.typeOf(this._current)==='number' && this._controllers[this._current] || false;
+		
+		var dateStr = date.toDateString();
+		if (!dateStr || dateStr.toLowerCase()==="invalid date") {
+			return false;
+		}
+		
+		if (dateStr==='NaN') {	// only trips in IE ("3 is not an object")
+			return false;
+		}
+		
+		var dateParts = dateStr.split(" "),
+			hours = date.getHours(),
+			hv = ((hours+11)%12)+1,
+			m = date.getMonth()+1,
+			replacers = {
+				H : hours,						// 24 hour time
+				I : (hv<10?"0":"") + hv,		// 12 hour time, leading 0
+				l : hv,							// 12 hour time
+				p : hours>11?"PM":"AM",
+				P : hours>11?"pm":"am",
+				M : (date.getMinutes()<10?"0":"") + date.getMinutes(),
+				S : (date.getSeconds()<10?"0":"") + date.getSeconds(),		// seconds
+				a : dateParts[0],
+				A : this.weekdays[date.getDay()],
+				d : dateParts[2],
+				e : Math.round(dateParts[2]),
+				m : (m<10?"0":"") + m,
+				B : this.months[Math.round(dateParts[1])],
+				b : dateParts[1],
+				h : dateParts[1],
+				y : dateParts[3].substring(2),
+				Y : dateParts[3]
+			};
+		
+		return format.replace(/%[HIlpPMSaAdemBbhyY]/gm, function(s) {
+			var v = replacers[s.charAt(1)+''];
+			return (v || v===0 || v===false) ? v : s;
+		});
 	},
 	
 
-	/**	@private */
-	getIdFromName : function(name) {
-		return this.get(name, true);
-	},
-
-
-	/**	@private */
-	getNameFromId : function(id) {
-		var controller = puredom.typeOf(id)==='number' && this._controllers[id];
-		return controller && controller.name || false;
-	},
-
-
 	/** @private */
-	_createControllerSandbox : function(name) {
-		var controllerManager = this,
-			sandbox,
-			sandboxController,
-			muted = false,
-			throwListenerControllerError;
-		
-		name = (name + '').toLowerCase();
-		
-		/** Throw an error from a listener without blocking other listeners */
-		throwListenerControllerError = function(listener, error) {
-			var customError = new Error(
-				'Listener error encountered in ControllerManager#sandbox.postMessage() :: ' + error.message,
-				error.fileName,
-				error.lineNumber
-			);
-			setTimeout(function() {
-				var e = customError;
-				error = customError = listener = null;
-				throw(e);
-			}, 1);
-		};
-		
-		/** A sandbox that can be safely passed to a controller */
-		sandbox = {
-			controllerManager : controllerManager,
-			manager : controllerManager,
-			postMessage : function(type, msgObj) {
-				var listener, x;
-				msgObj = puredom.extend({}, msgObj, {
-					controller	: name,
-					type		: (type + '').replace(/^on/gim,'')
-				});
-				if (!muted) {
-					controllerManager._fireEvent('message', msgObj);
-					controllerManager._fireEvent(msgObj.type, msgObj);
-					for (x=0; x<controllerManager._messageListeners.length; x++) {
-						listener = controllerManager._messageListeners[x];
-						if (!listener.controller || listener.controller===name.toLowerCase()) {
-							try {
-								listener.handler(msgObj);
-							} catch(err) {
-								throwListnerError(listener, err);
-							}
-						}
-					}
+	_getMonthIndex : function(m){
+		m = m.substring(0,3).toLowerCase();
+		for (var x=0; x<this.months.length; x++) {
+			if (this.months[x].substring(0,3).toLowerCase()===m) {
+				return x;
+			}
+		}
+		return -1;
+	},
+	
+
+	/** Weekday names
+	 *	@type Array(String)
+	 */
+	weekdays : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+
+
+	/** Month names
+	 *	@type Array(String)
+	 */
+	months : ["January","February","March","April","May","June","July","August","September","October","November","December"]
+	
+};
+/** @namespace Networking functionality. */
+puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net */ {
+	
+	/**	@class Represents an HTTP request.
+	 *	The raw XMLHttpRequest object is accessible through a *request* property.
+	 */
+	HttpRequest : function HttpRequest(options){
+		puredom.extend(this, options);
+	},
+	
+	
+	/**	Make a GET request. <br />
+	 *	This is a convenience wrapper around {@link puredom.net.request}.
+	 *	@param {String} url				URL to request
+	 *	@param {Function} callback		Called on completion. Gets passed <code>(success, response, request)</code>.
+	 *	@param {Object} [options]		Additional configuration. See options for {@link puredom.net.request}.
+	 *	@returns {puredom.net.HttpRequest} An HTTP request object
+	 *	@example
+	 *		puredom.net.get("/ajax?f=1", function(success, response) {
+	 *			console.log(success===true, response);
+	 *		});
+	 */
+	get : function(url, callback, options) {
+		return this.request(puredom.extend({
+			url : url,
+			method : 'GET'
+		}, options || {}), callback);
+	},
+	
+	
+	/**	Make a POST request. <br />
+	 *	This is a convenience wrapper around {@link puredom.net.request}.
+	 *	@param {String} url				URL to request
+	 *	@param {Object|String} body		Request body.  If an <code>Object</code>, will be serialized based on the request's Content-Type (defaulting to form-encoded)
+	 *	@param {Function} callback		Called on completion. Gets passed <code>(success, response, request)</code>.
+	 *	@param {Object} [options]		Additional configuration. See options for {@link puredom.net.request}.
+	 *	@returns {puredom.net.HttpRequest} An HTTP request object
+	 *	@example
+	 *		puredom.net.get("/ajax?f=2", { foo:'bar' }, function(success, res, req) {
+	 *			console.log(success===true, res, req.status, req.responseHeaders);
+	 *		});
+	 */
+	post : function(url, body, callback, options) {
+		return this.request(puredom.extend({
+			url : url,
+			method : 'POST',
+			body : body
+		}, options || {}), callback);
+	},
+	
+	
+	/**	Construct and send an HTTP request based on the specified options.
+	 *	@param {Object} options			Request options.
+	 *	@param {String} options.url						URL to request
+	 *	@param {String} [options.method="GET"]			HTTP method to use
+	 *	@param {String|Object} [options.body]			Request body. If a <code>String</code> is passed, it is considered pre-serialized.  
+	 *													If an <code>Object</code> is passed, it will be serialized based on the request's 
+	 *													<code>Content-Type</code> header.
+	 *	@param {Any} [options.bodySerialized]			If set, gets assigned unmodified as the request body.  If you're sending something like Blob data, this is for you.
+	 *	@param {Object} [options.headers]				A key-value list of request headers to send.
+	 *	@param {Object} [options.contentTypeOverride]	If set, overrides the response's <code>Content-Type</code> header with the given value.
+	 *	@param {Object} [options.callback]				Alias of <code>callback</code>, a function to call on completion. Gets passed <code>(success, response, request)</code>.
+	 *	@param {Function} [callback]	Called on completion. Gets passed <code>(success, response, request)</code>.  If set, takes precidence over <code>options.callback</code>.
+	 *	@returns {puredom.net.HttpRequest} An HTTP request object
+	 */
+	request : function(options, callback) {
+		var self = this,
+			req;
+		options = options || {};
+
+		if (!options.url) {
+			return false;
+		}
+
+		if (!options.method && options.type) {
+			options.method = options.type;
+			console.warn('puredom.net.request: The `type` option is deprecated. Use `method`.');
+		}
+
+		if (!options.body && options.post) {
+			options.body = options.post;
+			console.warn('puredom.net.request: The `post` option is deprecated. Use `body`.');
+		}
+
+		req = new puredom.net.HttpRequest({
+			url			: options.url,
+			type		: options.method || (options.body ? "POST" : "GET"),
+			callback	: callback || options.callback,
+			body		: options.body,
+			headers		: {
+				'content-type' : 'application/x-www-form-urlencoded',
+				'x-requested-with' : 'XMLHttpRequest'
+			}
+		});
+
+		if (options.headers) {
+			puredom.forEach(options.headers, function(value, key) {
+				var h = req.headers;
+				key = String(key).toLowerCase();
+				if (value===undefined || value===null) {
+					delete h[key];
+				}
+				else {
+					h[key] = String(value);
+				}
+			});
+		}
+
+		if (options.contentTypeOverride) {
+			req.contentTypeOverride = options.contentTypeOverride;
+			// @todo: fixme
+			delete options.contentTypeOverride;
+		}
+
+		options = callback = null;
+
+		/** @ignore */
+		function handleReadyState() {
+			var xhr = req.request,
+				typeMap = {
+					json : 'JSON',
+					document : 'XML'
+				},
+				headerReg = /^([a-z\-\.\_])\s*?\:/gim,
+				head, contentType, resType, key;
+			
+			if (xhr.readyState!==4) {
+				return;
+			}
+			self.fireEvent('before:response', req);
+			
+			req.status = xhr.status;
+			req.responseType = 'text';
+			req.responseText = req.response = xhr.responseText;
+			
+			req.responseHeaders = {};
+			headerReg.lastIndex = 0;
+			head = xhr.getAllResponseHeaders();
+			while ( (key=headerReg.exec(head)) ) {
+				req.responseHeaders[key[1].toLowerCase()] = xhr.getResponseHeader(key[1]);
+			}
+
+			if (req.contentTypeOverride) {
+				contentType = req.contentTypeOverride.toLowerCase();
+			}
+			else {
+				try {
+					contentType = (xhr.getResponseHeader("Content-Type")).toLowerCase().split(';')[0];
+				} catch(err) {}
+				contentType = contentType || "";
+			}
+			
+			resType = xhr.responseType;
+			if (resType) {
+				req.responseType = resType;
+				req.response = xhr.response;
+				key = 'response' + (typeMap[resType] || resType.charAt(0).toUpperCase()+resType.substring(1));
+				req[key] = req.response;
+			}
+			else if (contentType.match(/(^|\/)(json|javascript)$/gm)) {
+				req.responseType = 'json';
+				try {
+					req.response = req.responseJSON = JSON.parse(xhr.responseText.replace(/^[^\[\{]*(.*)[^\[\{]*$/g,'$1'));
+				} catch(parseError) {
+					req.jsonParseError = parseError;
 				}
 			}
-		};
+			else if (contentType==='application/xml' || contentType==='xml') {
+				req.responseType = 'document';
+				req.response = req.responseXML = xhr.responseXML;
+			}
+			
+			if (typeof req.callback==='function') {
+				req.callback(req.status<400, req.response, req);
+			}
+		}
 		
-		/** A privileged manager/controller for the sandbox */
-		sandboxController = {
-			setName : function(newName) {
-				name = (newName + '').toLowerCase();
-			},
-			mute : function() {
-				muted = true;
-			},
-			unmute : function() {
-				muted = false;
-			},
-			destroy : function() {
-				for (var x in this.sandbox) {
-					if (this.sandbox.hasOwnProperty(x)) {
-						this.sandbox[x] = null;
-					}
-				}
-				delete this.sandbox;
-				controllerManager = null;
-			},
-			sandbox : sandbox
-		};
-		
-		/** cleanup pointless refs: */
-		setTimeout(function() {
-			sandboxController = sandbox = null;
-		}, 1);
-		
-		return sandboxController;
+		/**	@ignore */
+		this.createXHR(req, function(xhr) {
+
+			/**	A reference to the request's underlying XMLHttpRequest instance
+			 *	@name puredom.net.HttpRequest#xhr
+			 *	@object
+			 */
+			req.xhr = xhr;
+
+			req.request = xhr;
+			
+			xhr.onreadystatechange = handleReadyState;
+
+			xhr.open(req.type, req.url, req.async!==false);
+
+			puredom.forEach(req.headers, function(value, key) {
+				xhr.setRequestHeader(key, value);
+			});
+
+			if (!req.bodySerialized && req.body && puredom.typeOf(req.body)==='object') {
+				self.serializeRequestBody(req);
+			}
+
+			xhr.send(req.bodySerialized || req.body || null);
+		});
+
+		return req;
 	},
 
 
-	/** @private */
-	_postMessageFromController : function(type, msgObj) {
+	/**	Lookup for request serialization methods. 
+	 *	Each must expose a stringify() or encode() method. 
+	 *	Keys are strings to find within a request's content-type header (lowercase'd).
+	 *	@private
+	 */
+	requestSerializers : {
+		json : puredom.json,
+
+		xml : puredom.xml,
+
+		'form-encoded' : puredom.querystring
 	},
-	
-	/** @private */
-	_controllers : [],
-	
-	/** @private */
-	_messageListeners : [],
-
-	/** @private */
-	_current : null
-});
 
 
-puredom.inherits(puredom.ControllerManager, puredom.EventEmitter);
+	/**	Serialize a request body. Adds a <code>bodySerialized</code> property to <code>req</code>.
+	 *	@param {puredom.net.HttpRequest} req
+	 *	@private
+	 */
+	serializeRequestBody : function(req) {
+		var contentType = (req.headers['content-type'] || 'application/x-www-form-urlencoded').toLowerCase();
+		puredom.forEach(this.serializers, function(api, type) {
+			if (contentType.indexOf(type)>-1) {
+				req.bodySerialized = (api.stringify || api.encode || api)(req.body);
+				return false;
+			}
+		});
+	},
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-switchControllerAsync : function(name, callback) {
-	var self = this,
-		params = {
-			previousController : this.currentController(),
-			parent : this.controllerParent
-		},
-		newController = name && this.getController(name),
-		loadNewController;
-	
-	if (newController) {
-		loadNewController = function() {
-			newController.load(params);
-			self._current = self.getControllerIdFromName(name);
-			self = newController = params = loadNewController = null;
-		};
-		if (params.previousController && params.precontrollerController.unload) {
-			params.previousController.unload(loadNewController);
+	/** Asynchronously create an XMLHttpRequest object.
+	 *	@private
+	 */
+	createXHR : function(req, callback, context) {
+		var xhr;
+		context = context || window;
+		
+		if (context.XMLHttpRequest) {
+			xhr = new context.XMLHttpRequest();
 		}
 		else {
-			loadNewController();
+			try {
+				xhr = new context.ActiveXObject("Msxml2.XMLHTTP");
+			} catch(err2) {
+				xhr = new context.ActiveXObject("Microsoft.XMLHTTP");
+			}
 		}
-		return true;
-	}
-	return false;
-},
-*/
 
+		callback(xhr);
+		return xhr;
+	}
+	
+	
+});
+/**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
+ *	@namespace JSONP Implementation. <br />
+ *		JSONP only supports GET requests, but works across domains. <br />
+ *		The server must support sending {@link http://en.wikipedia.org/wiki/JSONP JSONP} callbacks.
+ *	@function
+ *	@returns {puredom.net.jsonp.Request} jsonpRequest
+ */
+puredom.net.jsonp = (function() {
+
+	/** @namespace JSONp-related functionality.
+	 *	@name puredom.net.jsonp
+	 *	@private
+	 */
+	var jsonp = function() {
+			return jsonp.get.apply(jsonp, arguments);
+		},
+		reqIndex = 0;
+	
+	/**	Initiate a JSONP request.
+	 *	@name puredom.net.jsonp.get
+	 *	@function
+	 *	@param {String} url			The service URL, including querystring parameters.
+	 *	@param {Object} [options]		A hash of available options.
+	 *	@param {String} [options.url=url]		The service URL
+	 *	@param {Object} [options.params]		GET parameters as an object.
+	 *	@param {Function} [options.callback]	A function to handle the data once received.
+	 *	@param {Number} [options.timeout=10]	A number of seconds to wait before triggering failure.
+	 *	@param {Function} callback	A function that gets called when the request returns.
+	 *	@returns {puredom.net.jsonp.Request} jsonpRequest
+	 */
+	jsonp.get = function(url, options, callback) {
+		var script, requestObj, callbackId, tmp;
+		
+		if (puredom.typeOf(options)==='function') {
+			if (callback && puredom.typeOf(callback)==='object') {
+				tmp = callback;
+			}
+			callback = options;
+			if (tmp) {
+				options = tmp;
+			}
+		}
+		options = options || {};
+		if (options.callback && !callback) {
+			callback = options.callback;
+		}
+		if (!options.timeout) {
+			options.timeout = 10;
+		}
+		url = url || options.url;
+		
+		if (!url) {
+			return false;
+		}
+		
+		if (options.params && puredom.parameterize) {
+			url += (url.indexOf('?')>-1?'&':'?') + puredom.querystring.stringify(options.params);
+		}
+		
+		reqIndex += 1;
+		
+		options.callback = callbackId = "puredom_net_jsonp_"+reqIndex;
+		(function(jsonp, reqIndex) {
+			/**	@ignore */
+			window[options.callback] = function(data) {
+				var e;
+				if (callback) {
+					try {
+						callback(data);
+					} catch(err) {
+						e = err;
+					}
+					callback = null;
+				}
+				if (requestObj) {
+					requestObj.stop();
+					requestObj = null;
+				}
+				if (e) {
+					throw(e);
+				}
+			};
+		}());
+		
+		if (url.indexOf('{!callback}')>-1) {
+			url = url.replace('{!callback}', callbackId);
+		}
+		else {
+			url += (url.indexOf('?')<0?'?':'&') + encodeURIComponent(options.callbackParam || 'callback') + '=' + encodeURIComponent(callbackId);
+		}
+		
+		if (!this._head) {
+			tmp = document.getElementsByTagName('head');
+			this._head = tmp && tmp[0];
+		}
+		
+		script = puredom.el({
+			type : 'script',
+			attributes : {
+				src		: url,
+				async	: 'async',
+				type	: 'text/javascript'
+			},
+			parent : this._head || document.body
+		});
+		
+		/**	@class Represents a JSONp request.
+		 *	@name puredom.net.jsonp.Request
+		 */
+		requestObj = /** @lends puredom.net.jsonp.Request# */ {
+			/**	The request's callback ID */
+			id : callbackId,
+			
+			/**	Attempt to stop the request. */
+			stop : function() {
+				if (requestObj._timer) {
+					clearTimeout(requestObj._timer);
+				}
+				window[callbackId] = null;
+				try {
+					delete window[callbackId];
+				}catch(err){}
+				callback = null;
+				script.attr('src', 'about:blank').remove();
+				callbackId = requestObj = script = null;
+			}
+		};
+		
+		if (options.timeout && options.timeout>0) {
+			requestObj._timer = setTimeout(function() {
+				if (callback) {
+					callback({
+						_requestTimedOut : true,
+						_jsonpTimedout : true,
+						success : false,
+						result : false
+					});
+				}
+				if (requestObj) {
+					requestObj.stop();
+				}
+			}, Math.round(options.timeout*1000));
+		}
+		
+		url = options = tmp = null;
+		
+		return requestObj;
+	};
+	
+	return jsonp;
+}());
 /**	Provides a cross-browser persisted storage layer using various storage adapters.
- *	@constructor Asynchronously creates an instance of LocalStorage.<br />
- *	<strong>Available Options:</strong><br />
- *	<table class="options"><thead>
- *		<tr><td>Option</td><td>Type</td><td>Default Value</td><td>Description</td></tr>
- *	</thead><tbody>
- *		<tr><td>adapter</td><td>String</td><td><em>auto-detect</em></td><td>Attempt to use a specific adapter. If unset, the best adapter is automatically used (useBest=true).</td></tr>
- *		<tr><td>useBest</td><td>Boolean</td><td>true</td><td>Attempt to use the best adapter available, unless an adapter is manually specified and loads successfully.</td></tr>
- *		<tr><td>restore</td><td>Boolean</td><td>true</td><td>Attempt to restore the data immediately.</td></tr>
- *	</tbody></table>
+ *	@constructor Asynchronously creates an instance of LocalStorage.
  *	@param {String} id				Required identifier for the specific storage instance.
  *	@param {Object} [options]		Hashmap of available config options (see description)
+ *	@param {Object} [options.adapter=auto]		Attempt to use a specific adapter. If unset, the best adapter is automatically used (useBest=true).
+ *	@param {Object} [options.useBest=true]		Attempt to use the best adapter available, unless an adapter is manually specified and loads successfully.
+ *	@param {Object} [options.restore=true]		Attempt to restore the data immediately.
  *	@param {Function} [callback]	Gets passed a reference to the instance after the initial restore() has completed.
  */
 puredom.LocalStorage = function LocalStorage(id, callback, options) {
@@ -5470,12 +5737,12 @@ puredom.LocalStorage.prototype.data = {};
  */
 puredom.LocalStorage.prototype.setAdapter = function(type) {
 	var list = this.constructor.adapters,
-		lcType = (type+'').toLowerCase(),
+		lcType = (type+'').toLowerCase().replace(/adapt[eo]r$/g,''),
 		found = false,
 		foundWorking = false,
 		i;
 	for (i in list) {
-		if (list.hasOwnProperty(i) && (i+'').toLowerCase()===lcType) {
+		if (list.hasOwnProperty(i) && (i+'').toLowerCase().replace(/adapt[eo]r$/g,'')===lcType) {
 			found = true;
 			if (list[i].test(this)===true) {
 				foundWorking = true;
@@ -5832,12 +6099,10 @@ puredom.extend(puredom.LocalStorage.adapters.none.prototype, /** @lends puredom.
 
 
 
-// json2.js, https://github.com/douglascrockford/JSON-js
-if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typeof Date.prototype.toJSON!=='function'){/**@ignore*/Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null};/**@ignore*/String.prototype.toJSON=/**@ignore*/Number.prototype.toJSON=/**@ignore*/Boolean.prototype.toJSON=function(key){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+string+'"'}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key)}if(typeof rep==='function'){value=rep.call(holder,key,value)}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null'}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null'}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v)}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v}}if(typeof JSON.stringify!=='function'){/**@ignore*/JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' '}}else if(typeof space==='string'){indent=space}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value})}}if(typeof JSON.parse!=='function'){/**@ignore*/JSON.parse=function(text,reviver){var j;/**@ignore*/function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v}else{delete value[k]}}}}return reviver.call(holder,key,value)}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j}throw new SyntaxError('JSON.parse');}}}());
 /**	@class Storage adapter that persists data into browser cookies.
- *	@name puredom.LocalStorage.adapters.cookie
+ *	@name puredom.LocalStorage.adapters.CookieAdapter
  */
-puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapters.cookie */ {
+puredom.LocalStorage.addAdapter('CookieAdapter', /** @lends puredom.LocalStorage.adapters.CookieAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
@@ -5883,9 +6148,9 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 	
 });
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.LocalStorage
+ *	@name puredom.LocalStorage.adapters.LocalStorageAdapter
  */
-puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.adapters.LocalStorage */ {
+puredom.LocalStorage.addAdapter('LocalStorageAdapter', /** @lends puredom.LocalStorage.adapters.LocalStorageAdapter */ {
 	
 	/**	The default root key ID to use for accessing localStorage */
 	defaultName : 'db',
@@ -5957,9 +6222,9 @@ puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.
 	
 });
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.UserData
+ *	@name puredom.LocalStorage.adapters.UserDataAdapter
  */
-puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adapters.UserData */ {
+puredom.LocalStorage.addAdapter('UserDataAdapter', /** @lends puredom.LocalStorage.adapters.UserDataAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
@@ -6057,3985 +6322,6 @@ puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adap
 	 */
 	_getKey : function(storage) {
 		return 'ieud' + (storage.id || this.defaultName || '') + '';
-	}
-	
-});
-/**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.WebkitSQLite
- */
-puredom.LocalStorage.addAdapter('WebkitSQLite', /** @lends puredom.LocalStorage.adapters.WebkitSQLite */ {
-	
-	/** The default cookie ID to use for database storage */
-	defaultName : 'db',
-	
-	
-	/**	Default database identification info. */
-	dbInfo : {
-		name : 'PuredomLocalStorage',
-		table : 'storage',
-		version : '1.0',
-		displayName : 'Cache, Settings and Storage',
-		quota : 200000,					// 200 k
-		minimumQuota : 10000			// 10 k
-	},
-	
-	
-	/**	This adapter is the fastest storage mechanism for Webkit. <br />
-	 *	Web SQL has also be discontinued in favour of IndexedDB. Who knew SQL would turn out to be annoying? ... <br />
-	 *	In terms of complexity, clearly LocalStorage is better, but for now this adapter can stay at the top of the list.
-	 */
-	rating : 80,
-	
-	
-	/** Test if this adapter will work in the current environment */
-	test : function(storage) {
-		return !!window.openDatabase;
-	},
-	
-	
-	/** Load the persisted DB */
-	load : function(storage, callback) {
-		var db = this._getDatabase(storage),
-			key = this._getKey(storage),
-			table = this.dbInfo.table,
-			errorCB;
-		
-		callback = callback || this._nullCallback;
-		
-		if (db) {
-			errorCB = function(error) {
-				if (error.message.indexOf('no such table')>-1) {
-					callback();
-				}
-				else {
-					puredom.log('WebkitSQLite Adapter Error (load): ' + error.message);
-				}
-			};
-			
-			db.transaction(function(tx) {
-				if (tx) {
-					tx.executeSql('SELECT key,value FROM '+table+' WHERE key=?', [key], function(tx, result) {
-						var rows = [];
-						if (result && result.rows) {
-							for (var x=0; x<result.rows.length; x++) {
-								rows.push(result.rows.item(x));
-							}
-						}
-						if (rows.length>0) {
-							callback(puredom.json.parse(rows[0].value));
-						}
-						else {
-							callback();
-						}
-					});
-				}
-				else {
-					callback(false);
-				}
-			}, errorCB);
-		}
-	},
-	
-	
-	/** Save the DB to persistence. */
-	save : function(storage, data, callback) {
-		var key = this._getKey(storage),
-			table = this.dbInfo.table;
-		callback = callback || this._nullCallback;
-		
-		this._requireDatabase(storage, function(db) {
-			var errorCB,
-				jobs = 1,
-				jobComplete;
-			if (db) {
-				errorCB = function(error) {
-					puredom.log('WebkitSQLite Adapter Error (save): ' + error.message);
-				};
-				
-				jobComplete = function() {
-					jobs -= 1;
-					if (jobs<=0) {
-						if (callback) {
-							callback(true);
-						}
-						callback = storage = data = errorCB = jobComplete = db = null;
-					}
-				};
-				
-				data = puredom.json.stringify(data);
-				
-				db.transaction(function(tx){
-					tx.executeSql('INSERT OR REPLACE INTO '+table+' (key,value) VALUES(?,?)', [key,data], jobComplete);
-				}, errorCB);
-			}
-			else {
-				callback(false);
-				callback = null;
-			}
-		});
-	},
-	
-	
-	/**	@private */
-	_getDatabase : function(storage) {
-		var quota = this.dbInfo.quota,
-			db;
-		if (this._currentDb) {
-			return this._currentDb;
-		}
-		while (!db && quota>this.dbInfo.minimumQuota) {
-			try {
-				db = openDatabase(this.dbInfo.name, this.dbInfo.version, this.dbInfo.displayName, quota);
-			}catch(err){}
-			if (!db) {
-				quota /= 10;
-			}
-		}
-		if (db) {
-			this._currentDb = db;
-		}
-		else {
-			puredom.log('LocalStorage ERROR: WebkitSQLite Adapter failed to open database.');
-		}
-		return db || false;
-	},
-	
-	
-	/**	@private */
-	_requireDatabase : function(storage, callback) {
-		var self = this,
-			db = this._getDatabase(storage),
-			table = this.dbInfo.table;
-		callback = callback || this._nullCallback;
-		
-		if (db) {
-			self._createTable(db, function() {
-				callback(db);
-				self = callback = storage = db = null;
-			});
-		}
-		else {
-			callback(db, false);
-			self = callback = storage = null;
-		}
-	},
-	
-	
-	/**	@private */
-	_createTable : function(db, callback) {
-		var table = this.dbInfo.table;
-		callback = callback || this._nullCallback;
-		if (db) {
-			db.transaction(function(tx) {
-				tx.executeSql('CREATE TABLE IF NOT EXISTS '+table+' (key TEXT UNIQUE, value TEXT)', [], function(tx, result) {
-					callback(true);
-					callback = db = null;
-				}, function(tx, error) {
-					callback(false);
-				});
-			});
-		}
-		else {
-			callback(false);
-		}
-	},
-	
-	
-	/** Get the key for a storage object
-	 *	@private
-	 */
-	_getKey : function(storage) {
-		return (storage.id || this.defaultName || '') + '';
-	},
-	
-	
-	/** @private */
-	_nullCallback : function(){}
-	
-});
-/**	@namespace Functions for working with dates <br />
- *	See {@link http://php.net/strftime} for formatting options.
- */
-puredom.date = /** @lends puredom.date */ {
-	
-	/** Returns the current timestamp, in milliseconds.
-	 *	@function
-	 *	@returns {Number} timestamp
-	 */
-	now : (
-		Date.now ? function() {
-			return Date.now();
-		} : function() {
-			return +new Date();
-		}
-	),
-	
-
-	/** Create a date, optionally from a string.<br />
-	 *	This is a wrapper on new Date(str), adding support for more date formats and smoothing out differences between browsers.
-	 *	@param {String} [str=now]	A date string, parsed and used to set the initial date.
-	 *	@returns {Date} a new date object.
-	 */
-	create : function(str) {
-		var date;
-		if (str) {
-			str = (str+'').replace(/^([0-9]{4})\-([0-9]{2})\-([0-9]{2})T([0-9]{2})\:([0-9]{2})\:([0-9]{2})\.[0-9]{3}Z$/, '$1/$2/$3 $4:$5:$6');
-			date = new Date(str);
-		}
-		else {
-			date = new Date();
-		}
-		return date;
-	},
-	
-	
-	/**	Parse a string with the given format into a Date object.
-	 *	@param {String} str						A date string to parse
-	 *	@param {String} [format="%d/%m/%Y"]		A date format string. See {@link http://php.net/strftime} for available fields.
-	 *	@returns {Date|Boolean}	the date, or false on failure.
-	 */
-	parse : function(str, format) {
-		format = format || "%d/%m/%Y";
-		function setHours(hours, pm) {
-			if (pm===false || pm===true) {
-				temp.pm = pm===true;
-			}
-			if (hours || hours===0) {
-				temp.hours = hours;
-			}
-			hours = temp.hours;
-			if (temp.hours<12 && temp.pm) {
-				hours -= 12;
-			}
-			var i = rdate.getDate();
-			if (temp.hours===12 && temp.pm===false) {
-				if (rdate.getHours()!==0 || typeof pm==='boolean') {
-					rdate.setHours(0);
-				}
-			}
-			else {
-				rdate.setHours(hours);
-				rdate.setDate(i);
-			}
-		}
-		var origStr = str,
-			rdate = new Date(0),
-			temp = {},
-			weekdays = ['mo','tu','we','th','fr','sa','su'],
-			replacers = {
-				H : [/^[0-9]{1,2}/g, function(e){e=Math.round(e);setHours(e);}],
-				I : [/^[0-9]{1,2}/g, function(e){e=Math.round(e);setHours(e);}],
-				p : [/^[AP]M/gi, function(e){setHours(null, e.toLowerCase()==="pm");}],
-				M : [/^[0-9]{1,2}/g, function(e){rdate.setMinutes(Math.round(e));}],
-				a : [/^(Mon|Tue(s?)|Wed|Thu|Fri|Sat|Sun)/i, function(){}],									// dummy
-				A : [/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/i, function(){}],			// dummy
-
-
-				d : [/^[0-9]{1,2}/g, function(e){temp.date=Math.round(e);rdate.setDate(temp.date);}],
-				m : [/^[0-9]{1,2}/g, function(e){temp.month=Math.round(e)-1;rdate.setMonth(temp.month);}],
-				B : [new RegExp('^('+this.months.join("|")+')','gi'), function(e){temp.month=date._getMonthIndex(e);rdate.setMonth(temp.month);}],
-				b : [/^(Jan|Feb|Mar|Apr|May|Jun(e?)|Jul(y?)|Aug|Sep(t?)|Oct|Nov|Dec)/gi, function(e){temp.month=date._getMonthIndex(e);rdate.setMonth(temp.month);}],
-				y : [/^[0-9]{2}/g, function(e){e=Math.round(e)+1900;if(e<1950){e+=100;}rdate.setFullYear(e);}],		// wrap 2-digit dates at 1950/2050
-				Y : [/^[0-9]{4}/g, function(e){temp.year=Math.round(e);rdate.setFullYear(temp.year);}]
-			},
-			index, rep, r;
-		replacers.l = replacers.I;
-		replacers.e = replacers.d;
-		replacers.P = replacers.p;
-		replacers.h = replacers.b;
-		
-		/**	@ignore */
-		function rp(e) {
-			rep[1](e);
-			return '';
-		}
-		
-		for (index=0; index<format.length; index++) {
-			if (format.charAt(index)==="%") {
-				rep = null;
-				if (str.charAt(0)===' ' && format.charAt(index)==='%') {
-					str = str.substring(1);
-				}
-				for (r in replacers) {
-					if (replacers.hasOwnProperty(r) && format.substring(index+1, index+1+r.length)===r) {
-						rep = replacers[r];
-						str = str.replace(rep[0], rp);
-						index += rep.length-1;		// advance past the used symbol in format str
-						break;
-					}
-				}
-			}
-			else {
-				if (str.charAt(0)===format.charAt(index)) {
-					str = str.substring(1);
-				}
-			}
-		}
-		
-		if (temp.month || temp.month===0) {
-			rdate.setMonth(temp.month);
-		}
-		if (temp.year || temp.year===0) {
-			rdate.setFullYear(temp.year);
-		}
-		
-		return rdate;
-	},
-
-
-	/** Alias of {@link puredom.date.parse}
-	 *	@see puredom.date.parse
-	 *	@deprecated
-	 *	@private
-	 */
-	unformat : function(){return this.parse.apply(this,arguments);},
-	
-	
-	/**	Get a formatted string representation of a Date object.
-	 *	@param {String} date					A date object to convert
-	 *	@param {String} [format="%d/%m/%Y"]		A date format string. See {@link http://php.net/strftime} for available fields.
-	 *	@returns {String|Boolean}	the formatted date string, or false on failure.
-	 */
-	format : function(date, format) {
-		format = format || "%d/%m/%Y";
-		
-		if (!date || date.constructor!==Date || !date.toDateString) {
-			return false;
-		}
-		
-		var dateStr = date.toDateString();
-		if (!dateStr || dateStr.toLowerCase()==="invalid date") {
-			return false;
-		}
-		
-		if (dateStr==='NaN') {	// only trips in IE ("3 is not an object")
-			return false;
-		}
-		
-		var dateParts = dateStr.split(" "),
-			hours = date.getHours(),
-			hv = ((hours+11)%12)+1,
-			m = date.getMonth()+1,
-			replacers = {
-				H : hours,						// 24 hour time
-				I : (hv<10?"0":"") + hv,		// 12 hour time, leading 0
-				l : hv,							// 12 hour time
-				p : hours>11?"PM":"AM",
-				P : hours>11?"pm":"am",
-				M : (date.getMinutes()<10?"0":"") + date.getMinutes(),
-				S : (date.getSeconds()<10?"0":"") + date.getSeconds(),		// seconds
-				a : dateParts[0],
-				A : this.weekdays[date.getDay()],
-				d : dateParts[2],
-				e : Math.round(dateParts[2]),
-				m : (m<10?"0":"") + m,
-				B : this.months[Math.round(dateParts[1])],
-				b : dateParts[1],
-				h : dateParts[1],
-				y : dateParts[3].substring(2),
-				Y : dateParts[3]
-			};
-		
-		return format.replace(/%[HIlpPMSaAdemBbhyY]/gm, function(s) {
-			var v = replacers[s.charAt(1)+''];
-			return (v || v===0 || v===false) ? v : s;
-		});
-	},
-	
-
-	/** @private */
-	_getMonthIndex : function(m){
-		m = m.substring(0,3).toLowerCase();
-		for (var x=0; x<this.months.length; x++) {
-			if (this.months[x].substring(0,3).toLowerCase()===m) {
-				return x;
-			}
-		}
-		return -1;
-	},
-	
-
-	/** Weekday names
-	 *	@type Array(String)
-	 */
-	weekdays : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-
-
-	/** Month names
-	 *	@type Array(String)
-	 */
-	months : ["January","February","March","April","May","June","July","August","September","October","November","December"]
-	
-};
-/**	Handles populating and submitting HTML forms. 
- *	@constructor Creates a new FormHandler instance.
- *	@augments puredom.EventEmitter
- */
-puredom.FormHandler = function(form, options) {
-	var me = this;
-
-	options = options || {};
-	if (arguments.length===1 && typeof(form)==='object' && form.constructor!==puredom.NodeSelection) {
-		options = form;
-		form = options.form;
-	}
-	
-	puredom.EventEmitter.call(this);
-	
-	this._customTypes = [].concat(this._customTypes);
-	if (form) {
-		this.setForm(form);
-	}
-	if (options.enhance===true) {
-		this.enhance();
-	}
-	if (options.data) {
-		this.setData(options.data);
-	}
-	if (options.onsubmit && typeof(options.onsubmit)==='function') {
-		this.on('submit', options.onsubmit);
-		this._constructorSubmitHandler = options.onsubmit;
-	}
-	if (options.oncancel && typeof(options.oncancel)==='function') {
-		this.on('cancel', options.oncancel);
-		this._constructorCancelHandler = options.oncancel;
-	}
-	if (options.submitButton && ('on' in options.submitButton)) {
-		options.submitButton.on('click', this._defaultSubmitButtonHandler);
-		this._constructorSubmitButton = options.submitButton;
-	}
-	
-	if (options.cancelButton && options.cancelButton.on) {
-		options.cancelButton.on('click', function(e){
-			me.cancel();
-			return puredom.cancelEvent(e);
-		});
-		this._constructorCancelButton = options.cancelButton;
-	}
-};
-
-
-puredom.inherits(puredom.FormHandler, puredom.EventEmitter);
-
-
-puredom.extend(puredom.FormHandler.prototype, /** @lends puredom.FormHandler# */ {
-	
-	errorMessageSelector : '.errorMessage, .generalForm_errorMessage',
-	
-	setForm : function(form) {
-		var self = this;
-		this.form = puredom.el(form);
-		
-		if (!this.action) {
-			this.action = this.form.attr('action');
-		}
-		if (!this.method) {
-			this.method = this.form.attr('method');
-		}
-		
-		// <input type="submit" /> is required in order to fire submit on forms. Add a hidden one:
-		puredom.el({
-			type : 'input',
-			attributes : {
-				type : 'submit'
-			},
-			css : 'position:absolute; left:0; top:-999em; width:1px; height:1px; font-size:1px; visibility:hidden;'
-		}, this.form);
-		
-		
-		this.form.on('submit', function(e) {
-			self.submit();
-			return e.cancel();
-		});
-		
-		this._kill = function() {
-			self = null;
-		};
-		
-		return this;
-	},
-	
-	enhance : function() {
-		var self = this,
-			fields = this._getFields();
-		if (fields) {
-			fields.each(function(input) {
-				var customType = self._getCustomType(input);
-				if (customType && customType.enhance) {
-					customType.enhance(input);
-				}
-			});
-		}
-		self = fields = null;
-		return this;
-	},
-	
-	disable : function() {
-		this.disabled = true;
-		this._getFields().disable();
-		return this;
-	},
-	
-	enable : function() {
-		this.disabled = false;
-		this._getFields().enable();
-		return this;
-	},
-	
-	destroy : function() {
-		var self = this,
-			fields = this._getFields();
-		if (fields) {
-			fields.each(function(input) {
-				var customType = self._getCustomType(input);
-				if (customType && customType.destroy) {
-					customType.destroy(input);
-				}
-			});
-		}
-		if (this._constructorSubmitHandler) {
-			this.removeEventListener('submit', this._constructorSubmitHandler);
-		}
-		if (this._constructorSubmitButton) {
-			this._constructorSubmitButton.removeEvent('click', this._defaultSubmitButtonHandler);
-		}
-		if (this._constructorCancelHandler) {
-			this.removeEventListener('cancel', this._constructorCancelHandler);
-		}
-		if (this._constructorCancelButton) {
-			this._constructorCancelButton.removeEvent('click', this._constructorCancelHandler);
-		}
-		self = fields = null;
-		return this;
-	},
-	
-	clear : function() {
-		this.setData({}, true);
-		this.clearErrors();
-		return this;
-	},
-	reset : function(){ return this.clear.apply(this,arguments); },
-	
-	submit : function() {
-		var data, eventResponse;
-		if (this.disabled===true) {
-			puredom.log('Notice: Not submitting disabled form.');
-			return this;
-		}
-		this.clearErrors(false);
-		data = this.getData();
-		this._hasErrors = false;
-		if (data) {
-			eventResponse = this._fireEvent('submit', [data]);
-		}
-		else {
-			eventResponse = this._fireEvent('submitfailed', [data]);
-		}
-		if (!this._hasErrors && (!eventResponse || eventResponse.falsy!==true)) {
-			this.clearErrors();
-		}
-		return this;
-	},
-	
-	cancel: function() {
-		if (this.disabled===true) {
-			puredom.log('Notice: Not cancelling on disabled form.');
-			return this;
-		}
-		
-		this.clearErrors();
-		this._fireEvent('cancel');
-		
-		return this;
-	},
-	
-	clearErrors : function(clearMessage) {
-		this._getFields().each(function(node) {
-			node.parent().declassify('error');
-		});
-		if (clearMessage!==false) {
-			this._hasErrors = false;
-			this.form.query(this.errorMessageSelector).first().css({
-				height : 0,
-				opacity : 0
-			}, {tween:'fast', callback:function(sel) {
-				sel.hide();
-			}});
-		}
-	},
-	
-	showFieldErrors : function(fields) {
-		var self = this;
-		
-		this._hasErrors = true;
-		
-		// @TODO: multi-field errors and display error messages beside fields.
-		
-		puredom.forEach(fields, function(value, key) {
-			var message;
-			value = (value || 'Error') + '';
-			value = value.replace(/\{fieldnames\.([^\}]+)\}/gim, function(s, n) {
-				var id = n && self.form.query('[name="'+n+'"]').attr('id'),
-					label = id && self.form.query('label[for="'+id+'"]');
-				if (label && label.exists()) {
-					return (label._nodes[0].textContent || label._nodes[0].innerText || label._nodes[0].innerHTML || '').replace(/\:\s*?$/g,'');
-				}
-				return n;
-			});
-			self.form.query('[name="'+key+'"]').focus().parent().classify('error');
-			if (value.indexOf(' ')===-1) {
-				value = puredom.i18n(value.toUpperCase());
-			}
-			message = self.form.query(self.errorMessageSelector).first();
-			message.html('<div class="formHandlerErrorMessage">'+value+'</div>');
-			message.css({
-				height : Math.round(message.prop('offsetHeight')) || 0,
-				opacity : 0
-			}).show().css({
-				height : message.children().first().height()+'px',
-				opacity : 1
-			}, {tween:'medium'});
-			return false;
-		});
-		
-		self = null;
-	},
-	
-	getData : function() {
-		var data = null,
-			self = this,
-			fields = this._getFields();
-		if (fields) {
-			data = {};
-			fields.each(function(input) {
-				var name = input.attr('name');
-				if (name) {
-					data[name] = self._getInputValue(input);
-				}
-			});
-		}
-		self = fields = null;
-		return data;
-	},
-	
-	setData : function(data, includeMissing) {
-		var touched = [],
-			self = this,
-			fields = this._getFields();
-		if (data && fields) {
-			fields.each(function(input) {
-				var name = input.attr('name');
-				if (data.hasOwnProperty(name)) {
-					touched.push(name);
-					self._setInputValue(input, data[name]);
-				}
-				else if (includeMissing===true) {
-					self._setInputValue(input, null);
-				}
-			});
-		}
-		self = fields = null;
-		return this;
-	},
-	
-	
-	addCustomType : function(typeDefinition) {
-		var self = this,
-			fields = this._getFields();
-		
-		// actually add the type:
-		this._customTypes.push(typeDefinition);
-		
-		// adding a type after initial enhance should still enhance matched fields:
-		if (fields && typeDefinition.enhance) {
-			fields.each(function(input) {
-				var customType = self._getCustomType(input);
-				if (customType===typeDefinition) {
-					customType.enhance(input);
-				}
-			});
-		}
-		
-		self = fields = null;
-		return this;
-	},
-	
-	
-	/** @protected */
-	_getFields : function() {
-		var fields = null;
-		if (this.form) {
-			fields = this.form.query('input,textarea,select');		// {logging:true}
-		}
-		return fields;
-	},
-	
-	/** @protected */
-	_setInputValue : function(el, value) {
-		var customType = this._getCustomType(el);
-		if (value===undefined || value===null) {
-			value = '';
-		}
-		if (customType && customType.setValue) {
-			customType.setValue(el, value);
-		}
-		else {
-			el.value(value);
-		}
-		return this;
-	},
-	
-	/** @protected */
-	_getInputValue : function(el) {
-		var customType = this._getCustomType(el);
-		if (customType && customType.getValue) {
-			return customType.getValue(el);
-		}
-		else {
-			return el.value();
-		}
-	},
-	
-	/** @protected */
-	_getCustomType : function(el) {
-		var x, type, nodeName, customType;
-		if (el.attr('customtype')) {
-			type = (el.attr('customtype')+'').toLowerCase();
-		}
-		else if (el.attr('type')) {
-			type = (el.attr('type')+'').toLowerCase();
-		}
-		nodeName = (el.prop('nodeName')+'').toLowerCase();
-		for (x=0; x<this._customTypes.length; x++) {
-			customType = this._customTypes[x];
-			//console.log('customType for', el, '<>', customType);
-			if ( (customType.types && this._arrayIndexNC(customType.types,type)>-1)  ||
-				(customType.type && (customType.type+'').toLowerCase()===type) ||
-				(customType.nodeNames && this._arrayIndexNC(customType.nodeNames,nodeName)>-1) ||
-				(customType.nodeName && (customType.nodeName+'').toLowerCase()===nodeName) ) {
-				
-				return customType;
-			}
-		}
-		return false;
-	},
-	
-	/** @protected */
-	_arrayIndexNC : function(arr, val) {
-		val = (val + '').toLowerCase();
-		for (var x=0; x<arr.length; x++) {
-			if ((arr[x]+'').toLowerCase()===val) {
-				return x;
-			}
-		}
-		return -1;
-	},
-	
-	/** @private A DOM event handler that triggers the form to submit */
-	_defaultSubmitButtonHandler : function(e) {
-		var node = puredom.el(this);
-		do {
-			if (node.nodeName()==='form') {
-				node.submit();
-				break;
-			}
-		} while((node=node.parent()).exists() && node.nodeName()!=='body');
-		return puredom.cancelEvent(e);
-	},
-	
-	/** @protected */
-	_customTypes : []
-	
-});
-
-
-/** @static */
-puredom.FormHandler.addCustomType = function(typeDefinition) {
-	this.prototype._customTypes.push(typeDefinition);
-};
-
-/**	When called as a function, acts as an alias of {@link puredom.i18n.localize}.
- *	@namespace Internationalization extension for puredom.
- *	@function
- */
-puredom.i18n = (function() {
-	/**	@exports i18n as puredom.i18n */
-	var langs = {},
-		i18n;
-	
-	/**	@ignore */
-	i18n = function() {
-		return i18n.localize.apply(this,arguments);
-	};
-	
-	/**	Get the locale definition corresponding to the given language code.
-	 *	@param {String} langCode		A language code to retrieve the definition for.
-	 *	@returns {Object} locale, or <code>false</code> on error.
-	 */
-	i18n.getLang = function(langCode) {
-		langCode = langCode.toLowerCase().replace(/[^a-z0-9]/gim,'');
-		for (var x in langs) {
-			if (langs.hasOwnProperty(x) && (x+'').toLowerCase().replace(/[^a-z0-9]/gim,'')===langCode) {
-				return langs[x];
-			}
-		}
-		return false;
-	};
-	
-	/**	Check if a locale definition is registered for the given language code.
-	 *	@param {String} langCode		A language code to check for.
-	 *	@returns {Boolean} exists
-	 */
-	i18n.hasLang = function(langCode) {
-		return !!i18n.getLang(langCode);
-	};
-	
-	/**	Set the global locale.
-	 *	@param {String} langCode		The new language code to apply globally.
-	 *	@returns {this}
-	 */
-	i18n.setLang = function(langCode) {
-		if (i18n.hasLang(langCode)) {
-			i18n.locale = i18n.lang = langCode;
-		}
-		return this;
-	};
-	
-	/**	Apply the global locale definition to a selection ({@link puredom.NodeSelection}).<br />
-	 *	Looks for <code>data-i18n-id</code> attributes, and updates their owner nodes' contents with the corresponding String from the global locale definition.
-	 *	@param {puredom.NodeSelection} selection		A selection to apply the global locale definition to.
-	 */
-	i18n.localizeDOM = function(nodeSelection) {
-		nodeSelection.query('[data-i18n-id]').each(function(node) {
-			var key = (node.attr('data-i18n-id') || '') + '',
-				type = node.nodeName(),
-				current,
-				localized;
-			if (key && key.length>0) {
-				localized = i18n.localize(key, null, '');
-				if (localized && localized!==key && localized!=='') {
-					switch (type) {
-						case "select":
-						case "input":
-						case "textarea":
-							current = node.value();
-							if (current!==localized) {
-								node.value(localized);
-							}
-							break;
-						
-						default:
-							current = node.html();
-							if (current!==localized) {
-								node.html(localized);
-							}
-							break;
-					}
-				}
-			}
-		});
-	};
-	
-	/**	Localize a variable.
-	 *	@param {Any} value						A value to localize.  Ex: a Date, Number or String
-	 *	@param {String} [langCode=i18n.locale]	An alternative language code to use.
-	 *	@param {String} [defaultValue]			A fallback value to use if no localized value can be generated.
-	 *	@param {Object} [options]				Configuration object.
-	 */
-	i18n.localize = function(value, lang, defaultValue, options) {
-		var type = puredom.typeOf(value),
-			originalValue = value,
-			dateFormat, def, localizedValue, t, i;
-		options = options || {};
-		lang = (lang || i18n.lang || i18n.locale || 'en').toUpperCase();
-		if (langs.hasOwnProperty(lang)) {
-			def = langs[lang];
-		}
-		else if (lang.indexOf('-')>-1) {
-			lang = lang.substring(0, lang.indexOf('-'));
-			if (langs.hasOwnProperty(lang)) {
-				def = langs[lang];
-			}
-		}
-		
-		if (def && value!==null && value!==undefined) {
-			if (type==='string') {
-				value = value.replace(/\{([^{}]+)\}/gim,'$1');
-			}
-			def = {
-				labels : def.labels || {},
-				formats : def.formats || {}
-			};
-			if (type==='string' && !value.match(/^(labels|formats)\./gim)) {
-				value = 'labels.' + value;
-			}
-			if (type==='date' || value.constructor===Date) {
-				dateFormat = def.formats[options.datetype || 'date'];
-				//console.log(options.datetype, dateFormat);
-				localizedValue = dateFormat && puredom.date.format(value, dateFormat) || value.toLocaleString();
-			}
-			else if (type==='number') {
-				if (def.formats.thousands_separator) {
-					localizedValue = '';
-					t = value+'';
-					while (t.length > 0) {
-						localizedValue = t.substring(Math.max(0,t.length-3)) + localizedValue;
-						if (t.length>3) {
-							localizedValue = def.formats.thousands_separator + localizedValue;
-						}
-						t = t.substring(0, Math.max(0,t.length-3));
-					}
-				}
-			}
-			else if (type==='boolean') {
-				localizedValue = (value===true ? def.formats.booleanTrue : def.formats.booleanFalse) || (value+'');
-			}
-			else {
-				localizedValue = puredom.delve(def, value+'');
-			}
-		}
-		
-		if (localizedValue) {
-			return localizedValue;
-		}
-		else if (defaultValue!==null && defaultValue!==undefined) {
-			return defaultValue;
-		}
-		return originalValue;
-	};
-	
-	/**	Add a locale definition.
-	 *	@param {String} langCode		A language code
-	 *	@param {Object} definition		A key-value JSON object that defines labels and formats
-	 *	@returns {this}
-	 */
-	i18n.addLang = function(langCode, definition) {
-		langCode = (langCode+'').toUpperCase();
-		// if the JSON object is just a list, it is treated as a static label lookup:
-		if (!definition.labels) {
-			definition = {
-				labels : definition
-			};
-		}
-		langs[langCode] = definition;
-		return this;
-	};
-	
-	// Register this as a plugin for nodeselections
-	/**	Localize the selection.
-	 *	@name puredom.NodeSelection#localize
-	 *	@function
-	 */
-	puredom.addNodeSelectionPlugin('localize', function() {
-		i18n.localizeDOM(this);
-		return this;
-	});
-	
-	return i18n;
-}());
-
-/**	Generate a functional JavaScript interface on top of a REST-like API from a JSON API description.
- *	@constructor Creates a new NativeAPI instance.
- *	@param {Object} api		The API description
- *	@returns {Object}	An object with methods corresponding to the API object's method descriptions.
- */
-puredom.NativeAPI = function(api) {
-	var self = (this instanceof puredom.NativeAPI ? this : api) || {},		/* can be used as a method OR a class */
-		priv = {},
-		globalParameters = {},
-		authParameters = {},
-		getQueryStringFromObj,
-		shallowObjectCopy,
-		isArray,
-		objConstructor = ({}).constructor,
-		createApiMethod,
-		NativeAPIMethod,
-		MessageStringWithData,
-		createNativeAPIResponse,
-		emptyFunc = function(){},
-		log;
-	
-	/**	@private */
-	log = function(text) {
-		if (self.enableLogging!==false && window.console && window.console.log) {
-			window.console.log(text);
-		}
-	};
-	
-	/**	@private */
-	getQueryStringFromObj = function (obj) {
-		var querystring = "",
-			x, i;
-		for (x in obj) {
-			if (obj[x]!==null && obj[x]!==undefined && obj[x].constructor!==Function && obj[x].constructor!==objConstructor && puredom.typeOf(obj[x])!=='object' && !isArray(obj[x])) {
-				querystring += "&" + encodeURIComponent(x) + "=" + encodeURIComponent(obj[x]);
-			}
-			else if (obj[x] && isArray(obj[x])) {
-				for (i=0; i<obj[x]; i++) {
-					querystring += "&" + encodeURIComponent(x) + "[]=" + encodeURIComponent(obj[x]);
-				}
-			}
-		}
-		return querystring;
-	};
-	
-	/**	@private */
-	shallowObjectCopy = function(base, args) {
-		var i, p, obj;
-		for (i=1; i<arguments.length; i++) {
-			obj = arguments[i];
-			for (p in obj) {
-				if (obj.hasOwnProperty(p)) {
-					base[p] = obj[p];
-				}
-			}
-		}
-		return base;
-	};
-	
-	/**	@private */
-	isArray = function(what) {
-		return Object.prototype.toString.apply(what)==="[object Array]";
-	};
-	
-	/**	@private */
-	NativeAPIMethod = function NativeAPIMethod(){};
-	
-	/**	@class Wrapped String/Data pair
-	 *	@name puredom.NativeAPI.MessageStringWithData
-	 */
-	self.MessageStringWithData = MessageStringWithData = function MessageStringWithData(data, message){
-		this.message = message || '';
-		shallowObjectCopy(this, data);
-	};
-	/**	@private */
-	MessageStringWithData.prototype.toString = MessageStringWithData.prototype.toSource = function(){
-		return this.message;
-	};
-	
-	/**	@private */
-	createNativeAPIResponse = function(data, originalResponse) {
-		var response;
-		if (puredom.isArray(data.data) && data.data.length===0) {
-			data.data = {};
-		}
-		
-		/**	@class Represents a response from NativeAPI's methods.
-		 *	@name puredom.NativeAPI.NativeAPIResponse
-		 *	@ignore
-		 */
-		function NativeAPIResponse(){}
-		shallowObjectCopy(NativeAPIResponse.prototype, {
-			getData : function() {
-				return puredom.extend({}, this);
-			},
-			getResponse : function() {
-				return this.constructor.prototype._originalResponse;
-			},
-			_originalResponse : originalResponse
-		});
-		
-		response = new NativeAPIResponse();
-		shallowObjectCopy(response, data);
-		return (function() {
-			data = response = originalResponse = null;
-			return arguments[0];
-		}(response));
-	};
-	
-	/**	Set a paramter that will be passed on all requests. */
-	self.setGlobalParameter = function (key, value) {
-		if (value===undefined || arguments.length<2) {
-			delete globalParameters[key];
-		}
-		else {
-			globalParameters[key] = value;
-		}
-	};
-	
-	/**	Set a paramter that will be passed on all requests that require authentiation (eg: a token). */
-	self.setAuthParameter = function (key, value) {
-		if (value===undefined || arguments.length<2) {
-			delete authParameters[key];
-		}
-		else {
-			authParameters[key] = value;
-		}
-	};
-	
-	
-	/**	@ignore */
-	priv.cache = {};
-	
-	//window._inspectNativeApiCache = function(){ return priv.cache; };
-	
-	
-	/** @private */
-	priv.getCacheKey = function(method, options) {
-		var key = '', list=[], i, props=[];
-		options = puredom.extend({}, options || {});
-		delete options.callback;
-		key = (method.type || '') + '||' + method.endpoint + '||';
-		for (i in options) {
-			if (options.hasOwnProperty(i) && i!=='_cache' && i!=='_nocache' && i!=='_cache_deleteonly' && i!=='callback') {
-				props.push(i);
-			}
-		}
-		props.sort();
-		for (i=0; i<props.length; i++) {
-			list.push(encodeURIComponent('o_'+props[i]) + '=' + encodeURIComponent(options[props[i]]+''));
-		}
-		key += list.join('&');
-		return key;
-	};
-	
-	/** @private Get the cached request if it exists */
-	priv.getCached = function(method, options) {
-		var key = priv.getCacheKey(method, options),
-			entry = priv.cache.hasOwnProperty(key) ? puredom.json.parse(priv.cache[key]) : null;
-		if (self.enableCacheLogging===true) {
-			console.log('CACHE: Getting ['+method.type+'] '+method.endpoint, options, ' --> ', entry);
-		}
-		return entry;
-	};
-	
-	/** @private Delete a cache entry */
-	priv.uncache = function(method, options, response) {
-		var key = priv.getCacheKey(method, options);
-		if (self.enableCacheLogging===true) {
-			console.log('CACHE: Clearing ['+method.type+'] '+method.endpoint, options);
-		}
-		delete priv.cache[key];
-	};
-	
-	/** @private Cache a response, overwriting existing */
-	priv.cacheResponse = function(method, options, response) {
-		var key = priv.getCacheKey(method, options);
-		if (self.enableCacheLogging===true) {
-			console.log('CACHE: Storing ['+method.type+'] '+method.endpoint, options, ' --> ', response);
-		}
-		priv.cache[key] = puredom.json.stringify(response);
-	};
-	
-	/** @public Purge the internal request cache */
-	self.clearCache = function() {
-		if (self.enableCacheLogging===true) {
-			console.log('CACHE: Purging all entries');
-		}
-		priv.cache = {};
-	};
-	
-	
-	/** @private Validate submitted values against an API method definition */
-	priv.validateParameters = function(options, method) {
-		var requiredParams, name, p, pType, errorType, inputField, error,
-			response = {
-				errors : [],
-				message : ''
-			},
-			baseErrorMessage = {
-				nativeApiError : true,
-				clientSideError : true
-			};
-		
-		if (method.parameters) {
-			requiredParams = {};
-			for (name in method.parameters) {
-				if (method.parameters.hasOwnProperty(name)) {
-					p = method.parameters[name];
-					pType = puredom.typeOf(p);
-					// convert direct references to constructors to their lowercase'd names:
-					if (pType==='function' && p.name) {
-						pType = 'string';
-						p = p.name.toLowerCase();
-					}
-					else if (pType==='regexp' || p.constructor===RegExp) {
-						pType = 'string';
-						p = '/' + p.source + '/' + (p.global?'g':'') + (p.ignoreCase?'i':'') + (p.multiline?'m':'');
-					}
-					// all validation types are strings
-					if (pType==='string') {
-						if (p.substring(0,1)==='/') {
-							p = (/^\/(.*?)\/([gim]*?)$/gim).exec(p);
-							requiredParams[name] = {
-								validate : 'regex',
-								against : new RegExp(p[1] || '', p[2] || '')
-							};
-						}
-						else {
-							requiredParams[name] = {
-								validate : 'type',
-								against : p.toLowerCase()
-							};
-						}
-					}
-				}
-			}
-		}
-		
-		if (requiredParams) {
-			for (name in requiredParams) {
-				if (requiredParams.hasOwnProperty(name)) {
-					pType = requiredParams[name].validate;
-					p = requiredParams[name].against;
-					inputField = options[name];
-					error = null;
-					if (pType==='regex') {
-						p.lastIndex = 0;
-					}
-					if (!options.hasOwnProperty(name) || inputField===null || inputField===undefined || inputField==='') {
-						error = {
-							field : name,
-							type : 'RequiredError',
-							message : '{fieldnames.' + name + '} is required'
-						};
-					}
-					else if (pType==='regex' && !p.test(inputField+'')) {
-						error = {
-							field : name,
-							type : 'ValidationError',
-							message : '{fieldnames.' + name + '} is invalid'
-						};
-					}
-					else if (pType==='type' && p!==puredom.typeOf(inputField)) {
-						error = {
-							field : name,
-							type : 'TypeError',
-							message : '{fieldnames.' + name + '} is invalid'
-						};
-					}
-					if (error) {
-						error.missingParameter = error.field;
-						response.message += (response.message.length>0?', ':'') + error.message + ' ('+error.type+')';
-						response.errors.push(puredom.extend(error, baseErrorMessage));
-					}
-				}
-			}
-		}
-		
-		response.failed = response.errors.length>0;
-		return response;
-	};
-	
-	
-	
-	createApiMethod = function(subject, action, method) {
-		self[subject][action] = function (options) {
-			var validationResponse = priv.validateParameters(options=options||{}, method),
-				callback, req, type, querystring, x, i,
-				funcs, postData, requestParameters,
-				isLongPolling = method.longPolling===true || (method.allowLongPolling===true && options.longPolling===true),
-				optionsHasLongPollingProperty = options.hasOwnProperty('longPolling'),
-				optionsLongPollingProperty = options.longPolling,
-				unCache;
-			
-			// Check for a failed validation
-			if (validationResponse.failed) {
-				log("api."+subject+"."+action+": Errors: " + validationResponse.message, 9);
-				
-				// for historical reasons, return the first error on its own, then return the error collection as a third param:
-				options.callback(false, validationResponse.errors[0], validationResponse.errors);
-				return false;
-			}
-			
-			// callback for JSONp (or other request methods)
-			callback = function(json, extraData) {
-				var success = json && (json[api.statusProperty || 'success']===true || json[api.statusProperty || 'success']===1),			// The response.success property MUST be Boolean TRUE or Integer 1  <---
-					data = json.data || json || null,
-					message = json.errorMessage || json.message || null,
-					sval = json[api.statusProperty || 'success'],
-					optionsLongPollingRef,
-					enhancedMessage;
-				
-				// Some enhanced functionality used by error messages.
-				extraData = extraData || {};
-				extraData.apiMethod = method.endpoint;
-				
-				if (extraData.cached!==true && method.cache===true && self.enableCache===true) {
-					priv.cacheResponse(method, options, json);
-				}
-				
-				if (method.verifyResult) {
-					success = method.verifyResult(json);
-				}
-				else if ((sval!==true && sval!==false && sval!==0 && sval!==1) || (json.constructor!==objConstructor && !isArray(json))) {
-					success = (json.constructor===objConstructor || isArray(json)) ? true : false;
-					data = json;
-					message = null;
-				}
-				
-				// Long Polling!
-				if (isLongPolling) {
-					// Did the server respond with "timedout":true?
-					if (success && json.timedout===true) {
-						// Looks like we need to re-initiate the request:
-						optionsLongPollingRef = options;
-						
-						setTimeout(function() {
-							self[subject][action](optionsLongPollingRef);
-							callback = optionsLongPollingRef = success = json = data = message = sval = null;
-						}, 1);
-						// We'll respond later.
-						return true;
-					}
-				}
-				
-				// Complex response objects allow for passing more data using the existing structure:
-				data = createNativeAPIResponse(data, json, extraData);
-				enhancedMessage = new MessageStringWithData(json, message);
-				
-				if (extraData.parseError===true) {
-					success = false;
-					data = data.message || data;
-					if (api.onParseError) {
-						api.onParseError(json, extraData);
-					}
-				}
-				
-				(method.onbeforecomplete || method.onBeforeComplete || method.precallback || emptyFunc)(success, success===true?data:enhancedMessage, json);
-				if (success===true) {
-					(options.onsuccess || method.onsuccess || emptyFunc).call(api.endpoints[subject][action], data, json);
-				}
-				else {
-					(options.onerror || method.onerror || emptyFunc).call(api.endpoints[subject][action], message, data, json);
-				}
-				(options.oncomplete || options.callback || emptyFunc).call(api.endpoints[subject][action], success,success===true?data:enhancedMessage, json);
-				(method.oncomplete || method.onComplete || method.callback || emptyFunc)(success, success===true?data:enhancedMessage, json);
-				if (api.onRequestCompleted) {
-					api.onRequestCompleted(subject+'.'+action, data, success, requestParameters, options);
-				}
-				callback = req = type = querystring = funcs = postData = requestParameters = isLongPolling = optionsHasLongPollingProperty = optionsLongPollingProperty = unCache = enhancedMessage = null;
-				options = p = null;
-			};//-callback
-			
-			// general request prep
-			type = (method.type && method.type.toLowerCase()) || "";
-			querystring = method.endpoint;
-			if (method.formatSuffix) {
-				querystring += method.formatSuffix;
-			}
-			else if (api.formatSuffix) {
-				querystring += api.formatSuffix;
-			}
-			if (!querystring.match(/^(http|https|ftp)\:/)) {
-				querystring = api.root + querystring;
-			}
-			
-			unCache = options._cache===false || options._nocache===true;
-			//delete options._cache;
-			//delete options._nocache;
-			
-			if (isLongPolling) {
-				options.longPolling = null;
-				try{ delete options.longPolling; }catch(err){}
-				options.timeout = options.timeout || method.longPollingTimeout || self.longPollingTimeout || 60;
-			}
-			else if (method.cache===true && self.enableCache===true) {
-				//console.log(method.endpoint, puredom.extend({}, options));
-				if (unCache) {
-					priv.uncache(method, options);
-					if (options._cache_deleteonly===true) {
-						return;
-					}
-				}
-				else {
-					i = priv.getCached(method, options);
-					if (i) {
-						setTimeout(function() {
-							callback(i, {
-								cached : true,
-								fresh : false
-							});
-						}, 1);
-						return;
-					}
-				}
-			}
-			
-			//console.log('NativeAPI::querystring = ' + querystring);
-			if (options) {
-				querystring = querystring.replace(/\{([a-z0-9\-\._]+)\}/gim, function(s, i) {
-					//console.log('NativeAPI::tpl('+i+', '+((options.hasOwnProperty(i) && options[i]!==null && options[i]!==undefined)?'true':'false')+')');
-					if (options.hasOwnProperty(i) && options[i]!==null && options[i]!==undefined) {
-						try {
-							delete options[i];
-						} catch(err) {
-							options[i] = null;
-						}
-						return options[i];
-					}
-					return s;
-				});
-			}
-			
-			
-			// specific request prep
-			switch (type) {
-				case "xdr":
-					log("Cross-domain requests are not yet supported.", 7);
-					break;
-				
-				case "post":
-					funcs = {};
-					for (var j in options) {
-						if (options.hasOwnProperty(j) && Object.prototype.toString.apply(options[j])==="[object Function]") {
-							funcs[j] = options[j];
-							options[j] = null;
-							try{ delete options[j]; }catch(err2){}
-						}
-					}
-					requestParameters = postData = shallowObjectCopy(
-						{},
-						globalParameters,
-						method.auth===true ? authParameters : {},
-						method.defaultParameters || {},
-						options
-					);
-					for (j in funcs) {
-						if (funcs.hasOwnProperty(j)) {
-							options[j] = funcs[j];
-						}
-					}
-					funcs = null;
-					
-					// make the POST request
-					puredom.net.request({
-						url : querystring,
-						type : "POST",
-						post : postData,
-						callback : function(success, response) {
-							if (success && response) {
-								callback(response);
-							}
-							else {
-								if (this.jsonParseError===true) {
-									callback({status:false, message:"Unable to parse server response", rawdata:this.responseText}, {parseError:true, clientsideErrorDetection:true});
-								}
-								else {
-									callback({status:false, message:"Connection error "+this.status}, {clientsideErrorDetection:true});
-								}
-							}
-						},
-						contentTypeOverride : 'application/json'
-					});
-					break;
-				
-				case "jsonp":
-					// TODO: re-write the following line, it does not handle arrays properly:
-					requestParameters = shallowObjectCopy(
-						{},
-						globalParameters,
-						method.auth===true ? authParameters : {},
-						method.defaultParameters || {},
-						options
-					);
-					querystring += getQueryStringFromObj(requestParameters);
-					
-					// replace the first "&" with a "?"
-					if (querystring.indexOf("?")===-1 || querystring.indexOf("?")>querystring.indexOf("&")) {
-						querystring = querystring.replace("&","?");
-					}
-					
-					//console.log('puredom.net.jsonp(', querystring, callback, ');');
-					
-					// make the JSONp call
-					req = puredom.net.jsonp(querystring, callback);
-					break;
-				
-				//case "get":
-				default:
-					// TODO: re-write the following line, it does not handle arrays properly:
-					requestParameters = shallowObjectCopy(
-						{},
-						globalParameters,
-						method.auth===true ? authParameters : {},
-						method.defaultParameters || {},
-						options
-					);
-					querystring += getQueryStringFromObj(requestParameters);
-					
-					// replace the first "&" with a "?"
-					if (querystring.indexOf("?")===-1 || querystring.indexOf("?")>querystring.indexOf("&")) {
-						querystring = querystring.replace("&","?");
-					}
-					
-					// make the GET request
-					puredom.net.request({
-						url : querystring,
-						type : "GET",
-						callback : function(success, response) {
-							if (success && response) {
-								callback(response);
-							}
-							else {
-								if (this.jsonParseError===true) {
-									callback({status:false, message:"Unable to parse server response", rawdata:this.responseText}, {parseError:true, clientsideErrorDetection:true});
-								}
-								else {
-									callback({status:false, message:"Connection error "+this.status}, {clientsideErrorDetection:true});
-								}
-							}
-						},
-						contentTypeOverride : 'application/json'
-					});
-					break;
-			}
-			
-			if (optionsHasLongPollingProperty) {
-				options.longPolling = optionsLongPollingProperty;
-			}
-			
-			return req;
-		};
-	};
-	
-	
-	if (self.constructor===({}).constructor) {
-		self = (function(obj) {
-			/**	@ignore */
-			function NativeAPI(){}
-			for (var i in obj) {
-				if (obj.hasOwnProperty(i)) {
-					NativeAPI.prototype[i] = obj[i];
-				}
-			}
-			return new NativeAPI();
-		}(self));
-	}
-	
-	
-	var subject, action;
-	for (subject in api.endpoints) {
-		if (api.endpoints.hasOwnProperty(subject)) {
-			self[subject] = new NativeAPIMethod();
-			for (action in api.endpoints[subject]) {
-				if (api.endpoints[subject].hasOwnProperty(action)) {
-					createApiMethod(subject, action, api.endpoints[subject][action]);
-				}
-			}
-		}
-	}
-	
-	if (self.globalParameters) {
-		for (var o in self.globalParameters) {
-			if (self.globalParameters.hasOwnProperty(o)) {
-				self.setGlobalParameter(o, self.globalParameters[o]);
-			}
-		}
-	}
-	
-	if (this.constructor!==arguments.callee) {
-		return self;
-	}
-};
-/** @namespace Networking functionality. */
-puredom.net = /** @lends puredom.net */ {
-	
-	/**	@class Represents an HTTP request.
-	 *	The raw XMLHttpRequest object is accessible through a *request* property.
-	 */
-	HttpRequest : function HttpRequest(options){
-		puredom.extend(this, options);
-	},
-	
-	
-	/**	Make an HTTP GET request. This is a convenience wrapper around {@link puredom.net.request}.
-	 *	@param {String} url				The URL to which a request should be sent.
-	 *	@param {Function} callback		A function to be called when the request has completed, with signature: function({Boolean} success, {Object|String|Document} data)
-	 *	@param {Object} [options]		Additional configuration. See {@link puredom.net.request}.
-	 *	@example
-	 *	puredom.net.get("/ajax?f=1", function(success, response) {
-	 *		console.log(success===true, response);
-	 *	});
-	 *	@returns {puredom.net.HttpRequest} An HTTP request object
-	 */
-	get : function(url, callback, options) {
-		return this.request(puredom.extend({
-			url : url,
-			type : "GET",
-			callback : callback
-		}, options || {}));
-	},
-	
-	
-	/**	Make an HTTP POST request. This is a convenience wrapper around {@link puredom.net.request}. <br />
-	 *	<strong>Post value type conversion:</strong> <br />
-	 *		Object: Objects get automatically converted to a querystring-encoded Strings through {@link puredom.querystring.stringify}.<br />
-	 *		String: Strings are used as the POST body, without any conversion.
-	 *	@param {String} url				The URL to which a request should be sent.
-	 *	@param {Object|String} post		POST body (see description). If this value is set, the request type will be POST unless overridden via <code>options.type</code>.
-	 *	@param {Function} callback		A function to be called when the request has completed, with signature: function({Boolean} success, {Object|String|Document} data)
-	 *	@param {Object} [options]		Additional configuration. See {@link puredom.net.request}.
-	 *	@example
-	 *	puredom.net.get("/ajax?f=2", { foo:'bar' }, function(s, data) {
-	 *		console.log(s===true, data);
-	 *	});
-	 *	@returns {puredom.net.HttpRequest} An HTTP request object
-	 */
-	post : function(url, post, callback, options) {
-		return this.request(puredom.extend({
-			url : url,
-			type : "POST",
-			post : post,
-			callback : callback
-		}, options || {}));
-	},
-	
-	
-	/**	Make multiple HTTP requests in order, firing the callback only when all have completed.
-	 *	<br /><b>Callback Format:</b><br />
-	 *	@example
-	 *	callback(
-	 *		success   // {Boolean} - did *any* requests succeed?
-	 *		responses // {Array}   - responses corresponding to the provided resources.
-	 *		successes // {Number}  - how many requests succeeded (status<400)
-	 *		failures  // {Number}  - how many requests failed (status>=400)
-	 *	);
-	 *	@param {Object[]} resources		An array of resource objects, with format as described in {@link puredom.net.request} options.
-	 *	@param {Function} [callback]	A function to call once all requests have completed, with signature <code>function(success, responses, successes, failures)</code>. [See description]
-	 *	@returns {Boolean} returns false if no resources were provided.
-	 */
-	multiLoad : function(resources, callback) {
-		if (!resources) {
-			return false;
-		}
-		var cur = -1,
-			max = resources.length,
-			allData = [],
-			trues = 0,
-			falses = 0,
-			loaded, loadNext;
-		
-		/** @inner */
-		loaded = function(result, data) {
-			if (result && data) {
-				var res = resources[cur],
-					d = data;
-				if (res.process && res.process.call) {
-					d = res.process(d);
-					if (d===undefined) {
-						d = data;
-					}
-				}
-				allData.push(d);
-				if (callback) {
-					callback(trues>0, allData, trues, falses);
-				}
-				loaded = loadNext = resources = allData = callback = null;
-			}
-			else {
-				loadNext();
-			}
-		};
-		
-		/** @inner */
-		loadNext = function() {
-			cur += 1;
-			var res = resources[cur],
-				d = typeof(res)==='string' ? {url:res} : res;
-			if (d) {
-				http.request(d, loaded);
-			}
-			else {
-				if (cur<max) {
-					loadNext();
-				}
-				else {
-					callback(false, null, null, "No resources were available.");
-				}
-			}
-		};
-		
-		loadNext();
-		
-		return true;
-	},
-	
-	
-	/**	Construct and send an HTTP request based on a configuration object (options). <br />
-	 *	<strong>Options:</strong> <br />
-	 *		<table class="options"><tbody>
-	 *		<tr><td>{String}</td><td><b>url</b></td><td>Required. A URL to which the request should be sent.</td></tr>
-	 *		<tr><td>{String}</td><td><b>type</b></td><td>An explicit request type (HTTP verb). Generally "GET" or "POST". Overrides other methods of setting request type.</td></tr>
-	 *		<tr><td>{Object|String}</td><td><b>post</b></td><td>Post body. {Object}s are converted to a form-encoded body using {@link puredom.parameterize}. {String}s are used as the POST body with no manipulation. If this value is set, the request type will be POST unless overridden by *type*.</td></tr>
-	 *		<tr><td>{Function}</td><td><b>callback</b></td><td>A function to be called when the request has completed, with signature: <code>function({Boolean} success, {Object|String|Document} data)</code></td></tr>
-	 *		<tr><td>{Object}</td><td><b>headers</b></td><td>Hashmap of request headers. (key-value)</td></tr>
-	 *		<tr><td>{String}</td><td><b>contentTypeOverride</b></td><td>If set, overrides the *Content-Type* header returned by the server.</td></tr>
-	 *		</tbody></table>
-	 *	@param {Object} options			Define request options
-	 *	@param {Function} [callback]	A callback function, used if options.callback is not set.
-	 *	@returns {puredom.net.HttpRequest} An HTTP request object
-	 */
-	request : function(options) {
-		var opt, self;
-		if (!options.url) {
-			return false;
-		}
-		self = this;
-		options = options || {};
-		opt = new puredom.net.HttpRequest({
-			url			: options.url,
-			type		: options.type || (options.post ? "POST" : "GET"),
-			callback	: options.callback || arguments[1] || function(){},
-			post		: options.post,
-			headers		: options.headers
-		});
-		if (options.contentTypeOverride) {
-			opt.contentTypeOverride = options.contentTypeOverride;
-			delete options.contentTypeOverride;
-		}
-		
-		this.createXHR(opt.url, function(xhrCarrier) {
-			opt.request = xhrCarrier.xhr;
-			opt._xdrFrame = xhrCarrier.frame;
-			xhrCarrier = null;
-			
-			if (opt.post && puredom.typeOf(opt.post)==='object') {
-				opt.post = puredom.parameterize(opt.post);
-				if (opt.post.substring(0,1)==='?') {
-					opt.post = opt.post.substring(1);
-				}
-			}
-			/** @private */
-			opt.request.onreadystatechange = function() {
-				var contentType, data, i;
-				
-				// for proxied XHR only:
-				if (opt.request._orig) {
-					opt.request.readyState = opt.request._orig.readyState;
-					opt.request.status = opt.request._orig.status;
-					opt.request.responseText = opt.request._orig.responseText;
-					opt.request.responseXML = opt.request._orig.responseXML;
-				}
-				
-				if (opt.request.readyState===4) {
-					// The cross-domain frame can now be re-used.
-					if (opt._xdrFrame) {
-						setTimeout(function() {
-							self._freeIframes.push(opt._xdrFrame);
-							self = null;
-						}, 100);
-					}
-					
-					opt.status = opt.request.status;
-					if (opt.contentTypeOverride) {
-						contentType = opt.contentTypeOverride.toLowerCase();
-					}
-					else {
-						try {
-							contentType = (opt.request.getResponseHeader("Content-Type")).toLowerCase();
-						} catch(err) {}
-						contentType = contentType || "";
-					}
-					opt.responseText = opt.request.responseText;
-					
-					if (contentType.match(/\/(json|javascript)$/gm) || contentType==="json") {
-						opt.responseType = "json";
-						data = opt.responseJSON = null;
-						try {
-							data = opt.responseJSON = JSON.parse(opt.request.responseText.replace(/^[^\[\{]*(.*)[^\[\{]*$/g,'$1'));
-						}catch(jsonParseError){
-							opt.jsonParseError = true;
-						}
-					}
-					else if (contentType==="application/xml" || contentType==="xml") {
-						opt.responseType = "xml";
-						data = opt.responseXML = opt.request.responseXML;
-					}
-					else {
-						opt.responseType = "text";
-						data = opt.responseText;
-					}
-					
-					if (opt.callback) {
-						opt.callback(opt.request.status<400, data);
-					}
-				}
-			};
-			opt.request.open(opt.type, opt.url, opt.async!==false);
-			opt.request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-			opt.request.setRequestHeader('x-requested-with', 'XMLHttpRequest');
-			if (opt.headers) {
-				for (var h in opt.headers) {
-					if (opt.headers.hasOwnProperty(h)) {
-						try {
-							opt.request.setRequestHeader(h, opt.headers[h]);
-						} catch(err) {}
-					}
-				}
-			}
-			opt.request.send(opt.post || null);
-		});
-		return opt;
-	},
-	
-	
-	/**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
-	 *	@namespace JSONp Implementation. JSONp is GET-only and works across domains, but the server must support the JSONp pattern.
-	 *	@function
-	 *	@returns {puredom.net.jsonp.Request} jsonpRequest
-	 */
-	jsonp : (function() {
-		/** @namespace JSONp-related functionality.
-		 *	@name puredom.net.jsonp
-		 *	@private
-		 */
-		var jsonp = function() {
-				return jsonp.get.apply(jsonp, arguments);
-			},
-			reqIndex = 0;
-		
-		/**	Initiate a JSONp request.
-		 *	@name puredom.net.jsonp.get
-		 *	@function
-		 *	@param {String} url			The service URL, including querystring parameters.
-		 *	@param {Object} [options]		A hash of available options.
-		 *	@param {String} [options.url=url]		The service URL
-		 *	@param {Object} [options.params]		GET parameters as an object.
-		 *	@param {Function} [options.callback]	A function to handle the data once received.
-		 *	@param {Number} [options.timeout=10]	A number of seconds to wait before triggering failure.
-		 *	@param {Function} callback	A function that gets called when the request returns.
-		 *	@returns {puredom.net.jsonp.Request} jsonpRequest
-		 */
-		jsonp.get = function(url, options, callback) {
-			var script, requestObj, callbackId, tmp;
-			
-			if (puredom.typeOf(options)==='function') {
-				if (callback && puredom.typeOf(callback)==='object') {
-					tmp = callback;
-				}
-				callback = options;
-				if (tmp) {
-					options = tmp;
-				}
-			}
-			options = options || {};
-			if (options.callback && !callback) {
-				callback = options.callback;
-			}
-			if (!options.timeout) {
-				options.timeout = 10;
-			}
-			url = url || options.url;
-			
-			if (!url) {
-				return false;
-			}
-			
-			if (options.params && puredom.parameterize) {
-				url += (url.indexOf('?')>-1?'&':'?') + puredom.querystring.stringify(options.params);
-			}
-			
-			reqIndex += 1;
-			
-			options.callback = callbackId = "puredom_net_jsonp_"+reqIndex;
-			(function(jsonp, reqIndex) {
-				/**	@ignore */
-				window[options.callback] = function(data) {
-					var e;
-					if (callback) {
-						try {
-							callback(data);
-						} catch(err) {
-							e = err;
-						}
-						callback = null;
-					}
-					if (requestObj) {
-						requestObj.stop();
-						requestObj = null;
-					}
-					if (e) {
-						throw(e);
-					}
-				};
-			}());
-			
-			if (url.indexOf('{!callback}')>-1) {
-				url = url.replace('{!callback}', callbackId);
-			}
-			else {
-				url += (url.indexOf('?')<0?'?':'&') + encodeURIComponent(options.callbackParam || 'callback') + '=' + encodeURIComponent(callbackId);
-			}
-			
-			if (!this._head) {
-				tmp = document.getElementsByTagName('head');
-				this._head = tmp && tmp[0];
-			}
-			
-			script = puredom.el({
-				type : 'script',
-				attributes : {
-					src		: url,
-					async	: 'async',
-					type	: 'text/javascript'
-				},
-				parent : this._head || document.body
-			});
-			
-			/**	@class Represents a JSONp request.
-			 *	@name puredom.net.jsonp.Request
-			 */
-			requestObj = /** @lends puredom.net.jsonp.Request# */ {
-				/**	The request's callback ID */
-				id : callbackId,
-				
-				/**	Attempt to stop the request. */
-				stop : function() {
-					if (requestObj._timer) {
-						clearTimeout(requestObj._timer);
-					}
-					window[callbackId] = null;
-					try {
-						delete window[callbackId];
-					}catch(err){}
-					callback = null;
-					script.attr('src', 'about:blank').remove();
-					callbackId = requestObj = script = null;
-				}
-			};
-			
-			if (options.timeout && options.timeout>0) {
-				requestObj._timer = setTimeout(function() {
-					if (callback) {
-						callback({
-							_requestTimedOut : true,
-							_jsonpTimedout : true,
-							success : false,
-							result : false
-						});
-					}
-					if (requestObj) {
-						requestObj.stop();
-					}
-				}, Math.round(options.timeout*1000));
-			}
-			
-			url = options = tmp = null;
-			
-			return requestObj;
-		};
-		
-		return jsonp;
-	}()),
-	
-	
-	/** @private */
-	_freeIframes : [],
-	
-	
-	/** @private */
-	_xhrIndex : 0,
-	
-	
-	/** Asynchronously create an XMLHttpRequest object, automatically instantiating it from within an iframe if the TLD matches the page's TLD.
-	 *	@private
-	 */
-	createXHR : function(url, callback) {
-		var isCrossDomain = false,
-			self = this,
-			domain, frame, xhr, _loadHandler, timer, i;
-		this._xhrIndex += 1;
-		if (url) {
-			domain = (/^[a-z]{3,9}\:\/\/([^\/\?#]+)/gim).exec(url);
-			domain = domain && domain[1];
-			if (domain && domain!==location.hostname) {
-				isCrossDomain = true;
-				document.domain = location.hostname.match(/[^.]+\.[^.]+$/gim)[0];
-				for (i=0; i<this._freeIframes.length; i++) {
-					if (this._freeIframes[i].getAttribute('data-xhr-domain')===domain) {
-						frame = this._freeIframes.splice(i,1)[0];
-						break;
-					}
-				}
-				if (frame) {
-					callback(self._createXHRObj(frame.contentWindow, frame));
-				}
-				else {
-					frame = document.createElement('iframe');
-					frame.style.cssText = "position:absolute; left:0; top:-1000px; width:1px; height:1px; border:none; overflow:hidden;";
-					/** @inner */
-					_loadHandler = function() {
-						var win, body;
-						try {
-							win = frame.contentWindow;
-							body = win && win.document && win.document.domain===document.domain && win.document.body;
-						}catch(err){
-							body = null;
-						}
-						if (body && body.innerHTML) {
-							clearInterval(timer);
-							frame.onload = frame.onerror = null;
-							callback(self._createXHRObj(win, frame));
-							self = callback = xhr = frame = domain = _loadHandler = timer = null;
-						}
-					};
-					frame.onload = frame.onerror = _loadHandler;
-					frame.setAttribute('src', location.protocol+'//'+domain+'/xd_receiver.html');
-					frame.setAttribute('role', 'presentation');
-					frame.setAttribute('tabindex', '-1');
-					frame.setAttribute('data-xhr-domain', domain);
-					document.body.appendChild(frame);
-					timer = setInterval(_loadHandler, 50);
-				}
-			}
-		}
-		if (!isCrossDomain) {
-			xhr = this._createXHRObj();
-			callback(xhr);
-			return xhr;
-		}
-	},
-	
-	
-	/** @private */
-	_createXHRObj : function(win, frame) {
-		var xmlHttp;
-		win = win || window;
-		
-		try {
-			xmlHttp = new win.XMLHttpRequest();
-		} catch(err) {
-			try {
-				xmlHttp = new win.ActiveXObject("Msxml2.XMLHTTP");
-			} catch(err2) {
-				xmlHttp = new win.ActiveXObject("Microsoft.XMLHTTP");
-			}
-		}
-		return {
-			xhr : xmlHttp,
-			frame : frame
-		};
-	}
-	
-};
-
-/** Provides a managed notification/toast display area.
- *	@constructor Creates a new Notifier instance.
- *	@augments puredom.EventEmitter
- *	@param {Object} [options]	Hashmap of options
- *	@param {puredom.NodeSelection} [options.parent]		Construct the display area within a given element.
- */
-puredom.Notifier = function(options) {
-	var self = this;
-	
-	puredom.EventEmitter.call(this);
-	this._data = {
-		counter : 0,
-		list : {}
-	};
-	
-	this._notificationClickHandler = function(e) {
-		self._performAction(puredom.el(this).attr('data-notification-id'), 'notificationclick', e);
-		return puredom.cancelEvent(e);
-	};
-	
-	options = options || {};
-	if (options.parent) {
-		this._createBase(options.parent);
-	}
-};
-
-
-puredom.inherits(puredom.Notifier, puredom.EventEmitter);
-
-
-puredom.extend(puredom.Notifier.prototype, /** @lends puredom.Notifier# */ {
-
-	/**	Show a notification.
-	 *	@param {Object} config	Describes what to display
-	 *	@param {Object} [config.message]	The text to display
-	 *	@param {Object} [config.icon]		Icon/image to show next to the text
-	 *	@param {Object} [config.image]		Icon/image to show next to the text
-	 *	@param {Object} [config.timeout=Notifier.timeout]	How many seconds to wait before auto-dismissing the notification
-	 */
-	show : function(config) {
-		var notify;
-		if (config) {
-			this._data.counter += 1;
-			notify = {
-				id : this._data.counter + '',
-				timeout : config.timeout || this.timeout
-			};
-			this._data.list[notify.id] = notify;
-			
-			notify.base = this._build(notify.id, config);
-			this._show(notify.id);
-			
-			if (notify.timeout) {
-				this._resetTimeout(notify.id);
-			}
-			return notify;
-		}
-		return false;
-	},
-	
-
-	/**	@private */
-	_createBase : function(parent) {
-		if (this.notifications_base) {
-			this.notifications_base.remove();
-			this.notifications_base.appendTo(parent);
-		}
-		else {
-			this.notifications_base = puredom.el({
-				className : 'notifications_base'
-			}, parent);
-		}
-	},
-	
-
-	/**	@private */
-	_build : function(id, options) {
-		var base, iconSrc;
-		base = puredom.el({
-			className : "notification",
-			css : 'height:0; opacity:0;',
-			attributes : {
-				'data-notification-id' : id
-			},
-			children : [
-				{ className:'notification_top' },
-				{
-					className : 'notification_inner',
-					children : [
-						{ className:'notification_inner_top' },
-						{
-							className : 'notification_closeButton',
-							children : [
-								{ className:'label', innerHTML:this.closeButtonLabel || '&times;' }
-							]
-						},
-						{
-							className : 'notification_message',
-							children : [
-								{ className:'label', innerHTML:options.message || options.text }
-							]
-						},
-						{ className:'notification_inner_bottom' }
-					]
-				},
-				{ className:'notification_bottom' }
-			],
-			onclick : this._notificationClickHandler
-		}, this.notifications_base);
-		
-		// add an icon if specified
-		iconSrc = options.icon || options.image;
-		if (iconSrc!==false && this.defaultIcon) {
-			iconSrc = this.defaultIcon;
-		}
-		if (iconSrc) {
-			puredom.el({
-				type : 'img',
-				className : 'notification_message',
-				attributes : {
-					src : options.icon || options.image || this.defaultIcon
-				}
-			}, base.query('.notification_inner'));
-		}
-		
-		if (options.userDismiss===false) {
-			base.query('.notification_closeButton').hide(true);
-		}
-		
-		return base;
-	},
-	
-
-	/**	@private */
-	_show : function(id) {
-		var notify = this.get(id);
-		if (notify) {
-			notify.base.css({
-				opacity : 0
-			}).css({
-				opacity : 1,
-				height : notify.base.children().height()
-			}, {tween:this.showTween || 'medium'});
-		}
-	},
-	
-
-	/**	@private*/
-	_hide : function(id) {
-		var notify = this.get(id);
-		if (notify) {
-			notify.base.css({
-				opacity : 0,
-				height : 0
-			}, {tween:this.hideTween || 'medium', callback:function() {
-				notify.base.remove();
-				notify = null;
-			}});
-		}
-	},
-	
-
-	/**	@private */
-	_resetTimeout : function(id) {
-		var notify = this.get(id),
-			self = this;
-		if (notify) {
-			if (notify._hideTimer) {
-				clearTimeout(notify._hideTimer);
-			}
-			if (notify.timeout) {
-				notify._hideTimer = setTimeout(function() {
-					self._hide(id);
-					self = id = null;
-				}, notify.timeout*1000);
-			}
-			notify = null;
-		}
-	},
-	
-
-	/** Get a notification by ID */
-	get : function(id) {
-		return id && this._data.list.hasOwnProperty(id+'') && this._data.list[id+''] || false;
-	},
-	
-
-	/**	@private */
-	_performAction : function(id, action, args) {
-		var notify = this.get(id),
-			ret;
-		if (!puredom.isArray(args)) {
-			args = [args];
-		}
-		if (action && notify) {
-			args = [id].concat(args);
-			ret = this._fireEvent(action, args);
-			if (ret!==false) {
-				switch (action.toLowerCase()) {
-					case 'notificationclick':
-					case 'notificationclicked':
-						this._hide(id);
-						break;
-				}
-			}
-		}
-	},
-	
-
-	/**	@private */
-	timeout : 15,
-	
-
-	/**	@private */
-	_data : {
-		counter : 0,
-		list : {}
-	}
-});
-/**	Manages controllers, providing a means for separating functionality into feature-centric modules.
- *	@constructor Creates a new RouteManager instance.
- *	@augments puredom.ControllerManager
- *	@param {Object} [options]	Hashmap of options to be given to the instance.
- *	@param {Boolean} [options.allowTemplateFallback=false]		If no URL templates match, attempt to load by name.
- *	@param {Boolean} [options.useBest=false]					If no URL templates match, attempt to load by name.
- *	@param {Boolean} [options.allowPartialUrlFallback=false]	Use the longest URL template match, even if it isn't a perfect match.
- */
-puredom.RouteManager = function(options) {
-	var self = this;
-	options = options || {};
-	puredom.ControllerManager.call(this);
-	
-	this.allowTemplateFallback = options.allowTemplateFallback===true || options.useBest===true;
-	this.allowPartialUrlFallback = options.allowPartialUrlFallback===true;
-	
-	/**	@ignore */
-	this._controllerUpdateState = function(options) {
-		self.doStateUpdate(self._routerState, options);
-	};
-};
-
-
-puredom.inherits(puredom.RouteManager, puredom.ControllerManager);
-
-
-puredom.extend(puredom.RouteManager.prototype, /** @lends puredom.RouteManager# */ {
-	
-	/** RouteManagers are singular by default, because a browser can only navigate to one URL at a time. */
-	singular : true,
-	
-
-	/** @public */
-	rewrites : [
-		/*
-		{
-			inbound : {
-				pattern : /^\/?urlToChange(?:\/(.*?))?$/gim,
-				replace : '/final/url/$1'
-			}
-			//outbound	: //gim,
-		}
-		*/
-	],
-	
-
-	/**	For use with StateManager */
-	restoreState : function(state) {
-		if (this.initialized!==true) {
-			this._initState = state;
-		}
-		else {
-			if (state && state.current_url) {
-				this.route(state.current_url);
-			}
-			else {
-				this.routeDefault();
-			}
-		}
-	},
-	
-
-	/**	For use with StateManager */
-	doStateUpdate : function(state, options) {
-		var controller,
-			templatedUrl;
-		this._routerState = state && puredom.extend({}, state);
-		if (state && state.current) {
-			controller = this.get(state.current);
-			delete state.current;
-			templatedUrl = this._templateUrl(controller.customUrl || controller.urlTemplate || controller.name, controller);
-			if (templatedUrl.substring(0,1)!=='/') {
-				templatedUrl = '/' + templatedUrl;
-			}
-			state.current_url = templatedUrl;
-		}
-		this.updateState(state, options);
-	},
-	
-	
-	/** @override */
-	register : function(name, controller) {
-		controller.updateState = this._controllerUpdateState;
-		return puredom.ControllerManager.prototype.register.call(this, name, controller);
-	},
-	
-	
-	/** Attempt to route the given URL to a controller. */
-	route : function(url) {
-		var list = this._controllers,
-			normUrl = url.replace(/^[#!\/]+/gm,'').replace(/#.+$/gm,''),
-			item, i, p, urlTemplate, matches, params,
-			partialMatchName;
-		
-		for (i=0; i<list.length; i++) {
-			item = list[i];
-			urlTemplate = item.customUrl || item.urlTemplate || item.name;
-			matches = {};
-			if (this._checkUrlMatch(urlTemplate, url, matches)===true) {
-				params = {};
-				for (p in matches) {
-					if ((p+'').substring(0,7)==='params.') {
-						params[p.substring(7)] = matches[p];
-					}
-				}
-				return this.load(item.name, {
-					params : params
-				});
-			}
-			else if (this.allowPartialUrlFallback===true && this._checkUrlMatch(urlTemplate, url, matches, {partial:true})===true) {
-				partialMatchName = item.name;
-			}
-		}
-		
-		if (partialMatchName) {
-			return this.load(partialMatchName, {
-				params : {}
-			});
-		}
-		
-		if (this.allowTemplateFallback!==false && this.get(normUrl)) {
-			return this.load(normUrl, {
-				params : {}
-			});
-		}
-		
-		this._fireEvent('routingError', [{
-			attemptedFallback : this.allowTemplateFallback!==false,
-			url : url,
-			type : 'RoutingError'
-		}]);
-		
-		return false;
-	},
-	
-
-	/** Load a controller */
-	/*
-	load : function(name, options) {
-		this.__super.prototype.load.apply(this, arguments);
-		this.doStateUpdate();
-		return this;
-	},
-	*/
-	
-
-	/** Attempt to route the given URL to a controller. */
-	routeDefault : function(url) {
-		return this.loadDefault();
-	},
-	
-
-	/** Template a URL using values from the current controller. Non-matched fields are left unchanged.
-	 *	@private
-	 *	@param {String} tpl						The URL template
-	 *	@param {Object} [controller=current]	Explicit controller reference.
-	 *	@returns {String} templatedUrl
-	 */
-	_templateUrl : function(tpl, controller) {
-		controller = controller || this.current();
-		return puredom.template(tpl, controller, false);
-	},
-
-	
-	/** Check if a URL template matches the given URL.
-	 *	@private
-	 *	@param {String} urlTemplate		A URL template, as used in Controller.customUrl
-	 *	@param {String} url				The URL to test
-	 *	@param {Object} matches			Optional Object to populate with the matched URL segments
-	 *	@returns {Boolean} didMatch
-	 */
-	_checkUrlMatch : function(urlTemplate, url, matches, options) {
-		var templateSegments = this._getUrlSegments(urlTemplate),
-			urlSegments = this._getUrlSegments(url),
-			tplFieldReg = /^\{([^{}]+)\}$/gim,
-			isMatch = true,
-			i;
-		options = options || {};
-		matches = matches || {};
-		if (options.partial===true) {
-			for (i=templateSegments.length; i--; ) {
-				if (templateSegments[i].match(tplFieldReg)) {
-					templateSegments.splice(i, 1);
-				}
-			}
-			//console.log(urlSegments, templateSegments);
-		}
-		if (urlSegments.length===templateSegments.length) {
-			for (i=0; i<urlSegments.length; i++) {
-				if (urlSegments[i]===templateSegments[i] || templateSegments[i].match(tplFieldReg)) {
-					matches[templateSegments[i].replace(tplFieldReg,'$1')] = urlSegments[i];
-				}
-				else {
-					isMatch = false;
-					break;
-				}
-			}
-		}
-		else {
-			isMatch = false;
-		}
-		return isMatch;
-	},
-	
-
-	/**	Normalize a URL for comparison
-	 *	@private
-	 */
-	_getUrlSegments : function(url) {
-		var segs = (url+'').split('/'),
-			i;
-		for (i=segs.length; i--; ) {
-			if (segs[i].replace(/(\s|\/)/gm,'').length===0) {
-				segs.splice(i, 1);
-			}
-		}
-		return segs;
-	}
-	
-});
-/**	Generic namespaced state persistence with adapters for URL/history and Cookies.
- *	@constructor Creates a new StateManager instance.
- *	@param {String} [adapter=defaultAdapter]	Which persistence adapter to use
- *	@param {Object} options						Hashmap of options.
- *	@param {String} [options.adapter=defaultAdapter]	Which persistence adapter to use
- *	@param {String} [options.adapterOptions]			Configuration to pass to the adapter
- *	@param {String} [options.state]						Manually specify initial state
- *	@param {String} [options.objects]					Register a key-value list of objects using {@link puredom.StateManager#addObject}
- */
-puredom.StateManager = function(adapter, options) {
-	var x;
-	if (!options && puredom.typeOf(adapter)==='object') {
-		options = adapter;
-		adapter = options.adapter || options.adaptor;
-	}
-	options = options || {};
-	if (options.adaptor) {
-		options.adapter = options.adaptor;
-		options.adapter = null;
-	}
-	adapter = adapter || options.adapter;
-	
-	this.initialized = false;
-	this.objects = {};
-	this.states = {};
-	
-	if (!adapter || !this.adapters[adapter]) {
-		adapter = this.defaultAdapter;
-	}
-	this.adapter = puredom.extend({}, this.adapters.none, this.adapters[adapter], {
-		stateManager : this
-	});
-	if (this.adapter.init) {
-		this.adapter.init(puredom.extend({}, options.adapterOptions || options.adaptorOptions || {}, {
-			adapter : adapter
-		}), this);
-	}
-	
-	if (options.state) {
-		this.adapter.setState(options.state);
-		this.restoreFromState(options.state);
-	}
-	
-	if (options.objects) {
-		for (x in options.objects) {
-			this.addObject(x, options.objects[x]);
-		}
-	}
-};
-
-
-puredom.extend(puredom.StateManager.prototype, /** @lends puredom.StateManager# */ {
-	
-	/** A time to wait (in milliseconds) before committing state updates. Can be overridden 
-	 *	on a per-save basis by passing true as a second parameter to puredom#StateManager.save()
-	 */
-	saveQueueDelay : 50,
-	
-
-	/** If two save() calls occur within the specified number of milliseconds, overwrite the first
-	 *	@private
-	 */
-	replaceTimeout : 0,
-	
-
-	/** List of available Adapters, keyed by ID. */
-	adapters : /** @lends puredom.StateManager#adapters */ {
-
-		/**	In-memory persistence adapter. */
-		session : {
-			getState : function(callback){
-				callback(this.state);
-			},
-			setState : function(state, callback){
-				this.state = state;
-				callback(true);
-			},
-			state : {}
-		},
-
-		/**	Fallback abstract persistence adapter. */
-		base : {
-			getState : function(cb) {
-				setTimeout(function() {
-					throw(new Error("StateManager:: getState method not defined for the specified adapter."));
-				}, 1);
-				cb({});
-			},
-			setState : function(s,cb) {
-				setTimeout(function() {
-					throw(new Error("StateManager:: setState method not defined for the specified adapter."));
-				}, 1);
-				cb(true);
-			}
-		}
-
-	},
-	
-
-	/**	Stores references to persisted instances.
-	 *	@private
-	 */
-	objects : {},
-
-
-	/**	@private */
-	states : {},
-
-
-	/**	@private */
-	initialized : false,
-	
-
-	/**	Initialize the State Manager.
-	 *	@param {Object} [options]				Hashmap of options
-	 *	@param {String} [options.state]			Manually specify initial state
-	 *	@param {String} [options.objects]		Register a key-value list of objects using {@link puredom.StateManager#addObject}
-	 *	@param {String} [options.restore=true]	Immediately restore persisted state?
-	 *	@returns {this}
-	 */
-	init : function(options) {
-		if (this.initialized===true) {
-			return this;
-		}
-		options = options || {};
-		if (options.state) {
-			this.adapter.setState(options.state);
-			this.restoreFromState(options.state);
-		}
-		if (options.objects) {
-			for (var x in options.objects) {
-				this.addObject(x, options.objects[x]);
-			}
-		}
-		this.initialized = true;
-		if (options.restore!==false) {
-			this.restore();
-		}
-		
-		this.startPolling();
-		
-		return this;
-	},
-	
-
-	/**	Dismantle and cleanup the instance. */
-	destroy : function() {
-		this.stopPolling();
-		
-		this.adapter.stateManager = null;
-		this.adapter = this.states = this.objects = null;
-		this.initialized = false;
-	},
-	
-
-	/**	@private */
-	startPolling : function() {
-		if (this.adapter && this.adapter.startPolling) {
-			this.adapter.startPolling();
-		}
-	},
-	
-
-	/**	@private */
-	stopPolling : function() {
-		if (this.adapter && this.adapter.stopPolling) {
-			this.adapter.stopPolling();
-		}
-	},
-	
-
-	/**	Register an object for state persistence. <br />
-	 *	<strong>Note:</strong> If stored state is already available for the specified <code>id</code>, it will be applied immediately.
-	 *	@param {String} id				A meaningful identifier for the object
-	 *	@param {Object} obj				The object to persist
-	 *	@param {Function} [callback]	Called once the object's state has been restored
-	 *	@returns {this}
-	 */
-	addObject : function(id, obj, callback) {
-		var stateManager;
-		if (this.objects.hasOwnProperty(id)) {
-			setTimeout(function() {
-				throw(new Error("Cannot add duplicate object ID '"+id+"' to state list."));
-			}, 1);
-			if (callback) {
-				callback(false);
-			}
-		}
-		else {
-			stateManager = this;
-			this.objects[id] = obj;
-			this.states[id] = {};
-			
-			obj.updateState = function(stateUpdates, callback, now) {
-				stateManager.setObjState(id, puredom.extend(
-					{},
-					stateManager.getObjState(id),
-					stateUpdates
-				), callback || stateManager.emptyFunc, now);
-			};
-			
-			obj.setState = function(state, callback, now) {
-				stateManager.setObjState(id, state, callback || stateManager.emptyFunc, now);
-			};
-			
-			obj.getState = function() {
-				return stateManager.getObjState(id);
-			};
-			
-			obj.destroyStateManagerConnections = function() {
-				this.updateState = this.setState = this.getState = this.destroyStateManagerConnections = stateManager.emptyFunc;
-				stateManager = null;
-				/*
-				// much too harsh!
-				delete this.updateState;
-				delete this.setState;
-				delete this.getState;
-				delete this.destroyStateManagerConnections;
-				*/
-			};
-			
-			obj = null;
-			
-			// if the class is already initialized, we need to give an object its existing stored state back.
-			if (this.initialized===true) {
-				this.restoreOne(id, function() {
-					//this.save(callback);
-				});
-			}
-		}
-		return this;
-	},
-
-
-	/**	@private */
-	addObj : function() {
-		return this.addObject.apply(this,arguments);
-	},
-	
-
-	/**	Stop persisting state for the object given by <code>id</code>.
-	 *	@param {String} id				The object id to remove from persistence
-	 *	@param {Function} [callback]	Called once the removal is committed to the persistence layer
-	 *	@returns {this}
-	 */
-	removeObject : function(id, callback) {
-		if (this.objects.hasOwnProperty(id)) {
-			if (this.objects[id].destroyStateManagerConnections) {
-				this.objects[id].destroyStateManagerConnections();
-			}
-			this.objects[id] = null;
-			this.states[id] = null;
-			try {
-				delete this.objects[id];
-				delete this.states[id];
-			}catch(err){}
-			this.save(callback);
-		}
-		return this;
-	},
-
-
-	/**	@private */
-	removeObj : function() {
-		return this.removeObject.apply(this,arguments);
-	},
-	
-
-	/**	@private
-	 *	@returns {this}
-	 */
-	restoreFromState : function(state, callback, andSave) {
-		var self=this, cb, id, total=0, count=0;
-		if (callback) {
-			cb = function() {
-				count += 1;
-				if (count>=total) {
-					if (andSave!==false) {
-						self.save(function(state) {
-							if (callback) {
-								callback(true);
-							}
-							self = callback = null;
-						});
-					}
-					else {
-						if (callback) {
-							callback(true);
-						}
-						self = callback = null;
-					}
-				}
-			};
-		}
-		else {
-			cb = function(){};
-		}
-		if (puredom.typeOf(state)==='string') {
-			state = puredom.json(state);
-		}
-		for (id in this.objects) {
-			if (this.objects[id].restoreState) {
-				total += 1;
-				this.objects[id].restoreState(state[id]);
-				cb();
-			}
-		}
-		if (total===0) {
-			if (callback) {
-				callback(false);
-			}
-			self = callback = null;
-		}
-		return this;
-	},
-	
-	
-	/**	@private */
-	disableSave : function() {
-		this._saveDisabled = true;
-	},
-
-
-	/**	@private */
-	enableSave : function() {
-		this._saveDisabled = false;
-	},
-	
-	
-	/**	@private */
-	restoreOne : function(id, callback) {
-		var self = this;
-		this.adapter.getState(function(state) {
-			if (self.objects[id] && self.objects[id].restoreState) {
-				self.objects[id].restoreState(state[id]);
-			}
-			self = null;
-			if (callback) {
-				callback();
-			}
-		});
-	},
-	
-
-	/**	Restore state based on persisted values.
-	 *	@param {Function} [callback]	Called once state is restored.
-	 *	@returns {this}
-	 */
-	restore : function(callback) {
-		var self = this;
-		this._restoring = true;
-		this.adapter.getState(function(state) {
-			var newCurrentState = state && puredom.json(state);
-			self._lastSaveTime = new Date().getTime();
-			if (newCurrentState && newCurrentState!==self.currentState) {
-				self.currentState = newCurrentState;
-				self.restoreFromState(state, function() {
-					self._restoring = false;
-					if (callback) {
-						callback();
-					}
-					self = null;
-				}, false);
-			}
-			else {
-				self.save(function() {
-					self._restoring = false;
-					self = null;
-					if (callback) {
-						callback(false);
-					}
-					callback = null;
-				});
-			}
-		});
-		return this;
-	},
-	
-
-	/**	Save object state to the persistence layer.
-	 *	@param {Function} callback		Called once the data is saved
-	 *	@param {Boolean} [now=false]	By default, saves are buffered. Pass <code>true</code> to commit the save operation immediately.
-	 *	@param {Object} [options]		Hashmap of save options
-	 *	@param {Object} [options.replace=false]		By default, a new history entry is created for each unique save(). Passing <code>true</code> updates the current history entry in-place. This only affects adapters with history, such as the URL adapter.
-	 *	@returns {this}
-	 */
-	save : function(callback, now, options) {
-		var self = this;
-		options = options || {};
-		
-		if (this.initialized===true && !this._saveDisabled) {		// NOTE: Disabled check only on sync saves?
-			if (now===true) {										// --> && !this._saveDisabled
-				if (this.currentSaveTimer) {
-					clearTimeout(this.currentSaveTimer);
-					delete this.currentSaveTimer;
-				}
-				this.getStateObj(function(state) {
-					var newCurrentState = puredom.json(state),
-						saveTime = new Date().getTime(),
-						timeSinceLastSave = saveTime - (self._lastSaveTime || saveTime);
-					self._lastSaveTime = saveTime;
-					if (newCurrentState!==self.currentState) {
-						self.currentState = newCurrentState;
-						self.adapter.setState(state, function(success) {
-							if (callback && puredom.typeOf(callback)==='function') {
-								callback(!!success);
-							}
-							self = callback = options = null;
-						}, {
-							replace : options.replace===true || (self.replaceTimeout && timeSinceLastSave!==0 && timeSinceLastSave<self.replaceTimeout)
-						});
-					}
-					else if (callback && puredom.typeOf(callback)==='function') {
-						callback();
-						self = callback = options = null;
-					}
-				});
-			}
-			else if (!this.currentSaveTimer) {
-				this.currentSaveTimer = setTimeout(function() {
-					self.save(callback, true, options);
-					delete self.currentSaveTimer;
-					self = callback = options = null;
-				}, this.saveQueueDelay);
-			}
-		}
-		return this;
-	},
-	
-
-	/**	Overwrite state information for the given object ID.
-	 *	@param {String} id				The object ID to update
-	 *	@param {Object} state			Arbitrary state information
-	 *	@param {Function} [callback]	Called once the data is committed to the persistence layer
-	 *	@param {Boolean} [now=false]	Saves are buffered by default. Pass <code>true</code> to commit immediately.
-	 */
-	setObjState : function(id, state, callback, now) {
-		var options;
-		if (callback && typeof(callback)==='object') {
-			options = callback;
-		}
-		this.states[id] = state;
-		this.save(callback, options && options.now===true || callback===true, options);
-	},
-	
-
-	/**	Looks like a mistake.
-	 *	@private
-	 */
-	getObjState : function(id, state) {
-		this.states[id] = state;
-	},
-	
-
-	/**	@private */
-	getStateObj : function(callback) {
-		if (callback) {
-			callback(this.states);
-		}
-		return this;
-	},
-	
-
-	/**	@private */
-	emptyFunc : function(){}
-	
-});
-
-
-
-/**	URL persistence implemented via HTML5's history (pushState) API, with a #! fallback.
- *	@name puredom.StateManager#adapters.url
- */
-puredom.StateManager.prototype.adapters.url = {
-	init : function(options) {
-		var self = this,
-			_doPoll = this._doPoll,
-			_doPollTimed = this._doPollTimed;
-		this._doPoll = function() {
-			return _doPoll.apply(self,arguments);
-		};
-		this._doPollTimed = function() {
-			return _doPollTimed.apply(self,arguments);
-		};
-		
-		this.usePreceedingSlash = options.usePreceedingSlash!==false;
-		this.urlMapping = options.urlMapping;
-		this.urlHistory = [];
-		if (options.html5UrlPrefix) {
-			this.html5UrlPrefix = options.html5UrlPrefix;
-		}
-		if (options.beforeParse) {
-			this.beforeParse = options.beforeParse;
-		}
-		if (options.beforeCommit) {
-			this.beforeCommit = options.beforeCommit;
-		}
-	},
-	
-	getPrefix : function() {
-		if (this.html5UrlPrefix) {
-			if (typeof(this.html5UrlPrefix)==='function') {
-				return this.html5UrlPrefix();
-			}
-			else {
-				return this.html5UrlPrefix;
-			}
-		}
-		return '';
-	},
-	
-	usePreceedingSlash : true,
-	
-	/** The default interval on which to poll for state changes (ie: back/forward in browser history) */
-	pollInterval : 30,
-	
-	/** @private A history of state URLs */
-	urlHistory : [],
-	
-	/** Start the location poller */
-	startPolling : function() {
-		if (!this.polling) {
-			this.polling = true;
-			this.getCurrentUrl(true);
-			this.pollingTimer = setTimeout(this._doPollTimed, this.getPollInterval());
-			puredom.addEvent(window, 'hashchange,pushstate,popstate', this._doPoll);
-		}
-	},
-	
-	/** Stop the location poller */
-	stopPolling : function() {
-		clearTimeout(this.pollingTimer);
-		puredom.removeEvent(window, 'hashchange,pushstate,popstate', this._doPoll);
-		this.polling = false;
-	},
-	
-	getPollInterval : function() {
-		return this.stateManager && (this.stateManager.pollInterval || this.stateManager.adapterPollInterval) || this.pollInterval;
-	},
-	
-	/** @private Poll the location, this is a timer callback and requires explicit setting of context. */
-	_doPoll : function() {
-		var self = this,
-			currentUrl = self.currentUrl || null,
-			url = self.getCurrentUrl(true) || null;
-		if (url!==currentUrl) {
-			var startTime = new Date().getTime();
-			self.stateManager.disableSave();
-			self.stateManager.restore(function() {
-				self.stateManager.enableSave();
-				self = currentUrl = url = null;
-			});
-		}
-	},
-	_doPollTimed : function() {
-		this._doPoll.apply(this,arguments);
-		if (this.pollingTimer) {
-			clearTimeout(this.pollingTimer);
-		}
-		if (this.polling) {
-			this.pollingTimer = setTimeout(this._doPollTimed, this.getPollInterval());
-		}
-	},
-	
-	normalizeUrl : function(url) {
-		return (this.usePreceedingSlash?'/':'') + url.replace(/^[#!\/]+/gm,'').replace(/#.+$/gm,'');
-	},
-	
-	/** @private Get the relevant part of the page's current URL */
-	getCurrentUrl : function(andSave) {
-		var url = location.href + '',
-			crunchbangIndex = url.indexOf('#!'),
-			index = url.indexOf(location.host);
-		/*
-		// note: urlOverride gives apps a way to navigate to URLs without having to go through location.href, 
-		// removing the need for manual save({replace:true}) calls for parameter guarding.
-		if (this.stateManager._urlOverride) {
-			url = this.stateManager._urlOverride.replace(/^([a-z]+\:\/\/[^\/]\/)?\/?(#!)?\/?/gim,'');
-		}
-		else */
-		if (crunchbangIndex>-1) {
-			url = url.substring(crunchbangIndex+2);
-			if (window.history.replaceState) {
-				window.history.replaceState(null, null, url);
-			}
-		}
-		else if (index>-1) {
-			url = url.substring(index+location.host.length);
-		}
-		else {
-			url = null;
-		}
-		
-		if (url || url==='') {
-			url = this.normalizeUrl(url);
-		}
-		
-		if (andSave===true) {
-			if (url!==this.currentUrl && this.urlHistory[this.urlHistory.length-1]!==url) {
-				this.urlHistory.push(url);
-			}
-			this.currentUrl = url;
-		}
-		return url || false;
-	},
-	
-	setCurrentUrl : function(url, replace) {
-		var currentUrl = this.getCurrentUrl(false),
-			crunchedUrl,
-			stateObj,
-			prefix,
-			isCurrentHistoryEntry;
-		
-		url = this.normalizeUrl(url);
-		crunchedUrl = '#!' + url;
-		isCurrentHistoryEntry = this.urlHistory.length>0 && this.urlHistory[this.urlHistory.length-1]===url;
-
-		if (url!==currentUrl && !isCurrentHistoryEntry) {
-			if (window.history.pushState) {
-				// HTML5 History API
-				if (url.substring(0,1)!=='/') {
-					url = '/' + url;
-				}
-				prefix = this.getPrefix().replace(/\/$/,'');
-				url = prefix + url;
-				if (this.beforeCommit) {
-					url = this.beforeCommit(url) || url;
-				}
-
-				if (replace===true && window.history.replaceState) {
-					window.history.replaceState(null, null, url);
-				}
-				else {
-					window.history.pushState(null, null, url);
-				}
-			}
-			else {
-				// Crunchbang history management
-				if (window.location.href!==crunchedUrl) {
-					if (replace===true && window.location.replace) {
-						window.location.replace(crunchedUrl);
-					}
-					else {
-						window.location.href = crunchedUrl;
-					}
-				}
-			}
-			
-			// this adds the URL to our internal history:
-			this.getCurrentUrl(true);
-		}
-	},
-	
-	/** Overwrites the given persisted state. Required by the StateManager adapter interface */
-	setState : function(state, callback, options) {
-		var url = location.href + '',
-			index = url.indexOf('#!'),
-			stateUrl,
-			currentUrl = this.getCurrentUrl(false);
-		options = options || {};
-		stateUrl = this.stringify(state);
-		
-		this.setCurrentUrl(stateUrl, options.replace===true);
-		
-		callback(true);
-	},
-	
-	/** Get the current persisted state. Required by the StateManager adapter interface */
-	getState : function(callback) {
-		var url = this.getCurrentUrl(true),
-			state;
-		if (url) {
-			state = this.parse(url);
-			callback(state);
-		}
-		else {
-			callback(false);
-		}
-	},
-	
-	/** @private parse a URL and return a valid state Object. */
-	parse : function(str) {
-		var obj = {},
-			a, prefix, parts, x, y, index, key, value, encodedValue, levelKey, level, mappedUrl, mappedUrlIndex,
-			isArrayKey, autoConvertValue;
-		
-		isArrayKey = function(key) {
-			return !!key.match(/^\-?[0-9]+$/);
-		};
-		
-		/** auto-detects types by sniffing the content */
-		autoConvertValue = function(value) {
-			if (value==='undefined') {
-				value = undefined;
-			}
-			else if (value==='null') {
-				value = null;
-			}
-			else if (value.match(/^\-?[0-9]+$/)) {			// int
-				value = parseInt(value,10);
-			}
-			else if (value.match(/^\-?[0-9\.]+$/)) {		// float
-				value = parseFloat(value);
-			}
-			else if (value.match(/^(true|false)$/i)) {		// boolean
-				value = value.toLowerCase()==='true';
-			}
-			else if (value.match(/^\[[a-z0-9%_\-]+(,[a-z0-9%_\-]+)*\]$/)) {
-				value = value.substring(1, value.length-1).split(',');
-				for (var x=0; x<value.length; x++) {
-					value[x] = autoConvertValue(value[x]);
-				}
-			}
-			return value;
-		};
-		
-		if (this.beforeParse) {
-			a = this.beforeParse(str);
-			if (a || a==='') {
-				str = a;
-			}
-		}
-		
-		prefix = this.getPrefix();
-		// remove a preceeding slash if not disallowed:
-		if (prefix && str.substring(0,prefix.length)===prefix) {
-			str = str.substring(prefix.length);
-		}
-		if (this.usePreceedingSlash!==false && str.charAt(0)==='/') {
-			str = str.substring(1);
-		}
-		
-		// pick out the mappedUrl if it exists, and turn it back into the mapped parameter:
-		mappedUrlIndex = str.indexOf('?');
-		if (mappedUrlIndex===-1 && str.indexOf('=')===-1) {
-			// this adds support for a parameter-less mappedUrl (ie: /app/#!preferences )
-			mappedUrlIndex = str.length;
-		}
-		if (this.urlMapping && mappedUrlIndex>0) {
-			mappedUrl = str.substring(0, mappedUrlIndex);
-			str = encodeURIComponent(this.urlMapping) + '=' + encodeURIComponent(mappedUrl) + '&' + str.substring(mappedUrlIndex+1);
-		}
-		if (str.substring(0,1)==='?') {
-			str = str.substring(1);
-		}
-		
-		parts = str.split('&');
-		for (x=0; x<parts.length; x++) {
-			index = parts[x].indexOf('=');
-			key = decodeURIComponent(parts[x].substring(0, index));
-			encodedValue = decodeURIComponent(parts[x].substring(index+1));
-			value = decodeURIComponent(encodedValue);
-			
-			// simple-arrays
-			if (key.match(/\[\]$/g)) {
-				key = key.substring(0, key.length-2);
-				value = value.split(',');
-				for (y=0; y<value.length; y++) {
-					value[y] = decodeURIComponent(value[y]);
-				}
-			}
-			else {
-				// auto-detect types by sniffing the content:
-				value = autoConvertValue(value);
-			}
-			
-			// un-flatten the object into it's original nested equivalent:
-			key = key.split('.');
-			level = obj;
-			for (y=0; y<key.length; y++) {
-				levelKey = key[y];
-				if (isArrayKey(levelKey)) {
-					// this should work for whatever array-key format gets used, it just pulls out the integer.
-					levelKey = parseInt(levelKey.replace(/[^0-9]/,''),10);
-				}
-				
-				if (y<key.length-1) {
-					// create the level if it doens't exist:
-					if (!level[levelKey]) {
-						// detect if an array is needed by looking at the inner assignments:
-						if (isArrayKey(key[y+1])) {
-							level[levelKey] = [];
-						}
-						else {
-							level[levelKey] = {};
-						}
-					}
-					
-					// advance one level deeper:
-					level = level[levelKey];
-				}
-				else {
-					// assign the final value:
-					level[levelKey] = value;
-				}
-			}
-			
-			// assign the final value:
-			//level[key[key.length-1]] = value;
-		}
-		
-		return obj;
-	},
-	
-	/** @private Convert a state Object into it's serialized format for URL-based storage. */
-	stringify : function(obj) {
-		var str = '',
-			p,
-			serialize,
-			mappedUrl = '',
-			urlMapping = this.urlMapping;
-		
-		serialize = function(obj, id) {
-			var p, isSimpleArray;
-			switch (puredom.typeOf(obj)) {
-				// objects get flattened into dot-separated keys
-				case 'object':
-					for (p in obj) {
-						if (obj.hasOwnProperty(p)) {
-							serialize(obj[p], (id?(id+'.'):'') + p);
-						}
-					}
-					break;
-				// arrays are treated almost identically to objects, but keys are done in square brackets (as a hint for the parser)
-				case 'array':
-					isSimpleArray = true;
-					for (p=0; p<obj.length; p++) {
-						t = puredom.typeOf(obj[p]);
-						if (t!=='string' && t!=='number' && t!=='boolean') {
-							isSimpleArray = false;
-						}
-					}
-					if (isSimpleArray) {
-						str += '&' + encodeURIComponent(id) + '[]=';
-						for (p=0; p<obj.length; p++) {
-							str += (p>0?',':'') + encodeURIComponent(obj[p]);
-						}
-						//str += '&' + encodeURIComponent(id) + '=' + encodeURIComponent('[' + obj.join(',') + ']');
-					}
-					else {
-						for (p=0; p<obj.length; p++) {
-							serialize(obj[p], (id?(id+'.'):'') + p);
-							//serialize(obj[p], (id?(id+'.'):'') + '['+p+']');
-						}
-					}
-					break;
-				// do not include ill-formatted or missing values
-				case 'null':
-				case 'undefined':
-				case 'function':
-					break;
-				default:
-					if (urlMapping && id===urlMapping) {
-						mappedUrl = obj;
-					}
-					else {
-						str += '&' + encodeURIComponent(id) + '=' + encodeURIComponent(obj);
-					}
-			}
-		};
-		
-		serialize(obj);
-		serialize = obj = null;
-		if (str.substring(0,1)==='&') {
-			str = '?' + str.substring(1);
-		}
-		
-		// add a preceeding slash if not disallowed:
-		if (this.usePreceedingSlash!==false && mappedUrl.charAt(0)!=='/') {
-			mappedUrl = '/' + mappedUrl;
-		}
-		
-		return mappedUrl + str;
-	}
-};
-
-
-
-
-/**	Ugly but simple JSON-in-URL-hash persistence.
- *	@name puredom.StateManager#adapters.urlbasic
- */
-puredom.StateManager.prototype.adapters.urlbasic = {
-	setState : function(state, callback, options) {
-		var url = location.href + '',
-			index = url.indexOf('#!');
-		if (index>-1) {
-			url = url.substring(0, index);
-		}
-		url += '#!' + this.serializeState(state);
-		if (options && options.replace===true && typeof location.replace==='function') {
-			location.replace(url);
-		}
-		else {
-			location.href = url;
-		}
-		callback(true);
-	},
-	
-	getState : function(callback) {
-		var url = location.href + '',
-			index = url.indexOf('#!'),
-			state;
-		if (index>-1) {
-			url = url.substring(index+2);
-			state = puredom.json.parse(url);
-			callback(state);
-		}
-		else {
-			callback(false);
-		}
-	},
-	
-	serializeState : function(state) {
-		return puredom.json.stringify(state);
-	}
-};
-
-
-
-
-puredom.StateManager.prototype.adapters.cookies = {
-	init : function(options) {
-		options = options || {};
-		this.dbName = options.dbName || 'state';
-	},
-	
-	setState : function(state, callback) {
-		puredom.cookies.set(this.dbName, puredom.json.stringify(state));
-		callback(true);
-	},
-	
-	getState : function(callback) {
-		var state = puredom.cookies.get(this.dbName);
-		state = puredom.json.parse(state);
-		callback(state);
-	},
-	
-	serializeState : function(state) {
-		return puredom.json.stringify(state);
-	}
-};
-/**	Manages views, providing methods for loading, templating, caching and swapping.
- *	@constructor Creates a new TestSuite instance.
- *	@augments puredom.EventEmitter
- *	@param {Object} options		Hashmap of options to be given to the instance.
- */
-puredom.TestSuite = function(options) {
-	puredom.EventEmitter.call(this);
-	this.list = {};
-};
-
-
-puredom.inherits(puredom.TestSuite, puredom.EventEmitter);
-
-	
-puredom.extend(puredom.TestSuite.prototype, /** @lends puredom.TestSuite# */ {
-	
-	/** Add a test to the suite.
-	 *	@param {String} name	A human-readable name for the test
-	 *	@param {Object} test	The test definition
-	 *	@example:
-	 *		suite.add("Example", {
-	 *			prepare : function(test){},
-	 *			run : function(test){
-	 *				//-- *async* testing here --
-	 *				test.finish(results);
-	 *			},
-	 *			cleanup : function(test){}
-	 *		});
-	 */
-	add : function(name, test) {
-		var id = this._getIdFromName(name);
-		this.list[id] = {
-			name : name,
-			test : test,
-			results : []
-		};
-	},
-	
-
-	/** Run the test that matches <code>name</code>.
-	 *	@param {String} name	The name of a registered test to run
-	 */
-	run : function(name, callback, messageHandler) {
-		var self = this,
-			ob = this.get(name),
-			test = ob && ob.test,
-			passed = null,
-			finish, onMessage, sandboxController, sandbox, finalResult;
-		
-		// Prepare-run-cleanup model:
-		if (test && test.run) {
-			onMessage = function(type, message) {
-				if (type==='status') {
-					finalResult = message;
-				}
-				if (type==='result') {
-					passed = message===true;
-				}
-				else if (messageHandler) {
-					self.fireEvent(type, name, message);
-					messageHandler(type, message);
-					return false;
-				}
-			};
-			
-			finish = function(results) {
-				if (test.cleanup) {
-					test.cleanup(sandbox);
-				}
-				
-				if (results) {
-					finalResult = results;
-				}
-				else if (sandbox.results) {
-					finalResult = sandbox.results;
-				}
-				
-				// Archive results:
-				if (results) {
-					ob.results.push({
-						time : new Date().getTime(),
-						results : results
-					});
-				}
-				
-				self.fireEvent('finish', name, finalResult, passed);
-				if (callback) {
-					callback(finalResult, passed);
-				}
-				sandboxController.destroy();
-				self = finish = onMessage = finalResult = ob = test = sandboxController = sandbox = callback = messageHandler = null;
-			};
-			
-			// Get a new sandbox controller:
-			sandboxController = this._createSandboxController(ob);
-			// simple events:
-			sandboxController.messageHandler = onMessage;
-			sandboxController.onfinish = finish;
-			// get the sandbox itself:
-			sandbox = sandboxController.getSandbox();
-			
-			if (test.prepare) {
-				test.prepare(sandbox);
-			}
-			
-			results = test.run(sandbox);
-		}
-	},
-	
-
-	/** Retrieve the test that matches <code>name</code>.
-	 *	@param {String} name	The name of a registered test to find
-	 */
-	get : function(name) {
-		var id = this._getIdFromName(name);
-		return this.list.hasOwnProperty(id) && this.list[id] || false;
-	},
-	
-
-	/** Get a list of test names available in the suite. */
-	getList : function() {
-		var names = [],
-			i;
-		for (i in this.list) {
-			if (this.list.hasOwnProperty(i) && this.list[i].name) {
-				names.push(this.list[i].name);
-			}
-		}
-		return names;
-	},
-	
-
-	/** @private */
-	_getIdFromName : function(name) {
-		return (name+'').toLowerCase().replace(/[^a-z0-9_]+/gm,'');
-	},
-	
-
-	/** @private */
-	_createSandboxController : function(testObj) {
-		/**	@exports sandbox as puredom.TestSuite.test */
-
-			/**	@private */
-		var self = this,
-			/**	@private */
-			controller = {},
-			/**	@name puredom.TestSuite.test */
-			sandbox = {};
-		
-		/**	@private */
-		controller.getSandbox = function() {
-			return sandbox;
-		};
-		/**	@private */
-		controller.destroy = function() {
-			sandbox = controller = self = testObj = null;
-		};
-		
-		sandbox.status = sandbox.setStatus = function(message) {
-			var r;
-			if (controller.messageHandler) {
-				r = controller.messageHandler.call(self, 'status', message);
-			}
-			if (r!==false) {
-				puredom.log('tests["'+testObj.name+'"] >> ' + message);
-			}
-		};
-		sandbox.log = sandbox.postMessage = function(message) {
-			var r;
-			if (controller.messageHandler) {
-				r = controller.messageHandler.call(self, 'log', message);
-			}
-			if (r!==false) {
-				puredom.log('tests["'+testObj.name+'"] >> ' + message);
-			}
-		};
-		sandbox.done = sandbox.finish = sandbox.complete = function(results) {
-			if (controller.onfinish) {
-				setTimeout(function() {
-					if (controller.messageHandler) {
-						controller.messageHandler.call(self, 'status', results);
-					}
-					if (controller.onfinish) {
-						controller.onfinish.call(self,results);
-					}
-					results = null;
-				}, 1);
-			}
-		};
-		sandbox.pass = function(results) {
-			if (controller.messageHandler) {
-				controller.messageHandler.call(self, 'result', true);
-			}
-			if (controller.onpass) {
-				controller.onpass.call(self, true);
-			}
-			sandbox.done(results);
-		};
-		sandbox.fail = function(results) {
-			if (controller.messageHandler) {
-				controller.messageHandler.call(self, 'result', false);
-			}
-			if (controller.onfail) {
-				controller.onfail.call(self, fail);
-			}
-			sandbox.done(results);
-		};
-		
-		return controller;
-	},
-	
-
-	/** @private */
-	list : {}
-
-});
-/**	Manages views, providing methods for loading, templating, caching and swapping.
- *	@constructor Creates a new ViewManager instance.
- *	@augments puredom.EventEmitter
- *	@param {Object} [options]		Hashmap of options to be given to the instance.
- *	@param {Object} [options.init=false]				Immediately calls init(options) for you
- *	@param {Object} [options.viewDomPrefix=views_]		Custom DOM cache ID prefix
- *	@param {Object} [options.cacheBase=document.body]	Move the DOM view cache
- */
-puredom.ViewManager = function(options) {
-	puredom.EventEmitter.call(this);
-	this._htmlViews = {};
-	this._postProcessors = [];
-	if (options && options.init===true) {
-		this.init(options);
-	}
-};
-
-
-puredom.inherits(puredom.ViewManager, puredom.EventEmitter);
-
-
-puredom.extend(puredom.ViewManager.prototype, /** @lends puredom.ViewManager# */ {
-
-	/** ID prefix for view storage. */
-	viewDomPrefix : 'views_',
-	
-
-	/**	@private */
-	_regs : {
-		node : /<(\/?)([a-z][a-z0-9]*)(\s+[a-z0-9._-]+=(['"]).*?\4)*\s*\/?>/gim
-	},
-	
-
-	/**	Initialize the manager.
-	 *	@param {Object} [options]		Hashmap of options.
-	 *	@param {Object} [options.viewDomPrefix=views_]		Custom DOM cache ID prefix
-	 *	@param {Object} [options.cacheBase=document.body]	Move the DOM view cache
-	 */
-	init : function(options) {
-		options = options || {};
-		if (this.initialized!==true) {
-			this.initialized = true;
-			if (options.viewDomPrefix) {
-				this.viewDomPrefix = options.viewDomPrefix;
-			}
-			this.cacheBase = puredom.el({
-				className : 'views_cacheBase',
-				css : 'display: none;'
-			}, options.cacheBase || document.body);
-		}
-	},
-	
-
-	/**	Teardown and cleanup the manager. */
-	destroy : function() {
-		if (this.initialized===true) {
-			this.initialized = false;
-			try {
-				this.cacheBase.remove();
-			} catch(err) {}
-		}
-	},
-	
-
-	/**	@private */
-	log : function(msg, data) {
-		if (this.logging===true) {
-			puredom.log('ViewManager :: ' + msg, data);
-		}
-	},
-	
-
-	/**	Register a named view. */
-	addView : function(name, view) {
-		if (puredom.typeOf(view)==='string') {
-			this._htmlViews[(name+'').toLowerCase()] = view;
-		}
-		else {
-			this.load(name, false);
-		}
-	},
-	
-
-	/**	Check if a named view is registered. */
-	exists : function(name) {
-		return this._htmlViews.hasOwnProperty((name+'').toLowerCase());
-	},
-	
-
-	/**	Load a view and immediately template it. <br />
-	 *	See {@link puredom.ViewManager#load}
-	 */
-	template : function(name, fields, insertInto, insertBefore) {
-		var ui, template;
-		name = (name+'').toLowerCase();
-		fields = fields || {};
-		if (this._htmlViews.hasOwnProperty(name)) {
-			template = this._htmlViews[name];
-			//ui = this.buildViewFromHTML( puredom.template(template, fields) );
-			ui = this.load(puredom.template(template, fields), insertInto, insertBefore, null, false);
-		}
-		return ui || false;
-	},
-	
-
-	/**	Load a view.
-	 *	@param {String} name					The named view to load
-	 *	@param {HTMLElement} [insertInto]		Immediately insert the view into an parent
-	 *	@param {HTMLElement} [insertBefore]		Inject view into the parent of this node, before this node.
-	 *	@param {Boolean} [cloneOriginal=true]	Set this to false to hijack previously rendered DOM views.
-	 *	@param {Boolean} [caching=true]			Set this to false to turn off view caching.
-	 *	@returns {puredom.NodeSelection} view, or false on error.
-	 */
-	load : function(name, insertInto, insertBefore, cloneOriginal, caching) {
-		var ui, lookup, cached, origName=name;
-		if (name) {
-			cached = caching!==false && this.getCachedView(name);
-			if (cached) {
-				this.log('Using cached view for "'+name+'".');
-				ui = this.buildCachedView(cached);
-			}
-			else if (puredom.typeOf(name)==='string') {
-				this._regs.node.lastIndex = 0;
-				if (this._regs.node.test(name)) {										// build from an HTML string
-					this.log('Parsing HTML view for "'+name+'".');
-					ui = this.buildViewFromHTML(name);
-					//console.log('TEST:::', name, arguments);
-					name = null;
-				}
-				else if (this._htmlViews.hasOwnProperty((name+'').toLowerCase())) {		// build from stored HTML
-					this.log('Loading stored HTML view for "'+name+'".');
-					ui = this.buildViewFromHTML(this._htmlViews[(name+'').toLowerCase()]);
-				}
-				else {
-					this.log('Looking up in-DOM view for "'+name+'"...');
-					lookup = this.getViewFromDOM(name);									// build from a DOM tree
-					if (lookup && lookup.exists()) {
-						this.log('Lookup succeeded, view found.');
-						ui = this.buildViewFromDOM(lookup, cloneOriginal!==false);		// clone rendered view
-					}
-					else {
-						this.log('Lookup failed, no matching view found.');
-					}
-				}
-			}
-		}
-		
-		if (ui && ui.exists()) {
-			if (name) {
-				this.log('View "'+name+'" loaded.');
-				// cache views if not retrieved from the cache:
-				if (caching!==false) {
-					this.cacheView(name, ui, cloneOriginal!==false);
-				}
-				
-				ui.classify('views_'+name);
-			}
-			
-			if (!ui.parent().exists()) {
-				if (insertBefore) {
-					insertBefore.parent().insertBefore(ui, insertBefore);
-				}
-				if (!insertBefore && insertInto) {
-					ui.insertInto(insertInto);
-				}
-			}
-			
-			this.postProcessView(ui);
-			
-			return ui;
-		}
-		else {
-			puredom.log('ViewManager :: Unable to find view "'+name+'".');
-			return false;
-		}
-	},
-	
-
-	/**	Destroy a view. */
-	unload : function(ui, unCache) {
-		if (ui && ui.destroy) {
-			ui.destroy();
-		}
-	},
-	
-	
-	/** @private */
-	_postProcessors : [],
-	
-
-	/**	Register a post-processor function that will be run on all loaded views. <br />
-	 *	The function gets passed the view base as a {@link puredom.NodeSelection}.
-	 */
-	addViewPostProcessor : function(callback) {
-		var i, exists=false;
-		for (i=this._postProcessors.length; i--; ) {
-			if (this._postProcessors[i]===callback) {
-				exists = true;
-				break;
-			}
-		}
-		if (!exists) {
-			this._postProcessors.push(callback);
-		}
-	},
-	
-
-	/**	Process a view after it has loaded.  Automatically called by load().
-	 *	@private
-	 */
-	postProcessView : function(ui) {
-		for (var i=0; i<this._postProcessors.length; i++) {
-			this._postProcessors[i](ui);
-		}
-	},
-	
-	
-	/**	@private */
-	getViewFromDOM : function(def, customPrefix) {
-		var el;
-		customPrefix = customPrefix || this.viewDomPrefix;
-		if (customPrefix.match(/[a-z0-9_-]/i)) {
-			customPrefix = '#' + customPrefix;
-		}
-		def = def.replace(/[\s.\/\\]/gim, '');
-		this.log('Lookup: prefix="'+customPrefix+'", def="'+def+'"');
-		if (customPrefix) {
-			el = puredom.el(customPrefix + def);
-			if (el && el.exists()) {
-				return el;
-			}
-		}
-		return false;
-	},
-	
-	
-	/**	@private */
-	buildViewFromHTML : function(html) {
-		var node = puredom.el({
-			innerHTML : html
-		});
-		node = node.children();
-		node.remove();
-		return node.exists() && node || false;
-	},
-	
-	
-	/**	@private */
-	buildViewFromObj : function(obj) {
-		var node;
-		if (puredom.isArray(obj)) {
-			node = tinyom.el({
-				children : obj
-			});
-			node = node.children();
-		}
-		else {
-			obj = puredom.extend({}, obj, {
-				parent : null,
-				insertBefore : null
-			});
-			node = puredom.el(obj);
-		}
-		return node.exists() && node || false;
-	},
-
-	
-	/**	@private */
-	buildViewFromDOM : function(domNodes, clone) {
-		var node, html;
-		domNodes = puredom.el(domNodes);
-		if (clone===false) {
-			return domNodes;
-		}
-		node = domNodes.clone(true);			// deep, no parent
-		return node.exists() && node || false;
-	},
-	
-	
-	/**	@private */
-	_htmlViews : {},
-	
-	
-	/** The root node where cached DOM nodes are stored
-	 *	@private
-	 */
-	cacheBase : null,
-	
-
-	/**	Attempt to retrieve a cached view
-	 *	@private
-	 */
-	getCachedView : function(name) {
-		var view = this.cacheBase.query('[data-viewname="'+name+'"]').first();
-		return view.exists() && view || false;
-	},
-	
-
-	/** Build a view from the cache, optionally retrieving it if not passed a reference.
-	 *	@private
-	 */
-	buildCachedView : function(cached) {
-		var view;
-		if (puredom.typeOf(cached)==='string') {
-			cached = this.getCachedView(cached);
-		}
-		view = cached && this.buildViewFromDOM(cached);
-		if (view) {
-			view.attr('id', this.viewDomPrefix + view.attr('data-viewname'));
-		}
-		return view;
-	},
-	
-
-	/** Cache a view for future use.
-	 *	@private
-	 */
-	cacheView : function(name, ui, copy) {
-		/*
-		if (copy===true) {
-			ui = ui && this.buildViewFromDOM(ui);
-		}
-		this.cacheBase.query('[data-viewname='+name+']').destroy();
-		ui.attr('data-viewname', name);
-		ui.attr('id', null);
-		ui._removeAllEvents();
-		ui.insertInto(this.cacheBase);
-		*/
-		return false;
 	}
 	
 });
