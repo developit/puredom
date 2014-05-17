@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.4**  
+*Current version:* **1.2.5**  
 [![Master Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)
 [![Dependency Status](https://david-dm.org/developit/puredom.png?theme=shields.io)](https://david-dm.org/developit/puredom)
 [![devDependency Status](https://david-dm.org/developit/puredom/dev-status.png?theme=shields.io)](https://david-dm.org/developit/puredom#info=devDependencies)
@@ -17,6 +17,18 @@ What is Puredom?
 puredom is a fast, chainable, extensible JavaScript library for web applications.
 
 In plain english, it makes building developing rich apps using JavaScript, HTML and CSS much easier.
+
+
+---
+
+Installation via Package Managers
+=================================
+**Bower:**  
+`bower install puredom`
+
+
+**Component:**  
+`component install developit/puredom`
 
 
 ---
@@ -150,8 +162,7 @@ npm install
 **Install the Grunt CLI and JSHint:**  
 If you haven't already, install grunt-cli and jshint globally  
 ```
-sudo npm install -g grunt-cli
-sudo npm install -g jshint
+sudo npm install -g grunt-cli jshint
 ```
 
 **Build the library:**  
@@ -159,7 +170,7 @@ Just run grunt to build everything.
 ```
 grunt
 ```
-Builds output to `dist/<VERSION>`  
+Builds output to `dist/`  
 
 
 ---
@@ -193,6 +204,9 @@ License
 
 Changelog
 =========
+**Version 1.2.5** *(May 17, 2014)*  
+- Add Bower & Component support
+
 **Version 1.2.4** *(Apr 8, 2014)*  
 - Account for encoding specified in a Content-Type response header  
 
