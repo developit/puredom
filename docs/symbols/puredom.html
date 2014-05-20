@@ -108,7 +108,7 @@
 		&copy;2014<br />
 		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
-		Generated on: 2014-4-1 22:59
+		Generated on: 2014-4-19 22:35
 	</div>
 </div>
 
@@ -133,7 +133,7 @@
 					
 					
 					
-						<li>Version 1.2.2</li>
+						<li>Version 1.2.6</li>
 					
 					
 					
@@ -399,9 +399,9 @@
 										<div class="fixedFont">
 											<span class="methodMemberOf">puredom.</span>
 											<b><a href="../symbols/puredom.html#.mixin">mixin</a></b>
-											()
+											(base, props)
 										</div>
-										<div class="description">Mixins.</div>
+										<div class="description">Mix functionality from one object into another.</div>
 									</td>
 								</tr>
 							
@@ -1365,14 +1365,15 @@
 									&lt;static&gt; 
 									</span>
 									
+									<span class="light methodPropertyType">{Object}</span>
 									
-									
-									<span class="light methodNamespacePrefix">puredom.</span><b>mixin</b>()
+									<span class="light methodNamespacePrefix">puredom.</span><b>mixin</b>(base, props)
 								</div>
 								
 								<div class="description">
-									Mixins. Add functionality to an object without modifying it's prototype.<br />
-	Alias of <a href="../symbols/puredom.html#.extend">extend()</a>
+									Mix functionality from one object into another. <br />
+	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from. <br />
+	<strong>Alternative Signature:</strong> <code>mixin(true, [props, ...], base)</code>
 									
 									
 									
@@ -1380,9 +1381,55 @@
 								</div>
 								
 								
+									
+										<pre class="code">		// standard:
+		puredom.mixin(myObj, decorator1, decorator2);
+		
+		// alternative, decorator-first style:
+		puredom.mixin(true, decorator1, decorator2, myObj);</pre>
+									
 								
 								
 								
+									<dl class="detailList params">
+										<dt class="heading">Parameters:</dt>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Object}</span> <b>base</b>
+												
+											</dt>
+											<dd>The object to extend. For cloning, use an object literal.</dd>
+										
+											<dt>
+												<span class="light fixedFont paramType">{Object}</span> <b>props</b>
+												
+											</dt>
+											<dd>An Object to copy properties from, unless base already has a property of the same name.</dd>
+										
+									</dl>
+								
+								
+								
+									<dl class="detailList nomargin">
+									
+										
+										
+										
+										
+										
+										
+										
+											<dt class="heading">Returns:</dt>
+											
+												<dd><span class="light fixedFont">{Object}</span> base</dd>
+											
+										
+										
+										
+										
+										
+									
+									</dl>
 								
 								<div class="hr"></div>
 							</li>
