@@ -1,6 +1,6 @@
 puredom
 =======
-*Current version:* **1.2.5**  
+*Current version:* **1.2.6**  
 [![Master Build Status](https://travis-ci.org/developit/puredom.png?branch=master)](https://travis-ci.org/developit/puredom)
 [![Dependency Status](https://david-dm.org/developit/puredom.png?theme=shields.io)](https://david-dm.org/developit/puredom)
 [![devDependency Status](https://david-dm.org/developit/puredom/dev-status.png?theme=shields.io)](https://david-dm.org/developit/puredom#info=devDependencies)
@@ -204,6 +204,10 @@ License
 
 Changelog
 =========
+**Version 1.2.6** *(May 18, 2014)*  
+- Fix puredom.mixin() regression introduced in version 1.2.1
+- Added support for alternative "decorator-first" mixin() syntax
+
 **Version 1.2.5** *(May 17, 2014)*  
 - Add Bower & Component support
 

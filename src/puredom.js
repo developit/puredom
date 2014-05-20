@@ -1,22 +1,19 @@
-
-// Too convenient
-if (typeof(Date.now)!=='function') {
-	/**	@ignore */
-	Date.now = function() {
-		return new Date().getTime();
-	};
-}
-
-
 (function() {
 	/**	@exports self as puredom */
 	
 	var previousSelf = window.puredom;
 	
+	if (typeof Date.now!=='function') {
+		/**	@ignore */
+		Date.now = function() {
+			return new Date().getTime();
+		};
+	}
+
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.2.2
+	 *	@version 1.2.6
 	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
@@ -28,7 +25,7 @@ if (typeof(Date.now)!=='function') {
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.2.5',
+			version : '1.2.6',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -154,28 +151,54 @@ if (typeof(Date.now)!=='function') {
 		var i, j, ext;
 		base = base || {};
 		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						for (j in ext) {
-								if (ext.hasOwnProperty(j)) {
-										base[j] = ext[j];
-								}
-						}
-						// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
-						if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
-							base.toString = ext.toString;
-						}
+			ext = arguments[i];
+			if (ext) {
+				for (j in ext) {
+					if (ext.hasOwnProperty(j)) {
+						base[j] = ext[j];
+					}
 				}
+				// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
+				if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
+					base.toString = ext.toString;
+				}
+			}
 		}
 		return base;
 	};
 	
 	
-	/** Mixins. Add functionality to an object without modifying it's prototype.<br />
-	 *	Alias of {@link puredom.extend extend()}
-	 *	@function
+	/** Mix functionality from one object into another. <br />
+	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from. <br />
+	 *	<strong>Alternative Signature:</strong> <code>mixin(true, [props, ...], base)</code>
+	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
+	 *	@param {Object} props	An Object to copy properties from, unless base already has a property of the same name.
+	 *	@returns {Object} base
+	 *	@example
+	 *		// standard:
+	 *		puredom.mixin(myObj, decorator1, decorator2);
+	 *		
+	 *		// alternative, decorator-first style:
+	 *		puredom.mixin(true, decorator1, decorator2, myObj);
 	 */
-	self.mixin = self.extend;
+	self.mixin = function(base) {
+		var i, j, ext,
+			mix = Array.prototype.slice.call(arguments, 1);
+		if (base===true) {
+			base = mix.pop();
+		}
+		base = base || {};
+		for (i=0; i<mix.length; i++) {
+			if ( (ext=mix[i]) ) {
+				for (j in ext) {
+					if (ext.hasOwnProperty(j) && !base.hasOwnProperty(j)) {
+						base[j] = ext[j];
+					}
+				}
+			}
+		}
+		return base;
+	};
 	
 	
 	/**	Strip an object of all of its properties.<br />

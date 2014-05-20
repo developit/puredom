@@ -1,3 +1,10 @@
+Version 1.2.6 (May 18, 2014)
+- Fix puredom.mixin() regression introduced in version 1.2.1
+- Added support for alternative "decorator-first" mixin() syntax
+
+Version 1.2.5 (May 17, 2014)
+- Add Bower & Component support
+
 Version 1.2.4 (Apr 8, 2014)
 - Account for encoding specified in a Content-Type response header
 
