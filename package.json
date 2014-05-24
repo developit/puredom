@@ -3,15 +3,15 @@
   "version": "1.2.6",
   "description": "puredom is a fast, chainable, exstensible JavaScript library for web applications. It makes building developing rich apps using JavaScript, HTML and CSS much easier.",
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-uglify": "~0.2.4",
-    "grunt-contrib-jshint": "~0.6.4",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-shell": "~0.5.0",
-    "grunt-contrib-connect": "~0.6.0",
-    "grunt-contrib-watch": "~0.5.3",
+    "grunt": "~0.4.5",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-shell": "~0.7.0",
+    "grunt-contrib-connect": "~0.7.1",
+    "grunt-contrib-watch": "~0.6.1",
     "grunt-mocha": "~0.4.10",
-    "grunt-lib-phantomjs": "~0.5.0"
+    "grunt-lib-phantomjs": "~0.6.0"
   },
   "scripts": {
     "build": "npm install && grunt",
