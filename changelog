@@ -1,3 +1,7 @@
+Version 1.2.7 (May 24, 2014)
+- Fix ancient improper use of typeof
+- Update build & test dependencies
+
 Version 1.2.6 (May 18, 2014)
 - Fix puredom.mixin() regression introduced in version 1.2.1
 - Added support for alternative "decorator-first" mixin() syntax
