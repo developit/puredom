@@ -49,7 +49,7 @@ puredom.net.multiLoad = function(resources, callback) {
 	loadNext = function() {
 		cur += 1;
 		var res = resources[cur],
-			d = typeof(res)==='string' ? {url:res} : res;
+			d = typeof res==='string' ? {url:res} : res;
 		if (d) {
 			http.request(d, loaded);
 		}

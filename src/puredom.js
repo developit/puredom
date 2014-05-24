@@ -345,7 +345,7 @@
 				return 'array';
 			}
 		}
-		//return (typeof(what)+"").toLowerCase();
+		//return String(typeof what).toLowerCase();
 		return Object.prototype.toString.call(what).replace(priv.regex.parseObjectNameFromString,'$1').toLowerCase();
 	};
 	
@@ -1596,7 +1596,7 @@
 			else if (arguments.length>1) {
 				if (self.typeOf(key)==='object') {
 					for (i in key) {
-						if (typeof(i)==='string' && key.hasOwnProperty(i)) {
+						if (typeof i==='string' && key.hasOwnProperty(i)) {
 							this.attr(attrs, key[i]);
 						}
 					}
@@ -1614,7 +1614,7 @@
 			else {
 				this._each(function(node) {
 					var a = node.getAttribute(key);
-					if (typeof(a)!=='string') {
+					if (typeof a!=='string') {
 						a = null;
 					}
 					attrs.push( a );
@@ -2047,11 +2047,11 @@
 		selection : function(start, end) {
 			var el = this._nodes[0],
 				value, sel, before, endMax, range;
-			if (start && typeof(start)!=='number' && start.start) {
+			if (start && typeof start!=='number' && start.start) {
 				end = start.end;
 				start = start.start;
 			}
-			if (typeof(start)==='number') {
+			if (typeof start==='number') {
 				if (start<0) {
 					start = 0;
 				}
@@ -2084,7 +2084,7 @@
 			}
 			else {
 				if (window.getSelection) {					// Stanadards
-					value = typeof(el.value)==='string' ? el.value : el.innerHTML;
+					value = typeof el.value==='string' ? el.value : el.innerHTML;
 					sel = window.getSelection();
 					return {
 						start	: el.selectionStart+0,
@@ -2154,7 +2154,7 @@
 				tplValue = puredom.delve(templateFields, tplField);
 				
 				if (tplValue!==null && tplValue!==undefined) {
-					if (typeof(tplValue)==='date' || tplValue.constructor===Date) {
+					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
 						tplValue = tplValue.toLocaleString();
 					}
 					nType = node.attr('data-tpl-prop');
@@ -3414,7 +3414,7 @@
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
 			
-			if (typeof(type)!=='string' || !fn || !fn.call) {
+			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to add event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
@@ -3462,7 +3462,7 @@
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
 			
-			if (typeof(type)!=='string' || !fn || !fn.call) {
+			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to remove event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
@@ -3829,7 +3829,7 @@
 			ch = priv.support.filterProperty==='MsFilter' ? '"' : '',
 			p, a, i;
 		type = type.charAt(0).toUpperCase() + type.substring(1);
-		if (typeof(value)==='string') {
+		if (typeof value==='string') {
 			valueStr = value;
 			value = {};
 			a = valueStr.replace(/\s*(,|=)\s*      /gm,'$1').split(',');

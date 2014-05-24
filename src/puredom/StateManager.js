@@ -436,7 +436,7 @@ puredom.extend(puredom.StateManager.prototype, /** @lends puredom.StateManager# 
 	 */
 	setObjState : function(id, state, callback, now) {
 		var options;
-		if (callback && typeof(callback)==='object') {
+		if (callback && typeof callback==='object') {
 			options = callback;
 		}
 		this.states[id] = state;
@@ -499,7 +499,7 @@ puredom.StateManager.prototype.adapters.url = {
 	
 	getPrefix : function() {
 		if (this.html5UrlPrefix) {
-			if (typeof(this.html5UrlPrefix)==='function') {
+			if (typeof this.html5UrlPrefix==='function') {
 				return this.html5UrlPrefix();
 			}
 			else {

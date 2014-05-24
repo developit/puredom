@@ -59,7 +59,9 @@ _.assign(Bench, {
 	},
 
 	enqueue : function(name, tests) {
-		Bench.queue.push(Bench.create(name, tests, false));
+		var bench = Bench.create(name, tests, false);
+		Bench.queue.push(bench);
+		return bench;
 	},
 
 	processQueue : function(callback) {

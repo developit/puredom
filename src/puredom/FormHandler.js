@@ -6,7 +6,7 @@ puredom.FormHandler = function(form, options) {
 	var me = this;
 
 	options = options || {};
-	if (arguments.length===1 && typeof(form)==='object' && form.constructor!==puredom.NodeSelection) {
+	if (arguments.length===1 && typeof form==='object' && form.constructor!==puredom.NodeSelection) {
 		options = form;
 		form = options.form;
 	}
@@ -23,11 +23,11 @@ puredom.FormHandler = function(form, options) {
 	if (options.data) {
 		this.setData(options.data);
 	}
-	if (options.onsubmit && typeof(options.onsubmit)==='function') {
+	if (options.onsubmit && typeof options.onsubmit==='function') {
 		this.on('submit', options.onsubmit);
 		this._constructorSubmitHandler = options.onsubmit;
 	}
-	if (options.oncancel && typeof(options.oncancel)==='function') {
+	if (options.oncancel && typeof options.oncancel==='function') {
 		this.on('cancel', options.oncancel);
 		this._constructorCancelHandler = options.oncancel;
 	}

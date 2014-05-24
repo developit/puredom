@@ -347,7 +347,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				return 'array';
 			}
 		}
-		//return (typeof(what)+"").toLowerCase();
+		//return String(typeof what).toLowerCase();
 		return Object.prototype.toString.call(what).replace(priv.regex.parseObjectNameFromString,'$1').toLowerCase();
 	};
 	
@@ -1598,7 +1598,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			else if (arguments.length>1) {
 				if (self.typeOf(key)==='object') {
 					for (i in key) {
-						if (typeof(i)==='string' && key.hasOwnProperty(i)) {
+						if (typeof i==='string' && key.hasOwnProperty(i)) {
 							this.attr(attrs, key[i]);
 						}
 					}
@@ -1616,7 +1616,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			else {
 				this._each(function(node) {
 					var a = node.getAttribute(key);
-					if (typeof(a)!=='string') {
+					if (typeof a!=='string') {
 						a = null;
 					}
 					attrs.push( a );
@@ -2049,11 +2049,11 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		selection : function(start, end) {
 			var el = this._nodes[0],
 				value, sel, before, endMax, range;
-			if (start && typeof(start)!=='number' && start.start) {
+			if (start && typeof start!=='number' && start.start) {
 				end = start.end;
 				start = start.start;
 			}
-			if (typeof(start)==='number') {
+			if (typeof start==='number') {
 				if (start<0) {
 					start = 0;
 				}
@@ -2086,7 +2086,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			else {
 				if (window.getSelection) {					// Stanadards
-					value = typeof(el.value)==='string' ? el.value : el.innerHTML;
+					value = typeof el.value==='string' ? el.value : el.innerHTML;
 					sel = window.getSelection();
 					return {
 						start	: el.selectionStart+0,
@@ -2156,7 +2156,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				tplValue = puredom.delve(templateFields, tplField);
 				
 				if (tplValue!==null && tplValue!==undefined) {
-					if (typeof(tplValue)==='date' || tplValue.constructor===Date) {
+					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
 						tplValue = tplValue.toLocaleString();
 					}
 					nType = node.attr('data-tpl-prop');
@@ -3416,7 +3416,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
 			
-			if (typeof(type)!=='string' || !fn || !fn.call) {
+			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to add event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
@@ -3464,7 +3464,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
 			
-			if (typeof(type)!=='string' || !fn || !fn.call) {
+			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to remove event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
@@ -3831,7 +3831,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			ch = priv.support.filterProperty==='MsFilter' ? '"' : '',
 			p, a, i;
 		type = type.charAt(0).toUpperCase() + type.substring(1);
-		if (typeof(value)==='string') {
+		if (typeof value==='string') {
 			valueStr = value;
 			value = {};
 			a = valueStr.replace(/\s*(,|=)\s*      /gm,'$1').split(',');
@@ -4622,7 +4622,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 				var expires = '',
 					cookie = '',
 					date;
-				path = typeof(path)==='string' ? path : '';
+				path = typeof path==='string' ? path : '';
 				if (days) {
 					date = new Date();
 					date.setTime(date.getTime() + days*24*60*60*1000);
@@ -4632,7 +4632,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 					expires = "; expires="+cache[key].expires.toGMTString();
 				}
 				cookie = key + "=" + encodeURIComponent(value) + expires + "; path=/"+path.replace(/^\//,'');
-				if (typeof(domain)==='string' && domain.length>0) {
+				if (typeof domain==='string' && domain.length>0) {
 					cookie += '; domain=' + domain.replace(/[\;\,]/,'');
 				}
 				if (secure===true) {
@@ -4839,7 +4839,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 		 */
 		json.parse = function(what) {
 			var result;
-			if (typeof(what)==='string' && what.length>0) {
+			if (typeof what==='string' && what.length>0) {
 				try {
 					result = JSON.parse(what);
 				}catch(err) {
@@ -5991,7 +5991,7 @@ puredom.FormHandler = function(form, options) {
 	var me = this;
 
 	options = options || {};
-	if (arguments.length===1 && typeof(form)==='object' && form.constructor!==puredom.NodeSelection) {
+	if (arguments.length===1 && typeof form==='object' && form.constructor!==puredom.NodeSelection) {
 		options = form;
 		form = options.form;
 	}
@@ -6008,11 +6008,11 @@ puredom.FormHandler = function(form, options) {
 	if (options.data) {
 		this.setData(options.data);
 	}
-	if (options.onsubmit && typeof(options.onsubmit)==='function') {
+	if (options.onsubmit && typeof options.onsubmit==='function') {
 		this.on('submit', options.onsubmit);
 		this._constructorSubmitHandler = options.onsubmit;
 	}
-	if (options.oncancel && typeof(options.oncancel)==='function') {
+	if (options.oncancel && typeof options.oncancel==='function') {
 		this.on('cancel', options.oncancel);
 		this._constructorCancelHandler = options.oncancel;
 	}
@@ -7843,7 +7843,7 @@ puredom.extend(puredom.StateManager.prototype, /** @lends puredom.StateManager# 
 	 */
 	setObjState : function(id, state, callback, now) {
 		var options;
-		if (callback && typeof(callback)==='object') {
+		if (callback && typeof callback==='object') {
 			options = callback;
 		}
 		this.states[id] = state;
@@ -7906,7 +7906,7 @@ puredom.StateManager.prototype.adapters.url = {
 	
 	getPrefix : function() {
 		if (this.html5UrlPrefix) {
-			if (typeof(this.html5UrlPrefix)==='function') {
+			if (typeof this.html5UrlPrefix==='function') {
 				return this.html5UrlPrefix();
 			}
 			else {
