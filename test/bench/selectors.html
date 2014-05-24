@@ -17,7 +17,7 @@
 
 
 		<script>
-			Bench.enqueue('#id', {
+			var bench = Bench.enqueue('#id', {
 				'setup' : function() {
 					this.count = 0;
 
@@ -51,6 +51,22 @@
 					this.count = (this.count + 1) % 300;
 					document.getElementById('div'+this.count);
 				}
+			});
+
+			function log(msg) {
+				var div = document.createElement('pre');
+				div.textContent = div.innerText = Array.prototype.join.call(arguments, ', ');
+				document.body.appendChild(div);
+			}
+
+			log('Running...')
+
+			bench.on('cycle', function(e) {
+				log(this.name + ' :: ' + String(e.target));
+			});
+
+			bench.on('complete', function() {
+				log(this.name + ' :: Fastest is ' + this.filter('fastest').pluck('name'));
 			});
 		</script>
 	</body>
