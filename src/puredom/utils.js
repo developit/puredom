@@ -371,7 +371,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 				var expires = '',
 					cookie = '',
 					date;
-				path = typeof(path)==='string' ? path : '';
+				path = typeof path==='string' ? path : '';
 				if (days) {
 					date = new Date();
 					date.setTime(date.getTime() + days*24*60*60*1000);
@@ -381,7 +381,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 					expires = "; expires="+cache[key].expires.toGMTString();
 				}
 				cookie = key + "=" + encodeURIComponent(value) + expires + "; path=/"+path.replace(/^\//,'');
-				if (typeof(domain)==='string' && domain.length>0) {
+				if (typeof domain==='string' && domain.length>0) {
 					cookie += '; domain=' + domain.replace(/[\;\,]/,'');
 				}
 				if (secure===true) {
@@ -588,7 +588,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 		 */
 		json.parse = function(what) {
 			var result;
-			if (typeof(what)==='string' && what.length>0) {
+			if (typeof what==='string' && what.length>0) {
 				try {
 					result = JSON.parse(what);
 				}catch(err) {
