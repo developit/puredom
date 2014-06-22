@@ -1,5 +1,13 @@
-(function() {
+(function(window, global) {
 	/**	@exports self as puredom */
+
+	// node:
+	if (typeof process==='object' && process.argv && process.argv[0]==='node') {
+		window = require('jsdom').jsdom().parentWindow;
+	}
+
+	var document = window.document,
+		navigator = window.navigator;
 	
 	var previousSelf = window.puredom;
 	
@@ -4160,8 +4168,9 @@
 	/**	Log to the browser console, if it exists.
 	 */
 	self.log = function() {
-		if (window.console && window.console.log) {
-			window.console.log.apply(window.console, arguments);
+		var c = global.console;
+		if (c && c.log) {
+			c.log.apply(c, arguments);
 		}
 	};
 	
@@ -4242,8 +4251,11 @@
 	self.extend(self, baseSelf);
 	self.toString = function(){return 'function puredom(){}';};
 	
-	window.puredom = self;
-	if (typeof window.define==='function' && window.define.amd) {
+	this.puredom = window.puredom = self;
+	if (typeof define==='function' && define.amd) {
 		window.define('puredom', function(){ return self; });
 	}
-}());
+	if (typeof module==='object') {
+		module.exports = self;
+	}
+}(this, typeof global==='object' ? global : this));
