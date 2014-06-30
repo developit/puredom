@@ -21,7 +21,7 @@
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.2.6
+	 *	@version 1.3.0
 	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
@@ -33,7 +33,7 @@
 		}, 
 		/**	@private */
 		baseSelf = {
-			version : '1.2.6',
+			version : '1.3.0',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -106,7 +106,6 @@
 		vendorCssPrefix = '-moz';
 		vendorCssPrefixJS = 'Moz';
 	}
-	//else if (navigator.userAgent.match(/\bmsie\b/gim) && parseFloat(navigator.versionNumber)>=9) {
 	else if (navigator.userAgent.match(/\bmsie\s*?(8|9|[1-9][0-9]+)\b/gim)) {
 		vendorCssPrefix = '-ms';
 		vendorCssPrefixJS = 'Ms';
@@ -1683,30 +1682,32 @@
 
 		/**	Register an event handler. <br />
 		 *	When an event of the given type is triggered, the handler function is called.
-		 *	@param {String} eventType		An event type to listen for
+		 *	@param {String} type			An event type to listen for
+		 *	@param {String} [selector]		Optionally fire only if the event target matches a CSS selector
 		 *	@param {Function} handler		A handler to call in response to the event
 		 *	@example
 		 *		function clickHandler(e){ alert(e.button); }
 		 *		foo.addEvent("click", clickHandler);
 		 *	@returns {this}
 		 */
-		addEvent : function(eventType, handler, useCapture) {
+		on : function(type, selector, handler) {
 			this._each(function(el) {
-				self.addEvent(el, eventType, handler, useCapture);
+				self.addEvent(el, type, selector, handler);
 			});
 			return this;
 		},
 
 		/**	Un-register an event handler.
-		 *	@param {String} eventType		The event type
+		 *	@param {String} type			The event type
+		 *	@param {String} [selector]		Optionally fire only if the target matches a CSS selector
 		 *	@param {Function} handler		The handler to remove
 		 *	@example
 		 *		foo.removeEvent("click", clickHandler);
 		 *	@returns {this}
 		 */
-		removeEvent : function(eventType, handler, useCapture) {
+		off : function(type, selector, handler) {
 			this._each(function(el) {
-				self.removeEvent(el, eventType, handler, useCapture);
+				self.removeEvent(el, type, selector, handler);
 			});
 			return this;
 		},
@@ -1716,7 +1717,7 @@
 		 *	@param {Object|Event} e		The event data
 		 *	@returns {this}
 		 */
-		fireEvent : function(type, e) {
+		trigger : function(type, e) {
 			this._each(function(node) {
 				self.fireEvent(self.extend({}, e || {}, {
 					type : type,
@@ -1725,7 +1726,7 @@
 			});
 			return this;
 		},
-
+		
 		/**	@private */
 		_removeAllEvents : function(deep) {
 			var children;
@@ -2202,10 +2203,25 @@
 		}
 	});
 	
-	/**	Alias of {@link puredom.NodeSelection#addEvent}
+	/**	Alias of {@link puredom.NodeSelection#trigger}
 	 *	@function
 	 */
-	self.NodeSelection.prototype.on = self.NodeSelection.prototype.addEvent;
+	self.NodeSelection.prototype.fireEvent = self.NodeSelection.prototype.trigger;
+	
+	/**	Alias of {@link puredom.NodeSelection#trigger}
+	 *	@function
+	 */
+	self.NodeSelection.prototype.emit = self.NodeSelection.prototype.trigger;
+	
+	/**	Alias of {@link puredom.NodeSelection#on}
+	 *	@function
+	 */
+	self.NodeSelection.prototype.addEvent = self.NodeSelection.prototype.on;
+	
+	/**	Alias of {@link puredom.NodeSelection#off}
+	 *	@function
+	 */
+	self.NodeSelection.prototype.removeEvent = self.NodeSelection.prototype.off;
 	
 	/**	@ignore */
 	self.NodeSelection.prototype.animateCss = self.NodeSelection.prototype.animateCSS;
@@ -2922,6 +2938,15 @@
 			return currentResults;
 		};
 		
+		
+		/** @public */
+		getElement.matchesSelector = function(base, el, selector) {
+			return getElement(selector, {
+				within : base
+			}).indexOf(el) > -1;
+		};
+		
+		
 		/**	@public */
 		getElement.enableCache = function(enabled) {
 			cacheEnabled = enabled!==false;
@@ -3062,7 +3087,7 @@
 	/**	@class Represents a DOM event.
 	 *	@name puredom.DOMEvent
 	 */
-	self.DOMEvent = function PureDOMEvent(type) {
+	self.DOMEvent = function DOMEvent(type) {
 		if (type) {
 			this.type = type.replace(/^on/gi,'');
 		}
@@ -3169,7 +3194,7 @@
 				for (i=this.list.length; i--; ) {
 					evt = this.list[i];
 					this.list[i] = this.none;
-					self.removeEvent(priv.idToNode(evt.target), evt.type, evt.wrappedHandler);
+					self.removeEvent(priv.idToNode(evt.target), evt.type, evt.selector, evt.wrappedHandler);
 					this.unsetRefs(evt);
 					window.killCount = (window.killCount || 0) + 1;
 				}
@@ -3186,19 +3211,20 @@
 				if (evt.target===objId) {
 					this.unsetRefs(evt);
 					this.list.splice(i, 1);
-					self.removeEvent(obj, evt.type, evt.wrappedHandler);
+					self.removeEvent(obj, evt.type, evt.selector, evt.wrappedHandler);
 					window.killCount = (window.killCount || 0) + 1;
 				}
 			}
 		},
 		
 		/**	@private */
-		get : function(type, handler, obj, andDestroy) {
+		get : function(type, handler, obj, selector, andDestroy) {
 			var i, evt;
+			selector = selector || null;
 			obj = priv.nodeToId(obj);
 			for (i=this.list.length; i--; ) {
 				evt = this.list[i];
-				if (evt.target===obj && evt.handler===handler && evt.type===type) {
+				if (evt.target===obj && evt.handler===handler && evt.selector===selector && evt.type===type) {
 					handler = evt.wrappedHandler;
 					if (andDestroy===true) {
 						this.list.splice(i, 1);
@@ -3236,17 +3262,19 @@
 		},
 		
 		/**	@private */
-		create : function(type, handler, obj) {
+		create : function(type, handler, obj, selector) {
+			selector = selector || null;
 			var evt = {
 				type	: type,
 				target	: priv.nodeToId(obj),
+				selector : selector,
 				handler	: handler,
 				/**	@ignore */
-				wrappedHandler : function(e) {
-					var handler = arguments.callee.handler,
-						type = (arguments.callee.type || e.type).toLowerCase().replace(/^on/,''),
-						originalTarget = this!==window ? this : (priv && priv.idToNode(arguments.callee.target)),
-						event, i,
+				wrappedHandler : function wrappedHandler(e) {
+					var handler = wrappedHandler.handler,
+						type = (wrappedHandler.type || e.type).toLowerCase().replace(/^on/,''),
+						originalTarget = this!==window ? this : (priv && priv.idToNode(wrappedHandler.target)),
+						fireTarget, event, i,
 						d = {
 							isInSelf : false,
 							doPreventDefault : false,
@@ -3318,19 +3346,40 @@
 						event.target = event.target.parentNode;
 					}
 					
+					// allow filtering by CSS selector
+					var sel = wrappedHandler.selector,
+						selEls, isInSelector;
+					if (sel && typeof sel==='string') {
+						selEls = self.getElement(sel, {
+							within : originalTarget
+						});
+					}
+					
 					// is the capturing node within the original handler context?
-					d.searchNode = event.relatedTarget || event.target;
+					d.searchNode = !selEls && event.relatedTarget || event.target;
 					do {
+						if (selEls) {
+							if (selEls.indexOf(d.searchNode) !== -1 ) {
+								isInSelector = true;
+								fireTarget = d.searchNode;
+								break;
+							}
+							continue;
+						}
 						if (d.searchNode===originalTarget) {
 							d.isInSelf = true;
 							break;
 						}
 					} while(d.searchNode && (d.searchNode=d.searchNode.parentNode) && d.searchNode!==document);
 					
+					if (selEls && !isInSelector) {
+						return;
+					}
+					
 					// Don't fire mouseout events when the mouse is moving in/out a child node of the handler context element
 					if ((type!=='mouseover' && type!=='mouseout') || !d.isInSelf) {
 						if (handler && handler.call) {
-							d.handlerResponse = handler.call(originalTarget, event);
+							d.handlerResponse = handler.call(fireTarget || originalTarget, event);
 						}
 						else {
 							// NOTE: Turn this on and fix the IE bug.
@@ -3369,6 +3418,7 @@
 			evt.wrappedHandler.handler = handler;
 			evt.wrappedHandler.type = type;
 			evt.wrappedHandler.target = evt.target;		// an ID, not the node itself
+			evt.wrappedHandler.selector = selector;
 			this.list.push(evt);
 			obj = type = handler = evt = null;
 			return this.list[this.list.length-1].wrappedHandler;
@@ -3405,18 +3455,22 @@
 	 *	@private
 	 *	@param {HTMLElement} obj			An element to add the event listener to.
 	 *	@param {String} type				A type of event to register the listener for.
-	 *	@param {Function} listener			The listener function to register. Gets passed {Event} event.
-	 *	@param {Boolean} [useCapture=false]	If true, handler will be invoked during the capture phase instead of the bubbling phase.
+	 *	@param {String} [selector]			Optionally call handler only if the target matches a CSS selector.
+	 *	@param {Function} handler			The listener function to register. Gets passed <code>({Event} event)</code>.
 	 */
-	self.addEvent = function(obj, type, fn, useCapture) {
+	self.addEvent = function(obj, type, selector, fn) {
 		var x, origType;
+		if (typeof selector==='function') {
+			fn = selector;
+			selector = null;
+		}
 		if (obj) {
 			if (self.typeOf(type)==='string' && type.indexOf(',')>-1) {
 				type = type.replace(/\s/gm,'').split(',');
 			}
 			if (self.isArray(type)) {
 				for (x=0; x<type.length; x++) {
-					self.addEvent(obj, type[x], fn);
+					self.addEvent(obj, type[x], selector, fn);
 				}
 				return true;
 			}
@@ -3426,10 +3480,8 @@
 				self.log('Attempted to add event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
-					subject : priv.getSubjectDescription(obj),
-					useCapture : useCapture===true
+					subject : priv.getSubjectDescription(obj)
 				});
-				//throw('Attempted to add event with invalid type or handler: type='+type+', handler='+fn);
 				return;
 			}
 			
@@ -3437,12 +3489,12 @@
 				type = self.eventTypeMap[type];
 			}
 			
-			fn = priv.wrappedEventListener.create(origType, fn, obj);
+			fn = priv.wrappedEventListener.create(origType, fn, obj, selector);
 			if (obj.attachEvent) {
-				obj.attachEvent( 'on'+type, fn );
+				obj.attachEvent('on' + type, fn);
 			}
 			else if (obj.addEventListener) {
-				obj.addEventListener( type, fn, useCapture===true );
+				obj.addEventListener(type, fn, false);
 				self._eventCount = (self._eventCount || 0) + 1;
 			}
 		}
@@ -3453,18 +3505,22 @@
 	 *	@private
 	 *	@param {Element} obj				An element to remove the event listener from.
 	 *	@param {String} type				The event type of the listener to be removed.
-	 *	@param {Function} listener			The listener to remove.
-	 *	@param {Boolean} [useCapture=false]	The useCapture value of the listener to be removed (defaults to false).
+	 *	@param {String} [selector]			Optionally call handler only if the target matches a CSS selector.
+	 *	@param {Function} handler			The listener function to remove.
 	 */
-	self.removeEvent = function(obj, type, fn, useCapture) {
+	self.removeEvent = function(obj, type, selector, fn) {
 		var x, origType;
+		if (typeof selector==='function') {
+			fn = selector;
+			selector = null;
+		}
 		if (obj) {
 			if (self.typeOf(type)==='string' && type.indexOf(',')>-1) {
 				type = type.replace(/\s/gm,'').split(',');
 			}
 			if (self.isArray(type)) {
 				for (x=0; x<type.length; x++) {
-					self.removeEvent(obj, type[x], fn, useCapture);
+					self.removeEvent(obj, type[x], selector, fn);
 				}
 				return true;
 			}
@@ -3474,10 +3530,8 @@
 				self.log('Attempted to remove event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
-					subject : priv.getSubjectDescription(obj),
-					useCapture : useCapture===true
+					subject : priv.getSubjectDescription(obj)
 				});
-				//throw('Attempted to remove event with invalid type or handler: type='+type+', handler='+fn);
 				return;
 			}
 			
@@ -3485,13 +3539,13 @@
 				type = self.eventTypeMap[type];
 			}
 			
-			fn = priv.wrappedEventListener.get(origType, fn, obj, true);		// , useCapture===true ?
+			fn = priv.wrappedEventListener.get(origType, fn, obj, selector, true);
 			if (obj.detachEvent) {
-				obj.detachEvent( 'on'+type, fn );
+				obj.detachEvent('on' + type, fn);
 			}
 			else if (obj.removeEventListener) {
 				try {
-					obj.removeEventListener( type, fn, useCapture===true );
+					obj.removeEventListener(type, fn, false);
 					self._eventCount = (self._eventCount || 0) - 1;
 				} catch(err) {}
 			}
@@ -3992,6 +4046,8 @@
 		return obj;
 	};
 	
+	self._parseCss = priv.parseCSS;
+	
 	/** Some intense CSS3 transitions wrapping, needed in order to support animating multiple
 	 *	properties asynchronously with interjected transition modifications
 	 *	@private
@@ -4073,45 +4129,34 @@
 	
 	
 	/** @private */
-	self.addClass = function(el, classes) {
-		var prev, i;
+	self.addClass = function(el, classes, remove) {
+		var modified = false,
+			list, index, i;
 		if (classes) {
 			if (!self.isArray(classes)) {
 				classes = [classes];
 			}
-			prev = el.className || '';
-			if (prev.length>0) {
-				prev = ' ' + prev + ' ';
-				for (i=0; i<classes.length; i++) {
-					while (prev.indexOf(' '+classes[i]+' ')>-1) {
-						prev = prev.replace(' ' + classes[i] + ' ', ' ');
-					}
+			list = (el.className || '').split(/\s+/);
+			for (i=0; i<classes.length; i++) {
+				index = list.indexOf(classes[i]);
+				if (remove!==true && index===-1) {
+					modified = true;
+					list.push( classes[i] );
 				}
-				prev = prev.substring(1);
+				else if (remove===true && index>-1) {
+					modified = true;
+					list.splice(index, 1);
+				}
 			}
-			el.className = (prev + classes.join(' ')).replace(/\s+/gim,' ');
+			if (modified) {
+				el.className = list.join(' ');
+			}
 		}
 	};
 	
 	/** @private */
 	self.removeClass = function(el, classes) {
-		var prev, i;
-		if (classes) {
-			if (!self.isArray(classes)) {
-				classes = [classes];
-			}
-			prev = el.className || '';
-			if (prev.length>0) {
-				prev = ' ' + prev + ' ';
-				for (i=0; i<classes.length; i++) {
-					while (prev.indexOf(' '+classes[i]+' ')>-1) {
-						prev = prev.replace(' ' + classes[i] + ' ', ' ');
-					}
-				}
-				prev = prev.substring(1);
-			}
-			el.className = prev.replace(/\s+/gim,' ');
-		}
+		return self.addClass(el, classes, true);
 	};
 	
 	/** Get the current value of a CSS property from the given node. 
