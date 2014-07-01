@@ -1,7 +1,7 @@
 puredom [![NPM Version](http://img.shields.io/npm/v/puredom.svg?style=flat)](https://www.npmjs.org/package/puredom)
 =======
 
-⤹ `stable` ⥃ `devel.` ⤵︎  
+⤹ `stable` ⥃ `develop` ⤵︎  
 [![Master Build Status](http://img.shields.io/travis/developit/puredom.svg?style=flat&branch=master)](https://travis-ci.org/developit/puredom)
 [![Develop Build Status](http://img.shields.io/travis/developit/puredom.svg?style=flat&branch=develop&title=dev)](https://travis-ci.org/developit/puredom)
 
