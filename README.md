@@ -1,19 +1,21 @@
-puredom ![NPM Version](http://img.shields.io/npm/v/puredom.svg)
+puredom [![NPM Version](http://img.shields.io/npm/v/puredom.svg?style=flat)](https://www.npmjs.org/package/puredom)
 =======
 
-[![Master Build Status](https://travis-ci.org/developit/puredom.svg?branch=master)](https://travis-ci.org/developit/puredom)  [![Build Status](https://travis-ci.org/developit/puredom.svg?branch=develop)](https://travis-ci.org/developit/puredom)
-[![Dependency Status](https://david-dm.org/developit/puredom/status.png?theme=shields.io)](https://david-dm.org/developit/puredom)
-[![devDependency Status](https://david-dm.org/developit/puredom/dev-status.png?theme=shields.io)](https://david-dm.org/developit/puredom#info=devDependencies)  
- ` ^ ^ master – develop ^ ^ `
+⤹ `stable` ⥃ `devel.` ⤵︎  
+[![Master Build Status](http://img.shields.io/travis/developit/puredom.svg?style=flat&branch=master)](https://travis-ci.org/developit/puredom)
+[![Develop Build Status](http://img.shields.io/travis/developit/puredom.svg?style=flat&branch=develop&title=dev)](https://travis-ci.org/developit/puredom)
+
+[![Dependency Status](http://img.shields.io/david/developit/puredom.svg?style=flat)](https://david-dm.org/developit/puredom)
+[![devDependency Status](http://img.shields.io/david/dev/developit/puredom.svg?style=flat)](https://david-dm.org/developit/puredom#info=devDependencies)
 
 
 ---
 
 What is Puredom?
 ================
-puredom is a fast, chainable, extensible JavaScript library for web applications.
+puredom is a fast, chainable and extensible JavaScript library for web applications.
 
-In plain english, it makes building developing rich apps using JavaScript, HTML and CSS much easier.
+It makes building developing rich apps using JavaScript, HTML and CSS much easier.
 
 
 ---
@@ -159,7 +161,7 @@ npm install
 **Install the Grunt CLI and JSHint:**  
 If you haven't already, install grunt-cli and jshint globally  
 ```
-sudo npm install -g grunt-cli jshint
+sudo npm install -g grunt-cli
 ```
 
 **Build the library:**  
@@ -201,12 +203,19 @@ License
 
 Changelog
 =========
+**Version 1.3.0** *(Jun 29, 2014)*  
+- Add support for event delegation: `$('body').on('click', 'a', handleLink);`  
+
+**Version 1.2.7** *(May 24, 2014)*  
+- Fix ancient improper use of typeof  
+- Update build & test dependencies  
+
 **Version 1.2.6** *(May 18, 2014)*  
-- Fix puredom.mixin() regression introduced in version 1.2.1
-- Added support for alternative "decorator-first" mixin() syntax
+- Fix puredom.mixin() regression introduced in version 1.2.1  
+- Added support for alternative "decorator-first" mixin() syntax  
 
 **Version 1.2.5** *(May 17, 2014)*  
-- Add Bower & Component support
+- Add Bower & Component support  
 
 **Version 1.2.4** *(Apr 8, 2014)*  
 - Account for encoding specified in a Content-Type response header  
