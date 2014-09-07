@@ -94,19 +94,19 @@ puredom - Light Version
 -----------------------
 >	**[Core](http://puredom.org/docs/symbols/puredom.html)**  
 >	*Selector engine, filters, events, [NodeSelection](http://puredom.org/docs/symbols/puredom.NodeSelection.html)*  
->	
+>
 >	**[EventEmitter](http://puredom.org/docs/symbols/puredom.EventEmitter.html)**  
 >	*Add event support to objects and classes*  
->	
+>
 >	**[LocalStorage](http://puredom.org/docs/symbols/puredom.LocalStorage.html)**  
 >	*Persistent client-side stroage with adapters*  
->	
+>
 >	**[net](http://puredom.org/docs/symbols/puredom.net.html)**  
 >	*HTTP communication (AJAX and JSONP)*  
->	
+>
 >	**[date](http://puredom.org/docs/symbols/puredom.date.html)**  
 >	*Parse and format time and date*  
->	
+>
 >	**Formats**  
 >	*Work with [JSON](http://puredom.org/docs/symbols/puredom.json.html), [XML](http://puredom.org/docs/symbols/puredom.xml.html), [querystrings](http://puredom.org/docs/symbols/puredom.querystring.html),
 >	[text](http://puredom.org/docs/symbols/puredom.text.html) and [cookies](http://puredom.org/docs/symbols/puredom.cookies.html)*  
@@ -120,26 +120,26 @@ Includes everything from the light version, plus:
 
 >	**ControllerManager**  
 >	*Work with controllers in an MVC configuration*  
->	
+>
 >	**RouteManager**  
 >	*Manage controllers based on URL patterns*  
->	
+>
 >	**ViewManager**  
 >	*Register, store, load and template HTML, or JSON views*  
->	
+>
 >	**FormHandler**  
 >	*Manage form population, submission and error handling*  
->	
+>
 >	**i18n**  
 >	*Internationalization & localization*  
->	
+>
 >	**Notifier**  
 >	*Show stylized notifications within the browser window*  
->	
+>
 >	**NativeAPI** *(deprecated)*  
 >	*Dynamically create models for APIs using a simple JSON structure*  
 >	*For an alternative, try [puredom.model](http://github.com/developit/puredom.model) or [puredom.rest](http://github.com/developit/puredom.rest)*  
->	
+>
 >	**TestSuite** *(deprecated)*  
 >	*Run & automate asynchronous tests*  
 
@@ -179,23 +179,23 @@ License
 **puredom is released under a BSD-3-Clause License.**
 
 >	Copyright (c) Socialseek Inc. All rights reserved.
->	
->	Redistribution and use in source and binary forms, with or without modification, 
+>
+>	Redistribution and use in source and binary forms, with or without modification,
 >	are permitted provided that the following conditions are met:  
->	*	Redistributions of source code must retain the above copyright notice, 
+>	*	Redistributions of source code must retain the above copyright notice,
 >		this list of conditions and the following disclaimer.  
->	*	Redistributions in binary form must reproduce the above copyright notice, 
->		this list of conditions and the following disclaimer in the documentation 
+>	*	Redistributions in binary form must reproduce the above copyright notice,
+>		this list of conditions and the following disclaimer in the documentation
 >		and/or other materials provided with the distribution.  
->	*	Neither the name of Socialseek Inc. nor the names of its contributors may be used to endorse 
+>	*	Neither the name of Socialseek Inc. nor the names of its contributors may be used to endorse
 >		or promote products derived from this software without specific prior written permission.  
->	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS 
->	OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
->	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER 
->	OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
->	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
->	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
->	IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
+>	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+>	OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+>	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+>	OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+>	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+>	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+>	IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 >	OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
@@ -203,6 +203,9 @@ License
 
 Changelog
 =========
+**Version 1.4.0** *(Sep 7, 2014)*  
+- BREAKING CHANGE: Corrected signature of EventEmitter#emit() to match Node's implementation: arguments 1-N are passed on to handlers.  
+
 **Version 1.3.0** *(Jun 29, 2014)*  
 - Add support for event delegation: `$('body').on('click', 'a', handleLink);`  
 
