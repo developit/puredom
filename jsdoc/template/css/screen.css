@@ -1,0 +1,1006 @@
+
+/*
+ * BEGIN JSDOC
+ */
+
+/* Start menu */
+div.index {
+	/* position: fixed; */
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 260px;
+	height: 100%;
+	padding: 0;
+	background: #FFF;
+	border-right: 1px solid #AAA;
+	overflow: hidden;
+	z-index: 50;
+}
+
+div.index *.heading1 {
+	padding: 8px 0 0 0;
+}
+
+div.index div.menu,
+.index .menu nav {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+div.index div.menu {
+	overflow: hidden;
+}
+	.index .menu h2 {
+		position: absolute;
+		left: 0;
+		top: 0;
+		padding: 3px 0 0;
+		margin: 0;
+		width: 100%;
+		height: 56px;
+		border-top: 1px solid #EEE;
+		background-color: #BBB;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#CCCCCC), to(#999999)); /* Saf4+, Chrome */
+		background-image: -webkit-linear-gradient(top, #CCCCCC, #999999); /* Chrome 10+, Saf5.1+, iOS 5+ */
+		background-image:    -moz-linear-gradient(top, #CCCCCC, #999999); /* FF3.6 */
+		background-image:     -ms-linear-gradient(top, #CCCCCC, #999999); /* IE10 */
+		background-image:      -o-linear-gradient(top, #CCCCCC, #999999); /* Opera 11.10+ */
+		background-image:         linear-gradient(top, #CCCCCC, #999999);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#CCCCCC', EndColorStr='#999999'); /* IE6-IE9 */		border-bottom: 1px solid #555;
+		color: #FFF;
+		font-size: 160%;
+		-webkit-text-shadow: 0 -1px 0 rgba(0,0,0,0.55);
+		-moz-text-shadow: 0 -1px 0 rgba(0,0,0,0.55);
+		text-shadow: 0 -1px 0 rgba(0,0,0,0.55);
+		text-align: left;
+		text-indent: 5%;
+		z-index: 100;
+	}
+	.index .menu input,
+	.index .menu input:focus {
+		position: absolute;
+		display: block;
+		left: 5%;
+		top: 30px;
+		width: 90%;
+		padding: 2px 0;
+		font-size: 120%;
+		background: #FFF;
+		border: 1px solid #999;
+		border-bottom-color: #AAA;
+		-webkit-box-shadow: inset 0 1px 5px #999, 0 1px 0 rgba(255,255,255,0.5);
+		-moz-box-shadow: inset 0 1px 5px #999, 0 1px 0 rgba(255,255,255,0.5);
+		box-shadow: inset 0 1px 5px #999, 0 1px 0 rgba(255,255,255,0.5);
+		-webkit-border-radius: 11px;
+		-moz-border-radius: 11px;
+		border-radius: 11px;
+		-moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+		-webkit-outline: none;
+		-moz-outline: none;
+		outline: none;
+		color: #333;
+		text-align: left;
+		text-indent: 10px;
+		z-index: 100;
+	}
+	body .index .menu input:focus {
+		border-color: #79B;
+		border-bottom-color: #8AC;
+		-webkit-box-shadow: inset 0 1px 5px #789, 0 1px 0 rgba(255,255,255,0.5), 0 0 4px #ACF, 0 0 4px #ACF;
+		-moz-box-shadow: inset 0 1px 5px #789, 0 1px 0 rgba(255,255,255,0.5), 0 0 4px #ACF, 0 0 4px #ACF;
+		box-shadow: inset 0 1px 5px #789, 0 1px 0 rgba(255,255,255,0.5), 0 0 4px #ACF, 0 0 4px #ACF;
+	}
+
+
+body .index .menu nav {
+	top: 60px;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+	.index .menu nav ul {
+		padding: 0 0 20px;
+		/* padding: 61px 0 40px; */
+	}
+		.index .menu nav ul li {
+			padding: 0;
+			margin: 0;
+			overflow: hidden;
+		}
+			.index .menu nav ul li a {
+				display: block;
+				padding: 5px 10px;
+				margin: 0;
+				overflow: hidden;
+				border: none;
+				border-top: 1px solid #FFF;
+				border-bottom: 1px solid #DDD;
+				color: #444;
+				font-weight: normal;
+				font-size: 120%;
+				text-decoration: none;
+				text-indent: 0;
+				white-space: nowrap;
+				-webkit-user-select: none;
+				-webkit-tap-highlight-color: rgba(0,0,0,0);
+			}
+			.index .menu nav ul li a:hover,
+			.index .menu nav ul li a:focus,
+			.index .menu nav ul li a:active {
+				border-top-color: #EEE;
+				background: #EEE;
+				text-decoration: none;
+			}
+			body .index .menu nav ul li.current a,
+			body .index .menu nav ul li a:target {
+				background-color: #AACCFF;
+				background-image: -webkit-gradient(linear, left top, left bottom, from(#AACCFF), to(#557799)); /* Saf4+, Chrome */
+				background-image: -webkit-linear-gradient(top, #AACCFF, #557799); /* Chrome 10+, Saf5.1+, iOS 5+ */
+				background-image:    -moz-linear-gradient(top, #AACCFF, #557799); /* FF3.6 */
+				background-image:     -ms-linear-gradient(top, #AACCFF, #557799); /* IE10 */
+				background-image:      -o-linear-gradient(top, #AACCFF, #557799); /* Opera 11.10+ */
+				background-image:         linear-gradient(top, #AACCFF, #557799);
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AACCFF', EndColorStr='#557799'); /* IE6-IE9 */
+				border-top-color: #AACCFF;
+				border-bottom-color: #456;
+				color: #FFF;
+				-webkit-text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+				-moz-text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+				text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+				text-decoration: none;
+			}
+
+
+
+
+div.index div.indexLinks {
+	position: absolute;
+	top: 7px;
+	right: 10px;
+	z-index: 150;
+}
+	div.index div.indexLinks a,
+	body div.index div.indexLinks a:active:focus {
+		padding: 4px 8px 3px;
+		background-color: #888;
+		background-image: -webkit-linear-gradient(top, #AAAAAA, #888888);
+		-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,0.35);
+		-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,0.35);
+		-o-box-shadow: inset 0 1px 4px rgba(0,0,0,0.35);
+		box-shadow: inset 0 1px 4px rgba(0,0,0,0.35);
+		border: none;
+		-webkit-border-radius: 9px;
+		-moz-border-radius: 9px;
+		-o-border-radius: 9px;
+		border-radius: 9px;
+		color: #EEE;
+		-webkit-text-shadow: 0 -1px 0 rgba(0,0,0,0.4);
+		-moz-text-shadow: 0 -1px 0 rgba(0,0,0,0.4);
+		-o-text-shadow: 0 -1px 0 rgba(0,0,0,0.4);
+		text-shadow: 0 -1px 0 rgba(0,0,0,0.4);
+		text-decoration: none;
+	}
+	body div.index div.indexLinks a:hover {
+		text-decoration: none;
+	}
+	div.index div.indexLinks a:active,
+	div.index div.indexLinks a:focus,
+	body div.index div.indexLinks a.current {
+		background-color: #666;
+		background-image: -webkit-linear-gradient(top, #888888, #666666);
+		color: #CCC;
+	}
+	
+
+
+div.index ul.classList a {
+	line-height: 1.3em;
+}
+
+div.index ul.classList a + a {
+	margin-left: 0.5em;
+}
+
+.fineprint {
+	display: none;
+}
+
+div.indexStatic {
+	display: none;
+}
+/* End menu */
+
+
+#menuButton {
+	display: none;
+}
+
+
+#bodywrap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+
+
+
+
+/* Start content */
+div.content {
+	position: absolute;
+	left: 261px;
+	top: 0;
+	width: auto;
+	height: 100%;
+	background: #EEE;
+	overflow: auto;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	/*
+	margin: 0 0 0 auto;
+	width: 70%;
+	*/
+}
+div.innerContent {
+	padding: 10px 0 0;
+}
+
+div.content ul,
+div.content ol {
+	margin-bottom: 3em;
+}
+
+div.content ul.methodDetail {
+	margin-bottom: 0;
+}
+	/** a method */
+	div.content ul.methodDetail li {
+		/*
+		border-top: 1px dotted #DDD;
+		border-bottom: 1px dotted #DDD;
+		border-left: 5px solid #EEE;
+		*/
+		border-bottom: 1px dotted #DDD;
+		padding: 14px 5px 35px;
+		margin: 20px 0;
+	}
+		div.content ul.methodDetail li div.hr {
+			display: none;
+		}
+		
+		div.content .methodMemberOf {
+			display: none;
+		}
+	
+		/** method parameters */
+		div.content ul.methodDetail dl.detailList.params {
+			position: relative;
+			border: 1px dotted #D5D5D5;
+			border-top: none;
+			padding: 0;
+			margin: 32px 4px 0;
+		}
+			/** title */
+			div.content ul.methodDetail dl.detailList.params dt.heading {
+				position: absolute;
+				left: -14em;
+				top: -26px;
+				margin: 0 0 0 -1px;
+				float: none;
+				font-size: 120%;
+				color: #999;
+				border-top: none;
+				margin-top: 0;
+			}
+			div.content ul.methodDetail dl.detailList.params dt,
+			body div.content ul.methodDetail dl.detailList.params dd {
+				position: relative;
+				border-top: 1px dotted #D5D5D5;
+				padding: 4px 0 0;
+				margin: 0;
+			}
+			/** param [base] */
+			div.content ul.methodDetail dl.detailList.params dt {
+				float: left;
+				clear: none;
+				padding-left: 14em;
+			}
+			body div.content ul.methodDetail dl.detailList.params dd {
+				display: block;
+				float: none;
+				clear: none;
+				margin-left: 28em;
+				padding-left: 10px;
+				padding-bottom: 4px;
+				min-height: 1.2em;
+				color: #666;
+			}
+			/** param type */
+			div.content ul.methodDetail dl.detailList.params dt span.light.fixedFont {
+				display: block;
+				position: absolute;
+				left: 0;
+				top: 4px;
+				width: 14em;
+				padding: 0 5px 0 0;
+				text-align: right;
+				color: #BBB;
+				font-style: italic;
+				font-weight: normal;
+			}
+			/** param name */
+			div.content ul.methodDetail dl.detailList.params dt b {
+				display: block;
+				float: left;
+				clear: none;
+				width: 12em;
+				padding: 0 0 0 5px;
+				text-align: left;
+				color: #496;
+				font-weight: bold;
+				font-size: 120%;
+			}
+			/** param optionality */
+			div.content ul.methodDetail dl.detailList.params dt i {
+				position: relative;
+				padding: 1px 9px 0 8px;
+				margin: -1px 6px 0 0;
+				float: left;
+				clear: none;
+				color: #FFF;
+				font-style: normal;
+				font-weight: normal;
+				text-transform: lowercase;
+				background: #48C;
+				-webkit-border-radius: 0.7em;
+				-moz-border-radius: 0.7em;
+				-o-border-radius: 0.7em;
+				border-radius: 0.7em;
+			}
+		/** method return value */
+		div.content ul.methodDetail dl.detailList.nomargin {
+			padding: 8px 5px 5px;
+			margin: 0;
+			color: #666;
+		}
+			div.content ul.methodDetail dl.detailList.nomargin dt.heading {
+				display: block;
+				font-size: 120%;
+				color: #999;
+			}
+			div.content ul.methodDetail dl.detailList.nomargin dd {
+				display: block;
+				padding-left: 2em;
+			}
+				/*
+				div.content ul.methodDetail dl.detailList.nomargin .light.fixedFont {
+					display: block;
+					float: left;
+					clear: none;
+					width: 12em;
+					padding: 0 5px;
+					text-align: right;
+				}
+				*/
+		/** method description */
+		div.content ul.methodDetail .description {
+			margin: 0;
+			padding: 8px 10px 7px;
+			background: #F7F8F9;
+			-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,0.15);
+			-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,0.15);
+			-o-box-shadow: inset 0 1px 4px rgba(0,0,0,0.15);
+			box-shadow: inset 0 1px 4px rgba(0,0,0,0.15);
+			-webkit-border-radius: 3px;
+			-moz-border-radius: 3px;
+			-o-border-radius: 3px;
+			border-radius: 3px;
+			color: #666;
+			-webkit-text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+			-moz-text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+			-o-text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+			text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+			font-size: 100%;
+		}
+		/** method signature */
+		ul.methodDetail li div.fixedFont.heading {
+			position: relative;
+			font-size: 155%;
+			color: #777;
+			margin: 0 !important;
+			padding: 3px;
+			overflow: visible;
+		}
+		/** method namespace prefix (foo.bar.) */
+		ul.methodDetail li div.fixedFont.heading .methodNamespacePrefix {
+			color: #ABC;
+			font-weight: normal;
+			display: none;
+		}
+		/** method [property] type */
+		ul.methodDetail li div.fixedFont.heading .methodPropertyType {
+			position: absolute;
+			left: 0;
+			top: -11px;
+			color: #496;
+			font-weight: normal;
+			font-style: normal;
+			font-size: 63%;
+		}
+			ul.methodDetail li div.fixedFont.heading .methodPropertyType a {
+				color: #496;
+				font-weight: normal;
+				font-style: normal;
+				text-decoration: none;
+				border-bottom: 1px dotted #DDD;
+			}
+		/** method state [public/static/private/inner] */
+		ul.methodDetail li div.fixedFont.heading .methodModifier {
+			display: inline;
+			color: #BBB;
+			font-size: 75%;
+			font-weight: normal;
+		}
+		/** method name */
+		ul.methodDetail li div.fixedFont.heading b {
+			font-size: 115%;
+			color: #369;
+			font-weight: bold;
+		}
+
+div.content .classTitle {
+	position: relative;
+	margin: 0;
+  	padding: 0 10px 20px;
+  	color: #666;
+}
+
+div.content div.intro {
+	margin: 15px 0 45px
+}
+
+div.content ul.summary {
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid #CCC;
+	background: #FFF;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+/*
+div.content ul *.classname a,
+div.content ul *.filename a {
+	font-family: Consolas, "Courier New", Courier, monospace;
+	text-decoration: none;
+	font-weight: bold;
+}
+div.content ul *.classname a:hover,
+div.content ul *.filename a:hover {
+	text-decoration: underline;
+}
+*/
+
+div.content div.props {
+	position: relative;
+	margin-bottom: 2.5em;
+	padding: 10px 15px 15px 15px;
+	overflow: hidden;
+}
+
+div.content div.hr {
+	margin: 0 10px 0 0;
+	height: 4em;
+}
+
+
+
+table.summaryTable {
+	position: relative;
+	width: 100%;
+	border-collapse: collapse;
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	-ms-box-sizing: content-box;
+	-o-box-sizing: content-box;
+	-icab-box-sizing: content-box;
+	-khtml-box-sizing: content-box; 
+}
+
+*.sectionTitle {
+	padding: 0 10px 10px 0;
+}
+caption.sectionTitle {
+	padding-left: 10px;
+}
+
+table.summaryTable td,
+table.summaryTable th {
+	padding: 0px 10px 10px 10px;
+}
+table.summaryTable tr:last-child td {
+	padding-bottom: 0;
+}
+
+table.summaryTable td.attributes {
+	width: 14em;
+	color: #BBB;
+	text-align: right;
+}
+/*
+table.summaryTable td.nameDescription {
+	width: 65%
+}
+*/
+	.summaryTable td.nameDescription .fixedFont {
+		color: #A0A4A8;
+		font-size: 120%;
+		font-weight: normal;
+		border-left: none;
+	}
+	.summaryTable td.nameDescription .fixedFont a {
+		font-weight: bold;
+		margin: 0;
+		border-bottom: 1px dotted #ABC;
+		text-decoration: none;
+	}
+	.summaryTable td.nameDescription .description {
+		padding: 0 0 0 10px;
+		margin: 0;
+		/*
+		border-left: 1px dotted #DDD;
+		*/
+		color: #496;
+		font-size: 100%;
+	}
+
+
+
+dl.detailList {
+	margin-top: 0.5em;
+}
+
+dl.detailList.nomargin + dl.detailList.nomargin {
+	margin-top: 0;
+}
+
+dl.detailList dt {
+	display: inline;
+	margin-right: 5px;
+}
+
+dl.detailList dt:before {
+	display: block;
+	content: "";
+}
+
+dl.detailList dd {
+	display: inline;
+}
+
+dl.detailList.params dt {
+	display: block;
+}
+dl.detailList.params dd {
+	display: block;
+	padding-left: 2em;
+	padding-bottom: 0.4em;
+}
+
+
+
+
+ul.fileList,
+ul#ClassList2 {
+	padding: 0;
+	margin: 0 10px;
+	background: #FFF;
+	border: 1px solid #CCC;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+ul.fileList li:first-child a,
+ul#ClassList2 li:first-child a {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+ul.fileList li:last-child a,
+ul#ClassList2 li:last-child a {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom-width: 0;
+}
+	ul.fileList li,
+	ul.fileList li h2,
+	ul#ClassList2 li,
+	ul#ClassList2 li h2 {
+		display: block;
+		padding: 0;
+		margin: 0;
+		font-size: 100%;
+		list-style-type: none;
+	}
+		ul.fileList li dl,
+		ul#ClassList2 li dl {
+			display: none;
+			height: 0;
+		}
+		ul.fileList li a,
+		ul#ClassList2 li a {
+			display: block;
+			padding: 11px 10px 10px;
+			border: none;
+			background: #FFF;
+			border-bottom: 1px solid #DDD;
+			border-top: 1px solid #FFF;
+			color: #444;
+			font-size: 130%;
+			text-decoration: none !important;
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-webkit-tap-highlight-color: rgba(0,0,0,0);
+		}
+		body ul.fileList li a:hover,
+		body ul#ClassList2 li a:hover {
+			text-decoration: none !important;
+		}
+		ul.fileList li a:active,
+		ul.fileList li a:focus,
+		ul#ClassList2 li a:active,
+		ul#ClassList2 li a:focus {
+			background-color: #AACCFF;
+			background-image: -webkit-gradient(linear, left top, left bottom, from(#AACCFF), to(#557799)); /* Saf4+, Chrome */
+			background-image: -webkit-linear-gradient(top, #AACCFF, #557799); /* Chrome 10+, Saf5.1+, iOS 5+ */
+			background-image:    -moz-linear-gradient(top, #AACCFF, #557799); /* FF3.6 */
+			background-image:     -ms-linear-gradient(top, #AACCFF, #557799); /* IE10 */
+			background-image:      -o-linear-gradient(top, #AACCFF, #557799); /* Opera 11.10+ */
+			background-image:         linear-gradient(top, #AACCFF, #557799);
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#AACCFF', EndColorStr='#557799'); /* IE6-IE9 */
+			border-top-color: #AACCFF;
+			border-bottom-color: #456;
+			color: #FFF;
+		}
+
+
+
+.fixedFont.heading {
+	margin-bottom: 0.5em;
+}
+
+
+
+pre, code, .fixedFont {
+	font-family: Monaco, 'Panic Sans', Menlo, 'Inconsolata', Consolas, freemono, 'Courier New', courier, mono;
+}
+code {
+	background: #EEE;
+	border: 1px solid #DDD;
+}
+
+pre.multiline,
+code.multiline,
+.fixedFont.multiline {
+	/*
+	display: inline-block;
+	*display: table-cell;
+	*/
+	display: block;
+	max-width: 100%;
+	margin: 0 0 0 4px;
+	padding: 0 0 0 4px;
+	background: none;
+	border: none;
+	border-left: 1px solid #CCC;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+body pre.code {
+	max-height: 14em;
+	font-family: Monaco, 'Panic Sans', Menlo, 'Inconsolata', Consolas, freemono, 'Courier New', courier, mono;
+	margin: 5px 1px 7px;
+	padding: 7px 10px;
+	background: #383838;
+	-webkit-box-shadow: inset 0 1px 6px #000;
+	-moz-box-shadow: inset 0 1px 6px #000;
+	-o-box-shadow: inset 0 1px 6px #000;
+	box-shadow: inset 0 1px 6px #000;
+	border: none;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	color: #AAFFB9;
+}
+/* End content */
+
+.clear {
+	clear: both;
+	width: 100%;
+	min-height: 0;
+}
+
+/*
+ * END JSDOC
+ */
+
+
+
+
+
+
+
+/*
+ * START MEDIA QUERY CHECK
+ */
+
+.cssLoadCheck {
+	position: absolute;
+	top: -99999px;
+	left: -99999px;
+	border: 0;
+	width: 100px;
+	padding: 0;
+	overflow: hidden;
+}
+
+/*
+ * END MEDIA QUERY CHECK
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (max-width:800px) {
+	#bodywrap {
+		position: relative;
+		width: 100%;
+		background: #000;
+		overflow: visible;
+	}
+
+	html, body {
+		background: #EEE;
+		height: auto !important;
+		overflow: auto !important;
+	}
+	
+	/*
+	body #bodywrap,
+	body .content {
+		-webkit-transition: all 300ms ease-in-out;
+		-moz-transition: all 300ms ease-in-out;
+		transition: all 300ms ease-in-out;
+	}
+	
+	body.menu-open #bodywrap {
+		-webkit-transform: translate3d(280px, 0, 0);
+		-moz-transform: translate3d(280px, 0, 0);
+		-ms-transform: translate3d(280px, 0, 0);
+		-o-transform: translate3d(280px, 0, 0);
+		transform: translate3d(280px, 0, 0);
+	}
+	*/
+	
+	body .indexMenu,
+	body.menu-open .content {
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+	}
+	
+	body .indexMenu,
+	body #menuButton,
+	body .content {
+		-webkit-transition: all 300ms ease-in-out;
+		-moz-transition: all 300ms ease-in-out;
+		transition: all 300ms ease-in-out;
+	}
+	
+	body.menu-open .indexMenu,
+	body.menu-open #menuButton,
+	body.menu-open .content {
+		-webkit-transform: translate3d(280px, 0, 0);
+		-moz-transform: translate3d(280px, 0, 0);
+		-ms-transform: translate3d(280px, 0, 0);
+		-o-transform: translate3d(280px, 0, 0);
+		transform: translate3d(280px, 0, 0);
+	}
+	
+	#menuButton {
+		position: fixed;
+		display: inline-block;
+		left: 0;
+		top: 0;
+		padding: 0;
+		margin: 0;
+		text-decoration: none;
+		border: none;
+		z-index: 999;
+		cursor: pointer;
+	}
+	#menuButton strong {
+		position: relative;
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background: #000;
+		color: #000;
+		font-size: 0;
+		font-weight: bold;
+		letter-spacing: 3px;
+		line-height: 36px;
+		text-indent: 10px;
+		-webkit-transform-origin: 50% 50%;
+		transform-origin: 50% 50%;
+		-webkit-transform: rotate(-90deg);
+		transform: rotate(-90deg);
+	}
+	#menuButton strong::before {
+		color: #FFF;
+		font-size: 20px;
+		content: '|||';
+	}
+	
+	body.menu-open #menuButton {
+		width: 100%;
+		height: 100%;
+	}
+	
+	body .indexMenu {
+		position: fixed;
+		left: -280px;
+		top: 0;
+		width: 279px;
+		height: 100%;
+		background: #FFF;
+		overflow: auto;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		z-index: 1000;
+	}
+	
+	body .content {
+		position: relative !important;
+		left: 0 !important;
+		top: 0 !important;
+		width: 100% !important;
+		height: auto !important;
+		padding: 0;
+		overflow: hidden !important;
+		overflow-y: hidden !important;
+		-webkit-overflow-scrolling: none !important;
+	}
+	body.menu-open .content {
+		opacity: 0.15;
+	}
+	
+	body .innerContent {
+		padding: 40px 0 0 !important;
+	}
+	
+	body div.content .classTitle {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-ms-box-sizing: border-box;
+		box-sizing: border-box;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 40px;
+		padding: 2px 5px 2px 45px;
+		margin: 0;
+		letter-spacing: 0;
+		line-height: 16px;
+		background: #333;
+		-webkit-box-shadow: 0 0 3px rgba(0,0,0,0.5);
+		box-shadow: 0 0 3px rgba(0,0,0,0.5);
+		color: #999;
+		font-size: 90%;
+		font-weight: normal;
+		z-index: 800;
+		text-shadow: none;
+		text-align: center;
+	}
+		body div.content .classTitle span {
+			display: block;
+			font-size: 140%;
+			color: #FFF;
+			text-shadow: none;
+			padding: 0;
+			letter-spacing: 0;
+			font-weight: normal;
+		}
+	
+	body thead,
+	body td.attributes {
+		display: none !important;
+	}
+	
+	body div.content div.props {
+		margin-left: 2px;
+		margin-right: 2px;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+	
+	body ul.methodDetail li div.fixedFont.heading {
+		font-size: 120%;
+	}
+	
+	body div.content ul.methodDetail dl.detailList.nomargin dd {
+		padding-left: 0.6em;
+	}
+	
+	div.content ul.methodDetail dl.detailList.params dt,
+	body div.content ul.methodDetail dl.detailList.params dd {
+		float: none !important;
+		padding: 3px 5px !important;
+		margin: 0 !important;
+	}
+	body div.content ul.methodDetail dl.detailList.params dd {
+		border-top: none !important;
+	}
+	body div.content ul.methodDetail dl.detailList.params dt b,
+	body div.content ul.methodDetail dl.detailList.params dt i,
+	body div.content ul.methodDetail dl.detailList.params dt span.light.fixedFont {
+		display: inline-block !important;
+		position: relative !important;
+		top: 0 !important;
+		width: auto !important;
+		float: none !important;
+	}
+	/*
+	body div.content ul.methodDetail dl.detailList.params {
+		border-top: 1px dotted #D5D5D5;
+	}
+	*/
+	
+	/*
+	body pre.code {
+		display: block !important;
+		max-width: 100%;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	*/
+}

@@ -130,6 +130,13 @@ module.exports = function(grunt) {
 
 
 		shell : {
+			jsdoc : {
+				options : {
+					stdout : true
+				},
+				command : 'node node_modules/jsdoc2/app/run.js -c=jsdoc/jsdoc.conf'
+			},
+
 			compress : {
 				options : {
 					stdout : true
@@ -180,7 +187,13 @@ module.exports = function(grunt) {
 		'concat:light',
 		'uglify:light',
 		'concat:full',
-		'uglify:full'
+		'uglify:full',
+		'docs'
+	]);
+
+
+	grunt.registerTask('docs', [
+		'shell:jsdoc'
 	]);
 
 
