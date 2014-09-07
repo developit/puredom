@@ -1,4 +1,4 @@
-<html><head><meta http-equiv="content-type" content="text/html; charset=utf8"> <style>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
 	.KEYW {color: #933;}
 	.COMM {color: #bbb; font-style: italic;}
 	.NUMB {color: #393;}
@@ -7,17 +7,17 @@
 	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
 	</style></head><body><pre><span class='line'>  1</span> <span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">$</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>  2</span> </span><span class="WHIT">	</span><span class="COMM">/** @exports $ as puredom */</span><span class="WHIT">
-<span class='line'>  3</span> </span><span class="WHIT">	
-<span class='line'>  4</span> 	</span><span class="COMM">/**	Creates a new EventEmitter instance.
+<span class='line'>  3</span> 
+<span class='line'>  4</span> </span><span class="WHIT">	</span><span class="COMM">/**	Creates a new EventEmitter instance.
 <span class='line'>  5</span> 	 *	@class Fire events and listen for fired events.
 <span class='line'>  6</span> 	 */</span><span class="WHIT">
 <span class='line'>  7</span> </span><span class="WHIT">	</span><span class="NAME">$.EventEmitter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">EventEmitter</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>  8</span> </span><span class="WHIT">		</span><span class="NAME">this._eventRegistry</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>  9</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 10</span> </span><span class="WHIT">	
-<span class='line'> 11</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$.EventEmitter.prototype</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 12</span> </span><span class="WHIT">	
-<span class='line'> 13</span> 	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">multi</span><span class="PUNC">(</span><span class="NAME">inst</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">handler</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">collector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 10</span> 
+<span class='line'> 11</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$.EventEmitter.prototype</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 12</span> 
+<span class='line'> 13</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">multi</span><span class="PUNC">(</span><span class="NAME">inst</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">handler</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">collector</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 14</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">o</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 15</span> </span><span class="WHIT">			</span><span class="NAME">t</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ret</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 16</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">o</span><span class="PUNC">===</span><span class="STRN">'object'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -43,14 +43,14 @@
 <span class='line'> 36</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 37</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 38</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 39</span> </span><span class="WHIT">	
-<span class='line'> 40</span> 	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">normalizeType</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 39</span> 
+<span class='line'> 40</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">normalizeType</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 41</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">replace</span><span class="PUNC">(</span><span class="REGX">/(^on|\s+)/gim</span><span class="PUNC">,</span><span class="STRN">''</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 42</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 43</span> </span><span class="WHIT">	
-<span class='line'> 44</span> 	</span><span class="NAME">$.extend</span><span class="PUNC">(</span><span class="NAME">proto</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** @lends puredom.EventEmitter# */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 45</span> </span><span class="WHIT">	
-<span class='line'> 46</span> 		</span><span class="COMM">/** Register an event listener on the instance.
+<span class='line'> 43</span> 
+<span class='line'> 44</span> </span><span class="WHIT">	</span><span class="NAME">$.extend</span><span class="PUNC">(</span><span class="NAME">proto</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** @lends puredom.EventEmitter# */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 45</span> 
+<span class='line'> 46</span> </span><span class="WHIT">		</span><span class="COMM">/** Register an event listener on the instance.
 <span class='line'> 47</span> 		 *	@param {String} type		An event type, or a comma-seprated list of event types.
 <span class='line'> 48</span> 		 *	@param {Function} handler	A function to call in response to events of the given type.
 <span class='line'> 49</span> 		 *	@returns {this}
@@ -65,9 +65,9 @@
 <span class='line'> 58</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 59</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 60</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 61</span> </span><span class="WHIT">		
-<span class='line'> 62</span> 		
-<span class='line'> 63</span> 		</span><span class="COMM">/**	A version of {@link puredom.EventEmitter#on .on()} that removes handlers once they are called. 
+<span class='line'> 61</span> 
+<span class='line'> 62</span> 
+<span class='line'> 63</span> </span><span class="WHIT">		</span><span class="COMM">/**	A version of {@link puredom.EventEmitter#on .on()} that removes handlers once they are called.
 <span class='line'> 64</span> 		 *	@see puredom.EventEmitter#on
 <span class='line'> 65</span> 		 *	@param {String} type		An event type, or a comma-seprated list of event types.
 <span class='line'> 66</span> 		 *	@param {Function} handler	A function to call in response to events of the given type.  Will only be called once.
@@ -116,71 +116,74 @@
 <span class='line'>109</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'>110</span> </span><span class="WHIT">				</span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">r</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">rval</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>111</span> </span><span class="WHIT">			</span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">normalizeType</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>112</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">$.isArray</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>113</span> </span><span class="WHIT">				</span><span class="NAME">args</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Array.prototype.slice.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>114</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>115</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">multi</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'emit'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>116</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Array.prototype.concat.apply</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>117</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>118</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">=</span><span class="NAME">this._eventRegistry.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">--</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>119</span> </span><span class="WHIT">				</span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._eventRegistry</span><span class="PUNC">[</span><span class="NAME">x</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>120</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">r.type</span><span class="PUNC">===</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>121</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">returns.length</span><span class="PUNC">===</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>122</span> </span><span class="WHIT">						</span><span class="NAME">returns.falsy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">returns.falsey</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">returns.truthy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>123</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>124</span> </span><span class="WHIT">					</span><span class="NAME">rval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">r.handler.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>125</span> </span><span class="WHIT">					</span><span class="NAME">returns.push</span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>126</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">===</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>127</span> </span><span class="WHIT">						</span><span class="NAME">returns.falsy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">returns.falsey</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>128</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>129</span> </span><span class="WHIT">					</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">===</span><span class="KEYW">false</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>130</span> </span><span class="WHIT">						</span><span class="NAME">returns.truthy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>131</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>132</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">===</span><span class="KEYW">false</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>133</span> </span><span class="WHIT">						</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>134</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>135</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>136</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>137</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>138</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>139</span> 
-<span class='line'>140</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>141</span> </span><span class="WHIT">	
-<span class='line'>142</span> 	
-<span class='line'>143</span> 	</span><span class="NAME">$.forEach</span><span class="PUNC">(</span><span class="COMM">/** @lends puredom.EventEmitter# */</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>144</span> </span><span class="WHIT">		
-<span class='line'>145</span> 		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#on on()}
-<span class='line'>146</span> 		 *	@function
-<span class='line'>147</span> 		 *	@private
-<span class='line'>148</span> 		 */</span><span class="WHIT">
-<span class='line'>149</span> </span><span class="WHIT">		</span><span class="NAME">addListener</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'on'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">			</span><span class="NAME">args</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Array.prototype.slice.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">multi</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'emit'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Array.prototype.concat.apply</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">=</span><span class="NAME">this._eventRegistry.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">--</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">				</span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this._eventRegistry</span><span class="PUNC">[</span><span class="NAME">x</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">r.type</span><span class="PUNC">===</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">returns.length</span><span class="PUNC">===</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">						</span><span class="NAME">returns.falsy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">returns.falsey</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">returns.truthy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">					</span><span class="NAME">rval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">r.handler.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">					</span><span class="NAME">returns.push</span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">===</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">						</span><span class="NAME">returns.falsy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">returns.falsey</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">					</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">===</span><span class="KEYW">false</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">						</span><span class="NAME">returns.truthy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rval</span><span class="PUNC">===</span><span class="KEYW">false</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">						</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">returns</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>137</span> 
+<span class='line'>138</span> </span><span class="WHIT">		</span><span class="COMM">/**	Deprecated alternative version of {@link puredom.EventEmitter#emit emit()} that
+<span class='line'>139</span> 		 *	accepts an Array of event parameters as the second argument.
+<span class='line'>140</span> 		 *	@function
+<span class='line'>141</span> 		 *	@private
+<span class='line'>142</span> 		 *	@deprecated
+<span class='line'>143</span> 		 */</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">		</span><span class="NAME">fireEvent</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.emit.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">[</span><span class="NAME">type</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">concat</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>147</span> 
+<span class='line'>148</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>149</span> 
 <span class='line'>150</span> 
-<span class='line'>151</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#on on()}
-<span class='line'>152</span> 		 *	@function
-<span class='line'>153</span> 		 *	@private
-<span class='line'>154</span> 		 */</span><span class="WHIT">
-<span class='line'>155</span> </span><span class="WHIT">		</span><span class="NAME">addEventListener</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'on'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>156</span> 
-<span class='line'>157</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#removeListener removeListener()}
-<span class='line'>158</span> 		 *	@function
-<span class='line'>159</span> 		 *	@private
-<span class='line'>160</span> 		 */</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">		</span><span class="NAME">removeEventListener</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'removeListener'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>162</span> 
-<span class='line'>163</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#emit emit()}
-<span class='line'>164</span> 		 *	@function
-<span class='line'>165</span> 		 *	@private
-<span class='line'>166</span> 		 */</span><span class="WHIT">
-<span class='line'>167</span> </span><span class="WHIT">		</span><span class="NAME">trigger</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'emit'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>168</span> </span><span class="WHIT">	
-<span class='line'>169</span> 		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#emit emit()}
-<span class='line'>170</span> 		 *	@function
-<span class='line'>171</span> 		 *	@private
-<span class='line'>172</span> 		 */</span><span class="WHIT">
-<span class='line'>173</span> </span><span class="WHIT">		</span><span class="NAME">fireEvent</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'emit'</span><span class="WHIT">
-<span class='line'>174</span> </span><span class="WHIT">		
-<span class='line'>175</span> 	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">alias</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">key</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>176</span> </span><span class="WHIT">		</span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">alias</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>177</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>178</span> </span><span class="WHIT">	
-<span class='line'>179</span> </span><span class="PUNC">}</span><span class="PUNC">(</span><span class="NAME">puredom</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>151</span> </span><span class="WHIT">	</span><span class="NAME">$.forEach</span><span class="PUNC">(</span><span class="COMM">/** @lends puredom.EventEmitter# */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>152</span> 
+<span class='line'>153</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#on on()}
+<span class='line'>154</span> 		 *	@function
+<span class='line'>155</span> 		 *	@private
+<span class='line'>156</span> 		 */</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">		</span><span class="NAME">addListener</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'on'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>158</span> 
+<span class='line'>159</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#on on()}
+<span class='line'>160</span> 		 *	@function
+<span class='line'>161</span> 		 *	@private
+<span class='line'>162</span> 		 */</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">		</span><span class="NAME">addEventListener</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'on'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>164</span> 
+<span class='line'>165</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#removeListener removeListener()}
+<span class='line'>166</span> 		 *	@function
+<span class='line'>167</span> 		 *	@private
+<span class='line'>168</span> 		 */</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">		</span><span class="NAME">removeEventListener</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'removeListener'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>170</span> 
+<span class='line'>171</span> </span><span class="WHIT">		</span><span class="COMM">/**	Alias of {@link puredom.EventEmitter#emit emit()}
+<span class='line'>172</span> 		 *	@function
+<span class='line'>173</span> 		 *	@private
+<span class='line'>174</span> 		 */</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">		</span><span class="NAME">trigger</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'emit'</span><span class="WHIT">
+<span class='line'>176</span> 
+<span class='line'>177</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">alias</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">key</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">		</span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">alias</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>180</span> 
+<span class='line'>181</span> </span><span class="PUNC">}</span><span class="PUNC">(</span><span class="NAME">puredom</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span> </span></pre></body></html>
