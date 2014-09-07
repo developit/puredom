@@ -24,9 +24,16 @@
     "**/.*",
     "node_modules",
     "bower_components",
+    "src",
     "test",
     "tests",
     "website",
-    "docs"
+    "docs",
+    "jsdoc",
+    "component.json",
+    "Gruntfile.js",
+    "dev-server.js",
+    "changelog",
+    "package.json"
   ]
 }
