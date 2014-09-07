@@ -4954,16 +4954,16 @@ puredom.extend(puredom, /** @lends puredom */ {
 });
 (function($) {
 	/** @exports $ as puredom */
-	
+
 	/**	Creates a new EventEmitter instance.
 	 *	@class Fire events and listen for fired events.
 	 */
 	$.EventEmitter = function EventEmitter() {
 		this._eventRegistry = [];
 	};
-	
+
 	var proto = $.EventEmitter.prototype;
-	
+
 	function multi(inst, func, type, handler, collector) {
 		var o = typeof type,
 			t, i, ret;
@@ -4990,13 +4990,13 @@ puredom.extend(puredom, /** @lends puredom */ {
 		}
 		return false;
 	}
-	
+
 	function normalizeType(type) {
 		return String(type).toLowerCase().replace(/(^on|\s+)/gim,'');
 	}
-	
+
 	$.extend(proto, /** @lends puredom.EventEmitter# */ {
-	
+
 		/** Register an event listener on the instance.
 		 *	@param {String} type		An event type, or a comma-seprated list of event types.
 		 *	@param {Function} handler	A function to call in response to events of the given type.
@@ -5012,9 +5012,9 @@ puredom.extend(puredom, /** @lends puredom */ {
 			}
 			return this;
 		},
-		
-		
-		/**	A version of {@link puredom.EventEmitter#on .on()} that removes handlers once they are called. 
+
+
+		/**	A version of {@link puredom.EventEmitter#on .on()} that removes handlers once they are called.
 		 *	@see puredom.EventEmitter#on
 		 *	@param {String} type		An event type, or a comma-seprated list of event types.
 		 *	@param {Function} handler	A function to call in response to events of the given type.  Will only be called once.
@@ -5063,9 +5063,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 			var returns = [],
 				x, r, rval;
 			type = normalizeType(type);
-			if (!$.isArray(args)) {
-				args = Array.prototype.slice.call(arguments, 1);
-			}
+			args = Array.prototype.slice.call(arguments, 1);
 			if (multi(this, 'emit', type, args, returns)) {
 				return Array.prototype.concat.apply([], returns);
 			}
@@ -5089,13 +5087,23 @@ puredom.extend(puredom, /** @lends puredom */ {
 				}
 			}
 			return returns;
+		},
+
+		/**	Deprecated alternative version of {@link puredom.EventEmitter#emit emit()} that
+		 *	accepts an Array of event parameters as the second argument.
+		 *	@function
+		 *	@private
+		 *	@deprecated
+		 */
+		fireEvent : function(type, args) {
+			return this.emit.apply(this, ([type]).concat(args));
 		}
 
 	});
-	
-	
+
+
 	$.forEach(/** @lends puredom.EventEmitter# */{
-		
+
 		/**	Alias of {@link puredom.EventEmitter#on on()}
 		 *	@function
 		 *	@private
@@ -5118,19 +5126,14 @@ puredom.extend(puredom, /** @lends puredom */ {
 		 *	@function
 		 *	@private
 		 */
-		trigger : 'emit',
-	
-		/**	Alias of {@link puredom.EventEmitter#emit emit()}
-		 *	@function
-		 *	@private
-		 */
-		fireEvent : 'emit'
-		
+		trigger : 'emit'
+
 	}, function(alias, key) {
 		proto[key] = proto[alias];
 	});
-	
+
 }(puredom));
+
 /**	Manages controllers, providing a means for separating functionality into feature-centric modules.
  *	@constructor Creates a new ControllerManager instance.
  *	@param {Object} [options]		Hash of options to be given to the instance.
