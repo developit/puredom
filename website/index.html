@@ -22,6 +22,9 @@
 		<h1>puredom</h1>
 		<h4>Current version: <strong data-tpl-id="version">...</strong></h4>
 		
+		<form id="swiftype-search" action="javascript:" style="text-align:center; visibility:hidden; min-height:30px;">
+			<input type="text" id="st-search-input" class="st-search-input" tabindex="1">
+		</form>
 		
 		<div class="section">
 			<h2>What is Puredom?</h2>
@@ -106,6 +109,17 @@
 				var p = puredom('.github-fork-ribbon-wrapper');
 				p[ document.body.scrollTop>0 ? 'classify' : 'declassify' ]('small');
 			});
+			
+			puredom(function() {
+				puredom('#swiftype-search').fadeIn();
+			});
+			
+			// swiftype
+			(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+			(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+			e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+			})(window,document,'script','//s.swiftypecdn.com/install/v1/st.js','_st');
+			_st('install','4b2WJsJJbuCDq6krigUS');
 		</script>
 	</body>
 </html>
