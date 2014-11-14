@@ -203,6 +203,9 @@ License
 
 Changelog
 =========
+**Version 1.4.1** *(Nov 14, 2014)*  
+- Fix troublesome UMD setup.
+
 **Version 1.4.0** *(Sep 7, 2014)*  
 - BREAKING CHANGE: Corrected signature of EventEmitter#emit() to match Node's implementation: arguments 1-N are passed on to handlers.  
 

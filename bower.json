@@ -1,6 +1,6 @@
 {
   "name": "puredom",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "homepage": "http://puredom.org/",
   "authors": [
     "Jason Miller <jason@developit.ca>"
@@ -22,6 +22,7 @@
   "license": "BSD 3-Clause",
   "ignore": [
     "**/.*",
+    "**/*.min.js",
     "node_modules",
     "bower_components",
     "src",
@@ -32,7 +33,7 @@
     "jsdoc",
     "component.json",
     "Gruntfile.js",
-    "dev-server.js",
+    "server.js",
     "changelog",
     "package.json"
   ]
