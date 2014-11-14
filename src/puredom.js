@@ -4296,9 +4296,10 @@
 	self.extend(self, baseSelf);
 	self.toString = function(){return 'function puredom(){}';};
 	
-	this.puredom = window.puredom = self;
+	this.puredom = global.puredom = self;
+	
 	if (typeof define==='function' && define.amd) {
-		window.define('puredom', function(){ return self; });
+		define('puredom', function(){ return self; });
 	}
 	if (typeof module==='object') {
 		module.exports = self;
