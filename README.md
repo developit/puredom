@@ -204,6 +204,9 @@ License
 Changelog
 =========
 
+**Version 1.4.3** *(Dec 6, 2014)*
+- Don't proxy touch events if `navigator.maxTouchPoints=0`
+
 **Version 1.4.2** *(Dec 5, 2014)*
 - Fix the value of e.currentTarget when using delegated events
 
