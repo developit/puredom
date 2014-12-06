@@ -203,6 +203,10 @@ License
 
 Changelog
 =========
+
+**Version 1.4.2** *(Dec 5, 2014)*
+- Fix the value of e.currentTarget when using delegated events
+
 **Version 1.4.1** *(Nov 14, 2014)*  
 - Fix troublesome UMD setup.
 
