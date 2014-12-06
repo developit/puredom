@@ -76,7 +76,7 @@
 				querySelectorAll : !!('querySelectorAll' in document),
 				filters : false,
 				//filters : !!(document.all && document.documentElement && document.documentElement.filters),
-				webkitMultitouch : !!("createTouch" in document)
+				webkitMultitouch : ('createTouch' in document) && navigator.maxTouchPoints!==0
 			},
 			regex : {
 				css3AutoPrefix : /([\s\;\/\*])(transform|transition|perspective|box\-sizing|box\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,		// |text\-shadow
@@ -129,6 +129,21 @@
 			priv.html5div = document.createElement('div');
 			priv.html5frag.appendChild(priv.html5div);
 		}
+
+		/*
+		addEventListener('touchstart', function handler() {
+			removeEventListener('touchstart', handler);
+			priv.support.webkitMultitouch = true;
+		});
+
+		function handler(e) {
+			removeEventListener('mousedown', handler);
+			removeEventListener('touchstart', handler);
+			priv.support.webkitMultitouch = e.type==='touchstart';
+		}
+		addEventListener('mousedown', handler);
+		addEventListener('touchstart', handler);
+		*/
 	}());
 
 
