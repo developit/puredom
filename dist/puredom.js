@@ -10,9 +10,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 
 	var document = window.document,
 		navigator = window.navigator;
-	
+
 	var previousSelf = window.puredom;
-	
+
 	if (typeof Date.now!=='function') {
 		/**	@ignore */
 		Date.now = function() {
@@ -32,7 +32,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	 */
 	var self = function(){
 			return priv.puredom.apply(priv, arguments);
-		}, 
+		},
 		/**	@private */
 		baseSelf = {
 			version : '1.3.0',
@@ -61,7 +61,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		objConstructor = baseSelf.constructor,
 		textContentProperty,
 		getSupportedTextContentProperty,
-		
+
 		/**	@private */
 		priv = {
 			oninit : [],
@@ -94,8 +94,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			},
 			noop : function(){}
 		};
-	
-	
+
+
 	if (navigator.userAgent.match(/\b(webkit|applewebkit|chrome|chromium|khtml)\b/gim)) {
 		vendorCssPrefix = '-webkit';
 		vendorCssPrefixJS = 'Webkit';
@@ -116,8 +116,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		priv.support.filters = true;
 		priv.support.filterProperty = 'filter';
 	}
-	
-	
+
+
 	/**	@ignore */
 	(function(div, i) {
 		div = document.createElement('div');
@@ -132,8 +132,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			priv.html5frag.appendChild(priv.html5div);
 		}
 	}());
-	
-	
+
+
 	/**	Note: this function removes itself, and should only ever be run once.
 	 *	@ignore
 	 */
@@ -143,9 +143,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		getSupportedTextContentProperty = null;
 		return textContentProperty;
 	};
-	
-	
-	
+
+
+
 	/** Extend/augment a base object with the properties of one or more additional objects.<br />
 	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
 	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
@@ -168,15 +168,15 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 				// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
-				if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
+				if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString &&
 					base.toString = ext.toString;
 				}
 			}
 		}
 		return base;
 	};
-	
-	
+
+
 	/** Mix functionality from one object into another. <br />
 	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from. <br />
 	 *	<strong>Alternative Signature:</strong> <code>mixin(true, [props, ...], base)</code>
@@ -186,7 +186,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	 *	@example
 	 *		// standard:
 	 *		puredom.mixin(myObj, decorator1, decorator2);
-	 *		
+	 *
 	 *		// alternative, decorator-first style:
 	 *		puredom.mixin(true, decorator1, decorator2, myObj);
 	 */
@@ -208,8 +208,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return base;
 	};
-	
-	
+
+
 	/**	Strip an object of all of its properties.<br />
 	 *	<strong>Note:</strong> Sets property values to null, doesn't actually delete them.
 	 *	@param {Object} obj					An object to strip all properties from
@@ -222,8 +222,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 		}
 	};
-	
-	
+
+
 	/** Get a value from within a nested object. "Deep keys" use dot notation.
 	 *	@param {Object} obj		The object to delve into.
 	 *	@param {String} path	A dot-notated key to find within <code>obj</code>
@@ -244,8 +244,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			return obj;
 		}
 	};
-	
-	
+
+
 	/**	Flatten a nested Object using underscore-delimited keys. (<code>foo_bar_baz</code>)
 	 *	@param {Object} obj		The nested/deep object to flatten
 	 *	@returns {Object} flat
@@ -270,8 +270,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			return flat;
 		}
 	};
-	
-	
+
+
 	/** Inject arbitrarily nested template fields into a string of text. <br />
 	 *	Fields are referenced like this:  {foo.bar.baz|truncate:300,byWord}<br />
 	 *	<em><strong>Note:</strong> keys are CaSe-SeNsItIvE.</em>
@@ -310,8 +310,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		});
 		return templated;
 	};
-	
-	
+
+
 	/** Simple prototypal inheritance.
 	 *	@param {Function} baseClass		The base (child) class.
 	 *	@param {Function} superClass	A class to inherit from.
@@ -328,8 +328,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		base.prototype.constructor = base;
 		base.prototype.__super = superClass;
 	};
-	
-	
+
+
 	/** Get the <strong>lowercase</strong> type (constructor name) of an object.<br />
 	 *	<em><strong>Important Note:</strong> Unlike many other typeOf implementations, this method returns the name of an Object's constructor, rather than just "object".</em>
 	 *	@param {Any} what		An object to analyze
@@ -357,8 +357,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		//return String(typeof what).toLowerCase();
 		return Object.prototype.toString.call(what).replace(priv.regex.parseObjectNameFromString,'$1').toLowerCase();
 	};
-	
-	
+
+
 	/** Determines if the passed object is scalar.
 	 *	@param {Any} what		An object to analyze
 	 *	@returns {Boolean} isScalar
@@ -370,8 +370,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return false;
 	};
-	
-	
+
+
 	/* Index of an element within an array */
 	if (!Array.prototype.indexOf || ([self]).indexOf(self)!==0) {
 		try {
@@ -386,8 +386,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			};
 		}catch(arrayIndexErr){}
 	}
-	
-	
+
+
 	/**	Convert an Array-like object (having a length and numeric properties) into an Array.
 	 *	@param {Any} obj		An Array-like object to convert
 	 *	@returns {Array} array	The converted <code>Array</code> on success, or the original object <code>obj</code> on failure.
@@ -418,8 +418,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return arr;
 	};
-	
-	
+
+
 	/** Determine if the argument is an Array
 	 *	@function
 	 *	@param {Any} what		An object to analyze
@@ -430,8 +430,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	} : function(what) {
 		return Object.prototype.toString.call(what)==="[object Array]";
 	};
-	
-	
+
+
 	/** Determine if an object has a direct property with the given name.
 	 *	@param {Any} obj		An object to test
 	 *	@param {String} prop	A property name to test
@@ -440,8 +440,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	self.hasOwnProp = function(obj, prop) {
 		return Object.prototype.hasOwnProperty.call(obj, prop);
 	};
-	
-	
+
+
 	/** Iterate over an object, calling an <code>iterator</code> function on each value.
 	 *	@name puredom.forEach
 	 *	@function
@@ -471,11 +471,11 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return obj;
 	};
-	
+
 	/**	@ignore */
 	self.foreach = self.forEach;
-	
-	
+
+
 	/**	Set the innerHTML of an element, with fixes for various browser bugs
 	 *	@private
 	 *	@param {HTMLElement} el			An element whose content should be set
@@ -496,8 +496,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			el.appendChild(frag);
 		}
 	};
-	
-	
+
+
 	/** Create a DOM node from an Object description
 	 *	@private
 	 *	@param {Object} options			An object that describes how to construct the node
@@ -583,7 +583,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				parent.appendChild(el);
 			}
 		}
-		
+
 		if (options.children && self.isArray(options.children)) {
 			childFrag = document.createDocumentFragment();
 			for (x=0; x<options.children.length; x++) {
@@ -593,10 +593,10 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return el;
 	};
-	
-	
+
+
 	/**	Creates a new selection containing the elements of <code>nodes</code>. <br />
-	 *	This class is not generally instantiated directly - instead, use the puredom() 
+	 *	This class is not generally instantiated directly - instead, use the puredom()
 	 *	function to query for elements or wrap an Array of elements with a selection.
 	 *	@class Represents a collection of DOM Elements. <br />
 	 *	Puredom methods that work with DOM elements generally return an instance of this.
@@ -629,17 +629,17 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	};
 
 	self.extend(self.NodeSelection.prototype, /** @lends puredom.NodeSelection# */ {
-		
+
 		/**	@private */
 		_results : [],
-		
+
 		/**	@private */
 		_nodes : [],
-		
+
 		/**	@private */
 		_animations : [],
-		
-		
+
+
 		/**	Get an Array of String representations of each element in the selection. <br />
 		 *	For a more logging-friendly option, see {@link puredom.NodeSelection#describe}.
 		 */
@@ -668,19 +668,19 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			});
 			return p;
 		},
-		
+
 		/**	Get a String representation of the selection's current contents. <br />
 		 *	For the raw Array description, see {@link puredom.NodeSelection#describe}.
 		 */
 		toString : function() {
 			return this.describe().join(', ');
 		},
-		
+
 		/**	@private */
 		toSource : function() {
 			return this._nodes;
 		},
-		
+
 		/**	Get the result of the previous operation. <br />
 		 *	Many puredom methods return the selection they were called on rather than a standard return value.
 		 *	This method gets the equivalent return value of the most recent selection method call.
@@ -691,13 +691,13 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			reverseIndex = Math.round(reverseIndex) || 0;
 			return this._results[this._results.length - reverseIndex - 1];
 		},
-		
+
 		/**	@private */
 		pushResult : function(result) {
 			this._results.push(result);
 			return this;
 		},
-		
+
 		/**	Call an iterator function on each element in the selection, wrapping each in a new {@link puredom.NodeSelection}.<br />
 		 *	<strong>Note:</strong> Return <code>false</code> from within <code>iterator</code> to break out of the loop.
 		 *	@param {Function} iterator	Gets passed <code>(element, index)</code> for each element in the selection. The value of <code>this</code> is the selection itself.
@@ -706,7 +706,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		each : function(action) {
 			return this._each(action, true);
 		},
-		
+
 		/**	Call an iterator function on each <strong>raw DOM node</strong> in the selection.<br />
 		 *	<strong>Note:</strong> Return <code>false</code> from within <code>iterator</code> to break out of the loop.
 		 *	@param {Function} iterator	Gets passed <code>(node, index)</code> for each element in the selection. The value of <code>this</code> is the selection itself.
@@ -731,7 +731,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return this;
 		},
-		
+
 		/**	Call a function on the selection in the future.
 		 *	@param {Number} millis		The number of milliseconds to wait before calling <code>callback</code>.
 		 *	@param {Function} callback	The function to call in <code>millis</code> milliseconds. Gets called on the selection, so the value of <code>this</code> is the selection itself.
@@ -747,7 +747,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return this;
 		},
-		
+
 		/**	Get the <strong>lower-case</strong> nodeName of an element.<br />
 		 *	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em> <br />
 		 *	<strong>Note:</strong> In puredom, the <code>window</code> Object is given a nodeName of "#window".
@@ -764,7 +764,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return null;
 		},
-		
+
 		/**	Get a globally unique identifier for an element. <br />
 		 *	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em>
 		 *	@returns {String} uuid
@@ -772,7 +772,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		uuid : function() {
 			return this._nodes[0] && priv.nodeToId(this._nodes[0]) || null;
 		},
-		
+
 		/**	Get or set the textual content of elements. Omit <code>text</code> to retrieve the textual value instead of setting it.
 		 *	@param {String} [text]		If set, replaces the textual content of elements.
 		 *	@returns {String} text		The textual contents of the first element in the selection, or the selection itself if <code>text</code> was not set.
@@ -787,7 +787,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			});
 			return this;
 		},
-		
+
 		/**	Set the HTML contents of elements.
 		 *	@param {String} [content]			If set, updates the content of the elements. If not set, returns the HTML content of the first element.
 		 *	@param {Boolean} [asText=auto]		If <code>true</code>, content will be treated as textual, if <code>false</code> content will be treated as HTML. Defaults to auto-detection of HTML.
@@ -815,7 +815,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return this;
 		},
-		
+
 		/**	Apply CSS to elements.
 		 *	@param {String|Object} css				CSS to apply to the elements in the selection. Either a CSS-string, or an Object where the keys are CSS properties and the values are the corresponding values to apply.
 		 *	@param {Object} [options]				Options
@@ -868,7 +868,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				this._each(function(el) {
 					self.applyCss(el, css);
 				});
-				
+
 				if (callback) {
 					setTimeout(function(){
 						callback.call(selection, selection);
@@ -881,7 +881,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return this;
 		},
-		
+
 		/** Show elements.
 		 *	@returns {this}
 		 */
@@ -898,7 +898,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			});
 			return this;
 		},
-		
+
 		/** Hide elements.
 		 *	@param {Boolean} [andIgnore=true]		If <code>false</code>, triggers "visibility:hidden" CSS, instead of "display:none".
 		 *	@returns {this}
@@ -914,7 +914,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				andIgnore===false ? {visibility:'hidden'} : {display:'none'}
 			);
 		},
-		
+
 		/**	This function tries quite hard to guess what particular fade effect is needed. <br />
 		 *	If the element that is already semi-transparent, it fades from the current opacity. <br />
 		 *	If the element that is hidden but not explicitly transparent, it fades from opacity=0 (hidden). <br />
@@ -960,7 +960,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}}).show();
 			return this;
 		},
-		
+
 		/**	The opposite of fadeIn(). Makes several guesses about the desired effect. */
 		fadeOut : function(tween, callback, andIgnore) {
 			var originalOpacity = parseFloat(this.getStyle('opacity') || '1') || 1;
@@ -995,21 +995,21 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}});
 			return this;
 		},
-		
+
 		/**	Automatically detects and uses CSS3 transitions.
 		 *	@private
 		 */
 		animateCSS : (function() {
 			var manual, cssTransition, supportsCssTransition, checkCssTransitionSupport;
-			
+
 			/**	@ignore */
 			manual = function(cssProp, targetValue, duration, easing, callback) {
 				var startValues = [],
 					perNodeProperties = [],
 					numericTargetValue, units, s;
-				
+
 				cssProp = cssProp.toLowerCase();
-				
+
 				if (targetValue!=='auto') {
 					numericTargetValue = parseFloat((targetValue + '').replace(priv.regex.getNumericCSSValue,'')) || 0;
 					s = self.typeOf(targetValue)==='string' && targetValue.match(priv.regex.getCSSValueUnits);
@@ -1021,12 +1021,12 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				else {
 					units = cssProp==='opacity' ? '' : 'px';
 				}
-				
+
 				this._each(function(node, i) {
 					var ts, tss, testCssObj={}, iprop, vis;
-					
+
 					startValues[i] = parseFloat((self.nodeStyle(node, cssProp) + '').replace(priv.regex.getNonIntegerCharsSigned,'')) || 0;
-					
+
 					if (targetValue==='auto' || targetValue==='') {
 						vis = node.style.visibility || '';
 						testCssObj[cssProp] = targetValue;
@@ -1056,7 +1056,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 						};
 					}
 				});
-				
+
 				return this.animate(function(fraction, anim) {
 					this._each(function(node, i) {
 						var cssObj = {},
@@ -1089,26 +1089,26 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					callback.apply(sel, arguments);
 				});
 			};
-			
+
 			/**	@ignore */
 			cssTransition = function(cssProp, targetValue, duration, easing, callback) {
 				var anim = this._createAnimationObj(function(){}, duration, easing, callback),
 					me = this,
 					transition = {},
 					css = {};
-				
+
 				cssProp = self.getStyleAsProperty(cssProp);
 				if (self.typeOf(targetValue)==='number' && (cssProp+'').toLowerCase()!=='opacity') {
 					targetValue = targetValue + 'px';
 				}
-				
+
 				transition[self.getStyleAsCSS(cssProp)] = {
 					duration : anim.duration,
 					timingFunction : anim.easing
 				};
-				
+
 				css[cssProp] = targetValue;
-				
+
 				setTimeout(function() {
 					/**	@ignore */
 					me._each(function(node) {
@@ -1119,7 +1119,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					/**	@ignore */
 					anim._cb = function() {
 						if (anim) {
-							
+
 							/** remove CSS transition definitions from the generated CSS:
 							 *	@ignore
 							 */
@@ -1129,7 +1129,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 								self.updateCssTransitions(node, nullTransition);
 								priv.decrementAnimationCount(node);
 							});
-							
+
 							if (anim.callback) {
 								anim.callback.call(me, me);
 							}
@@ -1144,13 +1144,13 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					setTimeout(anim._cb, (parseInt(anim.duration,10) || 0)+20);
 				}, 10);
 			};
-			
+
 			/**	@ignore */
 			checkCssTransitionSupport = function() {
 				supportsCssTransition = document.body.style[vendorCssPrefixJS+'Transition']!==undefined || document.body.style.transition!==undefined;
 				return supportsCssTransition;
 			};
-			
+
 			return function(cssProp, targetValue, duration, easing, callback) {
 				var iosCompat=false, x;
 				if (self.typeOf(supportsCssTransition)!=='boolean') {
@@ -1165,17 +1165,17 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				return this;
 			};
 		}()),
-		
+
 		animate : function(animator, duration, easing, callback) {
 			if (animator) {
 				var nodeSelection = this,
 					anim = this._createAnimationObj.apply(this, arguments),
 					frame;
-				
+
 				this._each(function(node) {
 					priv.incrementAnimationCount(node);
 				});
-				
+
 				frame = function(now) {
 					anim.frameTime = now;
 					anim.position = anim.frameTime - anim.start;
@@ -1187,9 +1187,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					else if (anim.easingMethod) {
 						anim.fraction = anim.easingMethod.call(self.easingMethods, anim.fraction, anim);
 					}
-					
+
 					anim.animator.call(nodeSelection, anim.fraction, anim);
-					
+
 					if (anim.fraction===1) {
 						for (var x=nodeSelection._animations.length; x--; ) {
 							if (nodeSelection._animations[x]===anim) {
@@ -1211,9 +1211,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 						anim.timer = self.animationFrame.getTimer(frame, self.baseAnimationInterval || 10);
 					}
 				};
-				
+
 				self.animationFrame.getTimer(frame, self.baseAnimationInterval || 10);
-				
+
 				this._animations.push(anim);
 			}
 			return this;
@@ -1229,7 +1229,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				start		: self.animationFrame.getStartTime(),
 				frameTime	: null
 			};
-			
+
 			if (self.typeOf(anim.duration)==='string') {
 				switch (anim.duration.toLowerCase()) {
 					case 'long':
@@ -1247,11 +1247,11 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			else {
 				anim.duration = Math.round(anim.duration) || priv.animationTimes.medium;
 			}
-			
+
 			if (priv.animationTimeScale) {
 				anim.duration *= priv.animationTimeScale;
 			}
-			
+
 			if (anim.easing && self.easingMethods.hasOwnProperty(anim.easing)) {
 				anim.easingMethod = self.easingMethods[anim.easing];
 			}
@@ -1260,7 +1260,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return anim;
 		},
-		
+
 		/**	Add a CSS class to the selection. <br />
 		 *	Pass an Array and/or multiple arguments to add multiple classes.
 		 *	@param {String} className		A CSS class to add.
@@ -1285,7 +1285,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			});
 			return this;
 		},
-		
+
 		/**	Remove a CSS class to the selection. <br />
 		 *	Pass an Array and/or multiple arguments to remove multiple classes.
 		 *	@param {String} className		A CSS class to remove.
@@ -1539,14 +1539,14 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				this._each(function(node) {
 					var name = (node.nodeName+'').toLowerCase(),
 						type = (node.getAttribute('type') || '').toLowerCase();
-					
+
 					if (name==='input' && (type==='checkbox' || type==='radio')) {
 						node.checked = !!newValue;
 					}
 					else {
 						node.value = newValue;
 					}
-					
+
 					if (options.fireChange!==false) {
 						self.fireEvent({
 							type : 'change',
@@ -1555,7 +1555,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 						});
 					}
 				});
-				
+
 				return this;
 			}
 			else {
@@ -1728,7 +1728,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			});
 			return this;
 		},
-		
+
 		/**	@private */
 		_removeAllEvents : function(deep) {
 			var children;
@@ -2003,7 +2003,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			var nodes=[], parent;
 			this._each(function(node) {
 				parent = node.parentNode;
-				// Note: all newly created elements are placed into a document fragment in IE. 
+				// Note: all newly created elements are placed into a document fragment in IE.
 				// Unfortunately, this means parentNodes that are #document-fragment's can't be considered valid (lowest-common).
 				if (parent && nodes.indexOf(parent)<0 && parent.nodeType!==11) {
 					nodes.push(parent);
@@ -2016,7 +2016,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		 *	@returns {puredom.NodeSelection} children
 		 */
 		children : function() {
-			var children = [], 
+			var children = [],
 				x, y;
 			if (this._nodes.length>0) {
 				for (x=0; x<this._nodes.length; x++) {
@@ -2076,7 +2076,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				else if (end<start) {
 					end = start;
 				}
-				
+
 				if(window.getSelection) {
 					el.selectionStart = start;
 					el.selectionEnd = end;
@@ -2139,7 +2139,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			var attrName = self.templateAttributeName,
 				getFilters;
 			templateFields = templateFields || {};
-			
+
 			getFilters = function(value, htmlEntities) {
 				var filters = value.split('|'),
 					i;
@@ -2151,19 +2151,19 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				}
 				return filters;
 			};
-			
+
 			this.query('['+attrName+']').each(function(node) {
 				var nodeName = node.nodeName(),
 					tplField = node.attr(attrName),
 					tplValue = tplField,
 					tplFilters,
 					nType;
-				
+
 				tplFilters = getFilters(tplField);
 				tplField = tplField.split('|')[0];
-				
+
 				tplValue = puredom.delve(templateFields, tplField);
-				
+
 				if (tplValue!==null && tplValue!==undefined) {
 					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
 						tplValue = tplValue.toLocaleString();
@@ -2181,7 +2181,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 							case 'progress':
 								node.value(tplValue);
 								break;
-							
+
 							case 'img':
 							case 'video':
 							case 'audio':
@@ -2190,7 +2190,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
 								node.attr('src', tplValue);
 								break;
-							
+
 							default:
 								tplFilters.splice(0, 0, 'htmlEntities');
 								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
@@ -2204,32 +2204,32 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			return this;
 		}
 	});
-	
+
 	/**	Alias of {@link puredom.NodeSelection#trigger}
 	 *	@function
 	 */
 	self.NodeSelection.prototype.fireEvent = self.NodeSelection.prototype.trigger;
-	
+
 	/**	Alias of {@link puredom.NodeSelection#trigger}
 	 *	@function
 	 */
 	self.NodeSelection.prototype.emit = self.NodeSelection.prototype.trigger;
-	
+
 	/**	Alias of {@link puredom.NodeSelection#on}
 	 *	@function
 	 */
 	self.NodeSelection.prototype.addEvent = self.NodeSelection.prototype.on;
-	
+
 	/**	Alias of {@link puredom.NodeSelection#off}
 	 *	@function
 	 */
 	self.NodeSelection.prototype.removeEvent = self.NodeSelection.prototype.off;
-	
+
 	/**	@ignore */
 	self.NodeSelection.prototype.animateCss = self.NodeSelection.prototype.animateCSS;
-	
-	
-	
+
+
+
 	/**	@private */
 	priv.incrementAnimationCount = function(node) {
 		node._puredom_animationCount = priv.getAnimationCount(node) + 1;
@@ -2252,9 +2252,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	priv.getAnimationCount = function(node) {
 		return parseInt(node._puredom_animationCount, 10) || 0;
 	};
-	
-	
-	
+
+
+
 	/**	Destroy and cleanup puredom.
 	 *	@private
 	 */
@@ -2266,8 +2266,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			window.puredom = priv = objConstructor = getSupportedTextContentProperty = null;
 		}, 10);
 	};
-	
-	
+
+
 	/**	Create or retrieve one or more elements based on a query. <br />
 	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
 	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
@@ -2323,9 +2323,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return new self.NodeSelection(results);
 	};
-	
-	
-	
+
+
+
 	/**	Get a selection ({@link puredom.NodeSelection}) containing the node with the given UUID. <br />
 	 *	UniqueIDs can be retrieved using {@link puredom.NodeSelection#uuid}.
 	 *	@param {String} uuid						Unique node ID, such as one derived from {@link puredom.NodeSelection#uuid}.
@@ -2334,9 +2334,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	self.node = function(uuid) {
 		return new self.NodeSelection(priv.idToNode(uuid));
 	};
-	
-	
-	
+
+
+
 	/** Returns an {Array} of elements matching the passed CSS selector query.
 	 *	@function
 	 *	@param {String} search							A CSS selector, or multiple CSS selectors separated by a comma
@@ -2358,7 +2358,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			removeCommaPaddingReg = /\s*?\,\s*?/gm,
 			enableSelectorStats = false,
 			selectors;
-		
+
 		/** CSS selectors implemented as filters
 		 *		@tests:
 		 *			// Should set all checkboxes to "checked" that are descendants of fieldsets having the given className:
@@ -2383,7 +2383,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					return [b.getElementById(matches[0].substring(1))];
 				}
 			},
-			
+
 			/** .class
 			 *	@ignore
 			 */
@@ -2402,7 +2402,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 			},
-			
+
 			/** Attribute selectors
 			 *	[a=b]		absolute attribute match
 			 *	[a^=b]		left() match
@@ -2466,7 +2466,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 								default:
 									isMatch = !matches.attrValue && matches.attrPresent;
 							}
-							
+
 							// remove from the result set if not a match:
 							if (!isMatch) {
 								results.splice(i, 1);
@@ -2475,7 +2475,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 			},
-			
+
 			/** > Descendant selector
 			 *	@tests:
 			 *			// Should return <head> and <body>:
@@ -2514,7 +2514,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 			},
-			
+
 			/** :nth-child aliases, like :first-child
 			 *	@ignore
 			 */
@@ -2537,7 +2537,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 							break;
 						}
 					}
-					
+
 					if (map.hasOwnProperty(matches[1]+'-'+matches[2]) && selector) {
 						mappedSelector = map[matches[1]+'-'+matches[2]];
 						selector.regex.lastIndex = 0;
@@ -2549,7 +2549,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 			},
-			
+
 			/** :nth-child() selector
 			 *	@tests:
 			 *			// Should return third element in the body
@@ -2573,13 +2573,13 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 							odd : [2,1],
 							even : [2]
 						};
-					
+
 					originalResults = results.splice(0, results.length);
-					
+
 					if (matches[1].indexOf('-last')!==-1) {
 						originalResults.reverse();
 					}
-					
+
 					if (matches[2]) {		// explicit an+b
 						p = matches[2].split('n');
 						if (p[0].replace('-','').length===0) {
@@ -2602,15 +2602,15 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 							self.log('Unknown named nth-child expression "'+r[4]+'"');
 						}
 					}
-					
+
 					if (a+b<=0) {
 						return;
 					}
 					if (a===b) {
 						b = 0;
 					}
-					
-					
+
+
 					for (x=0; x<originalResults.length; x++) {
 						children = (originalResults[x].parentNode || {}).childNodes;
 						type = (originalResults[x].nodeName+'').toLowerCase();
@@ -2642,7 +2642,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 			},
-			
+
 			/** Nested element pseudo-pseudo-selector, with built-in nodeName filtering
 			 *	@ignore
 			 */
@@ -2661,16 +2661,16 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				}
 			}
 		];
-		
-		
+
+
 		/** Resets a RegExp for repeated usage.
 		 *	@private
 		 */
 		resetRegex = function(regex) {
 			regex.lastIndex = 0;
 		};
-		
-		
+
+
 		/**	@ignore */
 		function nativeQuerySelectorAll(selector, within) {
 			var results;
@@ -2686,8 +2686,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return results || false;
 		}
-		
-		
+
+
 		/** The selector engine's interface. Returns an {Array} of elements matching the passed CSS selector query
 		 *	@param {String} search			A CSS selector, or multiple CSS selectors separated by a comma
 		 *	@param {Object} [options]		Optional hash of one-time triggers for the engine:
@@ -2719,30 +2719,30 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				perSelectorSearchTime,
 				perSelectorFilterTime,
 				i, x;
-			
+
 			// Sanitize input and options:
 			search = (search + '').replace(removePaddingReg, '$1');
 			options = puredom.extend({}, options || {});
 			if (options.logging===true) {
 				doLogging = true;
 			}
-			
+
 			// Check for cache enabled and return cached value if it exists:
 			if (cacheEnabled && options.useCache===true && cache[search]) {
 				return cache[search];
 			}
-			
+
 			// Allow queries to be constrained to a given base node:
 			if (options.within) {
 				baseNode = options.within;
 			}
-			
+
 			if (baseNode && baseNode.length && !baseNode.nodeName && baseNode.indexOf && baseNode[0]) {
 				baseNode = baseNode[0];
 			}
-			
-			
-			
+
+
+
 			// Comma-separated statements are dealt with in isolation, joined and returned:
 			if (search.indexOf(',')>-1) {
 				search = search.split(',');
@@ -2778,13 +2778,13 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				}
 				return nodes;
 			}
-			
-			
+
+
 			/** -------------------------
 			 *	Selector engine internals
 			 */
-			
-			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById() 
+
+			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById()
 			// functionality is preserved (only returns one element, the last with that ID).
 			if (search.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
 				currentResults = [
@@ -2794,22 +2794,22 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				// skip parse:
 				//useCustomImplementation = false;
 			}
-			
-			
+
+
 			nodeName = search.match(nodeNameReg);
 			nodeName = ((nodeName && nodeName[0]) || "").toLowerCase();
 			search = search.substring(nodeName.length);
-			// NOTE: trim() is intentionally NOT called on search here. We *want* to know if there 
+			// NOTE: trim() is intentionally NOT called on search here. We *want* to know if there
 			// is preceeding whitespace, because that consitutes a "within" pseudo-pseudo-selector!
 			// ^ does that make sense?
-			
+
 			searchParsed = search;
-			
+
 			// querySelectorAll doesn't support searches beginning with the child selector. For those, use the custom engine.
 			if (originalSearch.charAt(0)==='>') {
 				useCustomImplementation = true;
 			}
-			
+
 			if (priv.support.querySelectorAll && useCustomImplementation!==true) {
 				currentResults = nativeQuerySelectorAll(originalSearch, baseNode);
 				if (currentResults===false) {
@@ -2817,9 +2817,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					useCustomImplementation = true;
 				}
 			}
-			
-			
-			
+
+
+
 			if (useCustomImplementation) {
 				if (search.substring(0,1)==='#') {
 					currentResults = [];
@@ -2832,7 +2832,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					currentResults = self.toArray(baseNode.getElementsByTagName(nodeName || '*'));
 					constrainedToNode = true;
 				}
-				
+
 				// A pass-by-reference handlerConfig for filters will be needed for :not() support:
 				handlerConfig = {
 					searchBaseNode : baseNode,
@@ -2840,8 +2840,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					first : true,
 					isFiltered : constrainedToNode || !!(nodeName && nodeName!=='*')
 				};
-				
-				
+
+
 				// Filter until there are no more selectors left in the statement:
 				while (searchParsed.length>0) {
 					parseIterations += 1;
@@ -2850,46 +2850,46 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 						if (enableSelectorStats===true) {
 							perSelectorSearchTime = Date.now();
 						}
-						
+
 						// Prepare and get matches from the selectorFilter's regular expression:
 						resetRegex(selectors[i].regex);
 						matches = selectors[i].regex.exec(searchParsed);
-						
+
 						if (enableSelectorStats===true) {
 							perSelectorSearchTime = Date.now() - perSelectorSearchTime;
 						}
-						
+
 						if (matches) {
 							// Match found, this must be the right selector filter:
 							hasMatch = true;
 							if (doLogging) {
 								self.log((selectors[i].title || selectors[i].regex) + ' ==>> matched:"'+ searchParsed.substring(0,matches[0].length) + '" ==>> remaining:"'+ searchParsed.substring(matches[0].length) + '" ||debug>> (submatches:'+ matches.slice(1).join(',') + ')');
 							}
-							
+
 							if (enableSelectorStats===true) {
 								perSelectorFilterTime = Date.now();
 							}
-							
+
 							// Allow the selector filter to filter the result set:
 							filterResponse = selectors[i].filter(matches, currentResults, handlerConfig);
 							if (filterResponse && self.isArray(filterResponse)) {
 								currentResults = filterResponse;
 							}
-							
+
 							if (enableSelectorStats===true) {
 								perSelectorFilterTime = Date.now() - perSelectorFilterTime;
 							}
-							
+
 							// Remove the matched selector from the front of the statement:
 							searchParsed = searchParsed.substring(matches[0].length);
-							
+
 							// We're no longer on the first match:
 							handlerConfig.first = false;
-							
+
 							// At least one filter has now been applied:
 							handlerConfig.isFiltered = true;
 						}
-						
+
 						// TODO: remove logging
 						if (enableSelectorStats===true) {
 							selectors[i].matchTimes.push(perSelectorSearchTime);
@@ -2897,21 +2897,21 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 								selectors[i].filterTimes.push(perSelectorFilterTime);
 							}
 						}
-						
+
 						// Drop out of the loop early if the selector is fully parsed (optimization):
 						if (searchParsed.length===0) {
 							break;
 						}
 					}
-					
+
 					// If no selector filters matched the statement, bail out. Otherwise causes an infinite loop.
 					if (!hasMatch) {
 						throw(new Error('puredom.getElement() :: Unknown CSS selector near: ' + searchParsed.substring(0,20), 'puredom.js', 2689));
 					}
 				}
 			}
-			
-			
+
+
 			if (options.includeInvisibles!==true) {
 				for (i=currentResults.length; i--; ) {
 					if (currentResults[i] && (currentResults[i].nodeName+'').charAt(0)==='#') {
@@ -2919,36 +2919,36 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					}
 				}
 			}
-			
+
 			if (doLogging) {
 				self.log('query=',originalSearch, ', result=',currentResults);
 			}
-			
+
 			// Cache the results if enabled & requested:
 			if (cacheEnabled && options.cache===true) {
 				cache[search] = currentResults;
 			}
-			
+
 			if (options.internal!==true && doLogging===true) {
 				time = Date.now() - time;
 				if (time>10) {
 					self.log('Slow Selector Warning: "'+originalSearch+'" took ' + time + 'ms to complete. '+parseIterations+' parse iterations.');
 				}
 			}
-			
+
 			// Return the matched result set.  Can be empty, but is always an Array.
 			return currentResults;
 		};
-		
-		
+
+
 		/** @public */
 		getElement.matchesSelector = function(base, el, selector) {
 			return getElement(selector, {
 				within : base
 			}).indexOf(el) > -1;
 		};
-		
-		
+
+
 		/**	@public */
 		getElement.enableCache = function(enabled) {
 			cacheEnabled = enabled!==false;
@@ -2956,18 +2956,18 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				cache = {};
 			}
 		};
-		
+
 		/**	@public */
 		getElement.disableCache = function() {
 			cacheEnabled = false;
 			cache = {};
 		};
-		
+
 		/**	@public */
 		getElement.clearCache = function() {
 			cache = {};
 		};
-		
+
 		/**	@private */
 		getElement._normalizeSelectorFilter = function(selectorFilter) {
 			if (arguments.length===2) {
@@ -2981,7 +2981,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return false;
 		};
-		
+
 		/** Add a custom CSS selector filter.
 		 *	@public
 		 */
@@ -2993,7 +2993,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return false;
 		};
-		
+
 		/** Remove a custom CSS selector filter.
 		 *	@public
 		 */
@@ -3017,7 +3017,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return isMatch===true;
 		};
-		
+
 		if (enableSelectorStats===true) {
 			/**	@ignore */
 			(function() {
@@ -3026,7 +3026,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					selectors[i].filterTimes = [];
 				}
 			}());
-			
+
 			/**	Get selector timing statistics.
 			 *	@public
 			 */
@@ -3070,22 +3070,22 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				return "disabled";
 			};
 		}
-		
+
 		return getElement;
 	}());
-	
-	
-	
+
+
+
 	/**	@namespace CSS selector engine internals.
 	 *	@name puredom.selectorEngine
 	 */
 	self.selectorEngine = self.getElement;
-	
-	
-	
+
+
+
 	// Events
-	
-	
+
+
 	/**	@class Represents a DOM event.
 	 *	@name puredom.DOMEvent
 	 */
@@ -3095,36 +3095,36 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 	};
 	self.DOMEvent.displayName = 'puredom.DOMEvent';
-	
+
 	self.extend(self.DOMEvent.prototype, /** @lends puredom.DOMEvent# */ {
-		
+
 		/**	Which mouse button or key generated the action (if applicable)
 		 *	@type Number
 		 */
 		which	: null,
-		
+
 		/**	The triggered event type (with no "on"-prefix)
 		 *	@type String
 		 */
 		type	: '',
-		
+
 		/**	The DOM node that originated the event.
 		 *	@type {Element}
 		 */
 		target	: null,
-		
+
 		/**	When available, refers to a DOM node that aided in originating the event (such as the DOM node the mouse was *previously* overtop of).
 		 *	@type {Element}
 		 */
 		relatedTarget : null,
-		
+
 		/**	Prevent the event's browser-default action from occurring.
 		 *	@function
 		 */
 		preventDefault : function() {
 			this.defaultPrevented = true;
 		},
-		
+
 		/**	Stop bubbling.
 		 *	@function
 		 */
@@ -3132,7 +3132,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			this.propagationStopped = true;
 			this.bubblingCancelled = true;
 		},
-		
+
 		/**	Stop bubbling, prevent the browser-default action and set the event's returned value to false.
 		 *	@function
 		 */
@@ -3142,53 +3142,53 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			this.returnValue = false;
 			return false;
 		},
-		
+
 		/**	Represents the handler's return value.
 		 *	@type Boolean
 		 */
 		returnValue : true,
-		
+
 		/**	The contained raw DOM Event.
 		 *	@type DOMEvent
 		 */
 		originalEvent : null,
-		
+
 		/**	The timestamp when the event was triggered.
 		 *	@type Number
 		 */
 		timeStamp : null
 	});
-	
+
 	/**	Alias of {@link puredom.DOMEvent#stopPropagation}, provided only for backward compatibility.
 	 *	@function
 	 */
 	self.DOMEvent.prototype.cancelBubble = self.DOMEvent.prototype.stopPropagation;
-	
+
 	/**	Alias of {@link puredom.DOMEvent#cancel}, provided only for compatibility with other notable DOM libraries.
 	 *	@function
 	 */
 	self.DOMEvent.prototype.stop = self.DOMEvent.prototype.cancel;
-	
-	/**	@deprecated 
+
+	/**	@deprecated
 	 *	@private
 	 */
 	self.DOMEvent.prototype.prevent = self.DOMEvent.prototype.cancel;
-	
-	
-	
-	
+
+
+
+
 	/**	@private */
 	priv.wrappedEventListener = {
 		list : [],
 		none : {},
-		
+
 		/**	@private */
 		summary : function() {
 			for (var x=0; x<this.list.length; x++) {
 				self.log( priv.idToNode(this.list[x].target), '.on', this.list[x].type, ' -> ', (this.list[x].handler.displayName || this.list[x].handler.name) );
 			}
 		},
-		
+
 		/**	@private */
 		reset : function(removeEvents) {
 			var i, evt;
@@ -3203,7 +3203,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			this.list.splice(0, this.list.length);
 		},
-		
+
 		/**	@private */
 		destroyObjHandlers : function(obj) {
 			var i, evt,
@@ -3218,7 +3218,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				}
 			}
 		},
-		
+
 		/**	@private */
 		get : function(type, handler, obj, selector, andDestroy) {
 			var i, evt;
@@ -3239,14 +3239,14 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			// fall back to the original handler
 			return handler;
 		},
-		
+
 		/**	@private */
 		unsetRefs : function(item) {
 			item.wrappedHandler.type = null;
 			item.wrappedHandler.handler = null;
 			item.wrappedHandler.target = null;
 		},
-		
+
 		/**	@private */
 		internalFireEvent : function(event) {
 			var target = priv.nodeToId(event.target),
@@ -3262,7 +3262,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				}
 			}
 		},
-		
+
 		/**	@private */
 		create : function(type, handler, obj, selector) {
 			selector = selector || null;
@@ -3295,8 +3295,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 						self.log("target:<"+e.target.nodeName+' class="'+e.target.className+'" id="'+e.target.id+'"' + "> , type:"+type+"/"+e.type);
 					}
 					e = d.e;
-					
-					
+
+
 					event = self.extend(new self.DOMEvent(type), {
 						which	: e.which,
 						target	: e.target || e.srcElement || originalTarget || document.body,
@@ -3305,19 +3305,19 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 						originalEvent : e,
 						timeStamp : e.timeStamp || Date.now()
 					});
-					
-					// NOTE: For convenience, copy extra properties from the original event. 
+
+					// NOTE: For convenience, copy extra properties from the original event.
 					// This is mostly used for custom events to pass custom properties.
 					for (i in e) {
 						if (!event.hasOwnProperty(i) && typeof e[i]!=='function' && i!==i.toUpperCase() && i!=='layerX' && i!=='layerY') {
 							event[i] = e[i];
 						}
 					}
-					
+
 					if (!event.target) {
 						self.log('Event target doesn\'t exist for type "'+event.type+'": ',event.target,', srcElement=',e.srcElement);
 					}
-					
+
 					if (e.type==='touchend' && priv._lastTouchPos) {
 						event.pageX = priv._lastTouchPos.pageX;
 						event.pageY = priv._lastTouchPos.pageY;
@@ -3342,12 +3342,12 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					if (type.indexOf('mouse')>-1 || type.indexOf('click')>-1 || (e.button!==null && e.button!==undefined)) {
 						event.button = typeof e.button=='number' ? e.button : e.which;
 					}
-					
+
 					// fix safari #textnode target bug
 					if (event.target && event.target.nodeType===3 && originalTarget.nodeType!==3) {
 						event.target = event.target.parentNode;
 					}
-					
+
 					// allow filtering by CSS selector
 					var sel = wrappedHandler.selector,
 						selEls, isInSelector;
@@ -3356,7 +3356,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 							within : originalTarget
 						});
 					}
-					
+
 					// is the capturing node within the original handler context?
 					d.searchNode = !selEls && event.relatedTarget || event.target;
 					do {
@@ -3373,21 +3373,22 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 							break;
 						}
 					} while(d.searchNode && (d.searchNode=d.searchNode.parentNode) && d.searchNode!==document);
-					
+
 					if (selEls && !isInSelector) {
 						return;
 					}
-					
+
 					// Don't fire mouseout events when the mouse is moving in/out a child node of the handler context element
 					if ((type!=='mouseover' && type!=='mouseout') || !d.isInSelf) {
 						if (handler && handler.call) {
+							event.currentTarget = fireTarget || originalTarget;
 							d.handlerResponse = handler.call(fireTarget || originalTarget, event);
 						}
 						else {
 							// NOTE: Turn this on and fix the IE bug.
 							//console.log('Handler not a function: ', self.typeOf(handler), ' handler=', handler, ' type=', type);
 						}
-						
+
 						event.returnValue = d.handlerResponse!==false && event.returnValue!==false;
 						if (event.defaultPrevented) {
 							event.returnValue = e.returnValue = false;
@@ -3425,12 +3426,12 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			obj = type = handler = evt = null;
 			return this.list[this.list.length-1].wrappedHandler;
 		}
-		
+
 	};
-	
-	
-	
-	
+
+
+
+
 	/** Get a String description of the subject for an event operation
 	 *	@private
 	 *	@param {Any} subject		An object of any type.
@@ -3438,8 +3439,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	priv.getSubjectDescription = function(obj) {
 		return (obj.nodeName ? (self.el(obj)+'') : (obj.constructor && obj.constructor.name || obj.name || obj)) + '';
 	};
-	
-	
+
+
 	/**	Automatically translate DOM event types from [key] to [value] when registering or removing listeners. <br />
 	 *	Also falsifies corresponding puredom-wrapped events' type fields.
 	 *	@object
@@ -3452,7 +3453,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			'mouseup'	: 'touchend'
 		});
 	}
-	
+
 	/**	Add an event listener to a DOM node for the given event type.
 	 *	@private
 	 *	@param {HTMLElement} obj			An element to add the event listener to.
@@ -3477,7 +3478,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				return true;
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
-			
+
 			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to add event with invalid type or handler:', {
 					type : type,
@@ -3486,11 +3487,11 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				});
 				return;
 			}
-			
+
 			if (self.eventTypeMap.hasOwnProperty(type)) {
 				type = self.eventTypeMap[type];
 			}
-			
+
 			fn = priv.wrappedEventListener.create(origType, fn, obj, selector);
 			if (obj.attachEvent) {
 				obj.attachEvent('on' + type, fn);
@@ -3501,8 +3502,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 		}
 	};
-	
-	
+
+
 	/**	Remove an event listener from a DOM node.
 	 *	@private
 	 *	@param {Element} obj				An element to remove the event listener from.
@@ -3527,7 +3528,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				return true;
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
-			
+
 			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to remove event with invalid type or handler:', {
 					type : type,
@@ -3536,11 +3537,11 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				});
 				return;
 			}
-			
+
 			if (self.eventTypeMap.hasOwnProperty(type)) {
 				type = self.eventTypeMap[type];
 			}
-			
+
 			fn = priv.wrappedEventListener.get(origType, fn, obj, selector, true);
 			if (obj.detachEvent) {
 				obj.detachEvent('on' + type, fn);
@@ -3553,8 +3554,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 		}
 	};
-	
-	
+
+
 	/**	When called from within an event handler and passed the DOM Event, cancels the event, prevents the event's default action, and returns false.<br />
 	 *	<strong>Note:</strong> puredom-wrapped Event objects have a cancel() method that does this for you.
 	 *	@private
@@ -3577,8 +3578,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return false;
 	};
-	
-	
+
+
 	/*
 	priv.checkEventTypeSupport = function(s, type) {
 		var da = !!('ondataavailable' in s),
@@ -3599,8 +3600,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	};
 	priv.supportsCustomEventTypes = priv.checkEventTypeSupport(document.createElement('span'), 'custom:event_typetest');
 	*/
-	
-	
+
+
 	/**	Fire an event on a DOM node.
 	 *	@private
 	 *	@param {Object} options				An event options object, having at least a "type" and "target".
@@ -3615,7 +3616,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			options = self.extend({}, options);
 			options.type = 'on'+options.type.toLowerCase().replace(/^on/,'');
 			//priv.checkEventTypeSupport(options.target, options.type);
-			
+
 			try {
 				evt = document.createEventObject();
 			}catch(err) {
@@ -3642,7 +3643,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					priv.wrappedEventListener.internalFireEvent(options);
 				}
 			}
-			
+
 		}
 		else {                                  // Everything else
 			evt = document.createEvent("HTMLEvents");
@@ -3657,24 +3658,24 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			rval = !options.target.dispatchEvent(evt);
 			preventDefault = evt.preventDefault===true;
 		}
-		
+
 		return {
 			evt             : evt,
 			preventDefault  : preventDefault,
 			rval            : rval
 		};
 	};
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**	@private */
 	priv._nodeToIdIndex = 0;
-	
+
 	/**	@private */
 	priv._nodeToIdList = {};
-	
+
 	/**	Get the UUID value for a given node. If the node does not yet have a UUID, it is assigned one.
 	 *	@private
 	 */
@@ -3701,7 +3702,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		priv.ensureNodeIdListing(el, id);
 		return id;
 	};
-	
+
 	/**	Get the node with the given UUID.
 	 *	@private
 	 */
@@ -3733,7 +3734,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return node || false;
 	};
-	
+
 	/**	@private */
 	priv.ensureNodeIdListing = function(node, id) {
 		var idAttr;
@@ -3746,7 +3747,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			priv._nodeToIdList[id] = '#'+idAttr;
 		}
 	};
-	
+
 	/**	@private */
 	priv.removeNodeUID = function(node) {
 		var id = node.getAttribute('id');
@@ -3762,9 +3763,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			node.className = node.className.replace(/(^|\b)_td_autoid_[0-9]+(\b|$)/gim,'');
 		}
 	};
-	
-	
-	
+
+
+
 	/**	@namespace Shim for HTML5's animationFrame feature.
 	 *	@name puredom.animationFrame
 	 *	@public
@@ -3777,7 +3778,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			},
 			perf = window.performance,
 			prefix;
-		
+
 		if (window.requestAnimationFrame) {
 			prefix = '';
 		}
@@ -3790,7 +3791,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		else {
 			self.nativeSupport = false;
 		}
-		
+
 		/** @ignore */
 		function now() {
 			if (perf && perf.now) {
@@ -3798,9 +3799,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 			return Date.now();
 		}
-		
+
 		if (self.nativeSupport) {
-			
+
 			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
 			 *	@param {Function} f		A function to call during the next animation frame.
 			 *	@name puredom.animationFrame.getTimer
@@ -3809,7 +3810,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			self.getTimer = function(f) {
 				return window[ (prefix ? (prefix+'R') : 'r') + 'equestAnimationFrame'](f);
 			};
-			
+
 			/**	Unregister a deferred animation function.
 			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
 			 *	@name puredom.animationFrame.cancelTimer
@@ -3818,7 +3819,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			self.cancelTimer = function(t) {
 				window[ (prefix ? (prefix+'C') : 'c') + 'ancelRequestAnimationFrame'](t);
 			};
-			
+
 			/**	Get the start time (timestamp, in milliseconds) of the current animation.
 			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
 			 *	@name puredom.animationFrame.getStartTime
@@ -3827,10 +3828,10 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			self.getStartTime = function(t) {
 				return window[ (prefix ? (prefix+'A') : 'a') + 'nimationStartTime'] || now();
 			};
-			
+
 		}
 		else {
-			
+
 			/**	@ignore */
 			self.getTimer = function(f) {
 				return setTimeout(function() {
@@ -3838,26 +3839,26 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 					f = null;
 				}, self.manualFramerate);
 			};
-			
+
 			/**	@ignore */
 			self.cancelTimer = function(t) {
 				clearTimeout(t);
 			};
-			
+
 			/**	@ignore */
 			self.getStartTime = function(t) {
 				return now();
 			};
-			
+
 		}
-		
+
 		return self;
 	}());
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**	Set the opacity of an element.
 	 *	@private
 	 *	@param {HTMLElement} el		A DOM node to which an opacity value should be applied.
@@ -3877,9 +3878,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			el.style.filter = null;
 		}
 	};
-	
-	
-	
+
+
+
 	/**	Apply a Microsoft filter value to an element, retaining existing applied filters. <br />
 	 *	See: {@link http://msdn.microsoft.com/en-us/library/ms532853(v=vs.85).aspx}
 	 *	@private
@@ -3934,10 +3935,10 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			el.style.zoom = 1;
 		}
 	};
-	
-	
-	
-	
+
+
+
+
 	/**	@private */
 	var cssPropCache = {};
 	/**	@private */
@@ -3956,8 +3957,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		cssPropCache[prop] = ret;
 		return ret;
 	}
-	
-	
+
+
 	/**	Apply key-value CSS styles to an element.
 	 *	@param {HTMLElement} el		An element whose style should be updated.
 	 *	@param {Object} properties	An Object where keys are CSS properties and values are the corresponding CSS values to apply.
@@ -4003,7 +4004,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 		}
 	};
-	
+
 	/**	Convert a CSS property name to it's CamelCase equivalent.
 	 *	@private
 	 */
@@ -4024,14 +4025,14 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	priv.styleAsPropVendorPrefixReplacer = function(s) {
 		return s.charAt(0).toUpperCase()+s.substring(1);
 	};
-	
+
 	/**	Convert a CSS property name to it's css-dash-separated equivalent.
 	 *	@private
 	 */
 	self.getStyleAsCSS = function(style) {
 		return typeof style==='string' && style.replace(/\-*([A-Z])/gm, '-$1').toLowerCase() || null;
 	};
-	
+
 	/**	Parse a CSS String and return an Object representation.
 	 *	@private
 	 */
@@ -4047,9 +4048,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return obj;
 	};
-	
+
 	self._parseCss = priv.parseCSS;
-	
+
 	/** Some intense CSS3 transitions wrapping, needed in order to support animating multiple
 	 *	properties asynchronously with interjected transition modifications
 	 *	@private
@@ -4080,10 +4081,10 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				};
 			}
 		}
-		
+
 		return transitions;
 	};
-	
+
 	/** @private */
 	self.setCssTransitions = function(el, transitions) {
 		var css = {
@@ -4092,7 +4093,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				'-vendor-transition-timing-function'	: []
 			},
 			p;
-		
+
 		for (p in transitions) {
 			if (transitions.hasOwnProperty(p) && transitions[p]) {
 				css['-vendor-transition-property'].push(p.toLowerCase());
@@ -4100,16 +4101,16 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 				css['-vendor-transition-timing-function'].push(transitions[p].timingFunction || 'ease');
 			}
 		}
-		
+
 		for (p in css) {
 			if (css.hasOwnProperty(p)) {
 				css[p] = css[p].join(', ');
 			}
 		}
-		
+
 		self.applyCss(el, css);
 	};
-	
+
 	/** @private */
 	self.updateCssTransitions = function(el, transitionsToUpdate) {
 		var transitions, p;
@@ -4128,8 +4129,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			self.setCssTransitions(el, transitions);
 		}
 	};
-	
-	
+
+
 	/** @private */
 	self.addClass = function(el, classes, remove) {
 		var modified = false,
@@ -4155,13 +4156,13 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			}
 		}
 	};
-	
+
 	/** @private */
 	self.removeClass = function(el, classes) {
 		return self.addClass(el, classes, true);
 	};
-	
-	/** Get the current value of a CSS property from the given node. 
+
+	/** Get the current value of a CSS property from the given node.
 	 *	@private
 	 */
 	self.nodeStyle = function(node, property) {
@@ -4170,36 +4171,36 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			filter,
 			s,
 			style;
-		
+
 		dashed = dashed.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
 		camelized = dashed.replace(/\-[a-z]/gim, function (s) {return s.substring(1).toUpperCase();});
-		
+
 		if (dashed==='opacity' && priv.support.filters) {
 			return node.filters.alpha && node.filters.alpha.enabled!==false && Math.round(node.filters.alpha.opacity)/100;
 		}
-		
+
 		if (node.style && node.style[camelized]) {
 			style = node.style[camelized] || '';
 		}
-	
+
 		else if (node.currentStyle && node.currentStyle[camelized]) {
 			style = node.currentStyle[camelized] || node.currentStyle[dashed] || '';
 		}
-	
+
 		else if (document.defaultView && document.defaultView.getComputedStyle) {
 			s = document.defaultView.getComputedStyle(node, null);
 			style = s && (s.getPropertyValue(dashed) || s.getPropertyValue(camelized)) || '';
 		}
-	
+
 		else if (window.getComputedStyle) {
 			s = window.getComputedStyle(node, null);
 			style = s && (s.getPropertyValue(dashed) || s.getPropertyValue(camelized)) || '';
 		}
-		
+
 		return style;
 	};
-	
-	
+
+
 	/**	Old alias of puredom.text.html()
 	 *	@private
 	 */
@@ -4210,8 +4211,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		}
 		return self.text.filter(str, filters);
 	};
-	
-	
+
+
 	/**	Log to the browser console, if it exists.
 	 */
 	self.log = function() {
@@ -4220,9 +4221,9 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			c.log.apply(c, arguments);
 		}
 	};
-	
-	
-	
+
+
+
 	/**	Add a new plugin method to {puredom.NodeSelection}. <br />
 	 *	When called, a plugin function gets passed the arguments supplied by the caller. <br />
 	 *	The value of <code>this</code> within the function is the selection ({@link puredom.NodeSelection}) it was called on.
@@ -4240,19 +4241,19 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			};
 		}
 	};
-	
-	
+
+
 	/**	Called on DOM ready.
 	 *	@private
 	 */
 	self.init = function() {
 		if (!initialized) {
 			initialized = true;
-			
+
 			self.forEach(priv.oninit, function(i) {
 				i.call(self, self);
 			});
-			
+
 			self.fireEvent({
 				target : document.body,
 				type : "puredomready",
@@ -4263,8 +4264,8 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 	self.addEvent(document, "DOMContentLoaded", self.init);
 	self.addEvent(window, "load", self.init);
 	self.addEvent(window, "unload", priv.unload);
-	
-	
+
+
 	/**	Allows extensions to be included before the core.
 	 *	@ignore
 	 */
@@ -4278,7 +4279,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			previousSelf = null;
 		}
 	}());
-	
+
 	/**	@private */
 	priv.puredom = function(i) {
 		if (self.typeOf(i)==='function') {
@@ -4294,12 +4295,12 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 			return self.el.apply(self, arguments);
 		}
 	};
-	
+
 	self.extend(self, baseSelf);
 	self.toString = function(){return 'function puredom(){}';};
-	
+
 	this.puredom = global.puredom = self;
-	
+
 	if (typeof define==='function' && define.amd) {
 		define('puredom', function(){ return self; });
 	}
@@ -4307,6 +4308,7 @@ if(!this.JSON){this.JSON={}}(function(){function f(n){return n<10?'0'+n:n}if(typ
 		module.exports = self;
 	}
 }(this, typeof global==='object' ? global : this));
+
 /**	@fileOverview Utilities that just get grafted onto the puredom namespace. */
 
 puredom.extend(puredom, /** @lends puredom */ {
