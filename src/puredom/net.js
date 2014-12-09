@@ -112,6 +112,10 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			delete options.contentTypeOverride;
 		}
 
+		if (options.responseType) {
+			req.responseType = options.responseType;
+		}
+
 		options = callback = null;
 
 		/** @ignore */
@@ -131,7 +135,9 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			
 			req.status = xhr.status;
 			req.responseType = 'text';
-			req.responseText = req.response = xhr.responseText;
+			if (!xhr.responseType || xhr.responseType==='text') {
+				req.responseText = req.response = xhr.responseText;
+			}
 			
 			req.responseHeaders = {};
 			headerReg.lastIndex = 0;
@@ -189,6 +195,10 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			xhr.onreadystatechange = handleReadyState;
 
 			xhr.open(req.type, req.url, req.async!==false);
+
+			if (req.responseType) {
+				xhr.responseType = req.responseType;
+			}
 
 			puredom.forEach(req.headers, function(value, key) {
 				xhr.setRequestHeader(key, value);
