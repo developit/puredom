@@ -1,3 +1,6 @@
+Version 1.5.0 (Dec 9, 2014)
+- Add support for overriding xhr.responseType via options.responseType in puredom.net.*
+
 Version 1.4.3 (Dec 6, 2014)
 - Don't proxy touch events if navigator.maxTouchPoints=0
 
