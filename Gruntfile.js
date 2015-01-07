@@ -9,7 +9,6 @@ module.exports = function(grunt) {
 			},
 			full : {
 				src: [
-					'src/json2.js',
 					'src/puredom.js',
 					'src/puredom/utils.js',
 					'src/puredom/EventEmitter.js',
@@ -63,7 +62,6 @@ module.exports = function(grunt) {
 			options : {
 				browser : true,
 				ignores: [
-					'src/json2.js'
 				]
 			},
 			beforeconcat : [
