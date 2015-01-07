@@ -204,14 +204,18 @@ License
 Changelog
 =========
 
-**Version 1.5.0** *(Dec 9, 2014)*
-- Add support for overriding `xhr.responseType` via `options.responseType` in `puredom.net.*`
+**Version 1.6.0** *(Jan 6, 2015)*  
+- Fix HTTP responses with a `0` status not being treated as errors  
+- Remove `json2.js` JSON polyfill  
 
-**Version 1.4.3** *(Dec 6, 2014)*
-- Don't proxy touch events if `navigator.maxTouchPoints=0`
+**Version 1.5.0** *(Dec 9, 2014)*  
+- Add support for overriding `xhr.responseType` via `options.responseType` in `puredom.net.*`  
 
-**Version 1.4.2** *(Dec 5, 2014)*
-- Fix the value of e.currentTarget when using delegated events
+**Version 1.4.3** *(Dec 6, 2014)*  
+- Don't proxy touch events if `navigator.maxTouchPoints=0`  
+
+**Version 1.4.2** *(Dec 5, 2014)*  
+- Fix the value of e.currentTarget when using delegated events  
 
 **Version 1.4.1** *(Nov 14, 2014)*  
 - Fix troublesome UMD setup.

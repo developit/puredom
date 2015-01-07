@@ -11,7 +11,7 @@
 			i;
 		puredom.forEach(repos, function(repo, ind) {
 			var item;
-			if (repo.type==='repo' && !repo['private'] && repo.name!=='puredom') {
+			if (repo.type==='repo' && !repo['private'] && String(repo.name).toLowerCase()!=='puredom') {
 				count++;
 				item = plugins.index(ind);
 				if (!item.exists()) {
