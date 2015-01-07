@@ -5543,7 +5543,7 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			}
 			
 			if (typeof req.callback==='function') {
-				req.callback(req.status<400, req.response, req);
+				req.callback(req.status!==0 && req.status<400, req.response, req);
 			}
 		}
 		
