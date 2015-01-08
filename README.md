@@ -204,6 +204,11 @@ License
 Changelog
 =========
 
+**Version 1.6.1** *(Jan 8, 2015)*  
+- Fix incorrect encoding of attributes when templated through NodeSelection#template()  
+- Remove try/catch from applyCss() that was causing a de-opt  
+- Clean up filters support (will be going away shortly)  
+
 **Version 1.6.0** *(Jan 6, 2015)*  
 - Fix HTTP responses with a `0` status not being treated as errors  
 - Remove `json2.js` JSON polyfill  
