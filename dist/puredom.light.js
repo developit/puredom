@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.3.0',
+			version : '1.6.1',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -75,7 +75,6 @@
 				html5 : true,
 				querySelectorAll : !!('querySelectorAll' in document),
 				filters : false,
-				//filters : !!(document.all && document.documentElement && document.documentElement.filters),
 				webkitMultitouch : ('createTouch' in document) && navigator.maxTouchPoints!==0
 			},
 			regex : {
@@ -129,21 +128,6 @@
 			priv.html5div = document.createElement('div');
 			priv.html5frag.appendChild(priv.html5div);
 		}
-
-		/*
-		addEventListener('touchstart', function handler() {
-			removeEventListener('touchstart', handler);
-			priv.support.webkitMultitouch = true;
-		});
-
-		function handler(e) {
-			removeEventListener('mousedown', handler);
-			removeEventListener('touchstart', handler);
-			priv.support.webkitMultitouch = e.type==='touchstart';
-		}
-		addEventListener('mousedown', handler);
-		addEventListener('touchstart', handler);
-		*/
 	}());
 
 
@@ -1816,15 +1800,11 @@
 					what.appendChild(this._nodes[0]);
 				}
 				else {
-					// TODO: Why was this added for IE? Was this a bug?
-					//frag = priv.support.filters===true ? what : document.createDocumentFragment();
 					frag = document.createDocumentFragment();
 					this._each(function(node) {
 						frag.appendChild(node);
-					}, null, true);							// reverse
-					if (priv.support.filters!==true) {
-						what.appendChild(frag);
-					}
+					}, null, true);
+					what.appendChild(frag);
 				}
 			}
 			return this;
@@ -2153,11 +2133,8 @@
 				getFilters;
 			templateFields = templateFields || {};
 
-			getFilters = function(value, htmlEntities) {
-				var filters = value.split('|'),
-					i;
-				value = filters.splice(0, 1)[0];
-				for (i=filters.length; i--; ) {
+			getFilters = function(filters, htmlEntities) {
+				for (var i=filters.length; i--; ) {
 					if (filters[i]==='htmlEntities') {
 						filters.splice(i, 1);
 					}
@@ -2172,8 +2149,9 @@
 					tplFilters,
 					nType;
 
-				tplFilters = getFilters(tplField);
-				tplField = tplField.split('|')[0];
+				tplField = tplField.split('|');
+				tplFilters = getFilters(tplField.slice(1));
+				tplField = tplField[0];
 
 				tplValue = puredom.delve(templateFields, tplField);
 
@@ -2181,9 +2159,13 @@
 					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
 						tplValue = tplValue.toLocaleString();
 					}
+					if (tplFilters && tplFilters.length) {
+						tplValue = self.text.filter(tplValue, tplFilters.join('|'));
+					}
+
 					nType = node.attr('data-tpl-prop');
 					if (nType) {
-						node.prop(nType, self.text.filter(tplValue, tplFilters.join('|')));
+						node.prop(nType, tplValue);
 					}
 					else {
 						switch (nodeName) {
@@ -2199,15 +2181,11 @@
 							case 'video':
 							case 'audio':
 							case 'iframe':
-								tplFilters.splice(0, 0, 'htmlEntities');
-								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
 								node.attr('src', tplValue);
 								break;
 
 							default:
-								tplFilters.splice(0, 0, 'htmlEntities');
-								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
-								node.html(tplValue);
+								node.html(self.text.htmlEntities(tplValue));
 								break;
 						}
 					}
@@ -3982,12 +3960,15 @@
 		properties = properties || {};
 		for (x in properties) {
 			if (properties.hasOwnProperty(x)) {
-				try {
-					cx = self.getStyleAsCSS(x);
-					cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
-					cx = self.getStyleAsProperty(cx);
-					cx = getPrefixedCssProperty(cx);
-					if (cx==='opacity' && priv.support.filters) {
+				cx = self.getStyleAsCSS(x);
+				cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
+				cx = self.getStyleAsProperty(cx);
+				cx = getPrefixedCssProperty(cx);
+				if (!priv.support.filters) {
+					el.style[cx] = properties[x];
+				}
+				else {
+					if (cx==='opacity') {
 						ieOpac = Math.round( parseFloat(properties[x])*100 );
 						if (ieOpac<100) {
 							self.applyMsFilter(el, 'alpha', {
@@ -4001,7 +3982,7 @@
 							});
 						}
 					}
-					else if (cx==='--box-shadow' && priv.support.filters) {
+					else if (cx==='--box-shadow') {
 						d = properties[x].match(/\b(\#[0-9af]{3}[0-9af]{3}?|rgba?\([0-9\,\s]+\))\b/gim);
 						d = d && d[0] || '';
 						p = (' '+properties[x]+' ').replace(d,'').replace(/\s+/m,' ').split(' ').slice(1,4);
@@ -4010,10 +3991,7 @@
 							Strength : Math.round(p[3].replace(/[^0-9\-\.]/gim,''))
 						});
 					}
-					else {
-						el.style[cx] = properties[x];
-					}
-				}catch(err){}
+				}
 			}
 		}
 	};
