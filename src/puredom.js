@@ -75,7 +75,6 @@
 				html5 : true,
 				querySelectorAll : !!('querySelectorAll' in document),
 				filters : false,
-				//filters : !!(document.all && document.documentElement && document.documentElement.filters),
 				webkitMultitouch : ('createTouch' in document) && navigator.maxTouchPoints!==0
 			},
 			regex : {
@@ -129,21 +128,6 @@
 			priv.html5div = document.createElement('div');
 			priv.html5frag.appendChild(priv.html5div);
 		}
-
-		/*
-		addEventListener('touchstart', function handler() {
-			removeEventListener('touchstart', handler);
-			priv.support.webkitMultitouch = true;
-		});
-
-		function handler(e) {
-			removeEventListener('mousedown', handler);
-			removeEventListener('touchstart', handler);
-			priv.support.webkitMultitouch = e.type==='touchstart';
-		}
-		addEventListener('mousedown', handler);
-		addEventListener('touchstart', handler);
-		*/
 	}());
 
 
@@ -1816,15 +1800,11 @@
 					what.appendChild(this._nodes[0]);
 				}
 				else {
-					// TODO: Why was this added for IE? Was this a bug?
-					//frag = priv.support.filters===true ? what : document.createDocumentFragment();
 					frag = document.createDocumentFragment();
 					this._each(function(node) {
 						frag.appendChild(node);
-					}, null, true);							// reverse
-					if (priv.support.filters!==true) {
-						what.appendChild(frag);
-					}
+					}, null, true);
+					what.appendChild(frag);
 				}
 			}
 			return this;
@@ -3982,12 +3962,15 @@
 		properties = properties || {};
 		for (x in properties) {
 			if (properties.hasOwnProperty(x)) {
-				try {
-					cx = self.getStyleAsCSS(x);
-					cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
-					cx = self.getStyleAsProperty(cx);
-					cx = getPrefixedCssProperty(cx);
-					if (cx==='opacity' && priv.support.filters) {
+				cx = self.getStyleAsCSS(x);
+				cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
+				cx = self.getStyleAsProperty(cx);
+				cx = getPrefixedCssProperty(cx);
+				if (!priv.support.filters) {
+					el.style[cx] = properties[x];
+				}
+				else {
+					if (cx==='opacity') {
 						ieOpac = Math.round( parseFloat(properties[x])*100 );
 						if (ieOpac<100) {
 							self.applyMsFilter(el, 'alpha', {
@@ -4001,7 +3984,7 @@
 							});
 						}
 					}
-					else if (cx==='--box-shadow' && priv.support.filters) {
+					else if (cx==='--box-shadow') {
 						d = properties[x].match(/\b(\#[0-9af]{3}[0-9af]{3}?|rgba?\([0-9\,\s]+\))\b/gim);
 						d = d && d[0] || '';
 						p = (' '+properties[x]+' ').replace(d,'').replace(/\s+/m,' ').split(' ').slice(1,4);
@@ -4010,10 +3993,7 @@
 							Strength : Math.round(p[3].replace(/[^0-9\-\.]/gim,''))
 						});
 					}
-					else {
-						el.style[cx] = properties[x];
-					}
-				}catch(err){}
+				}
 			}
 		}
 	};
