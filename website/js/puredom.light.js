@@ -1,23 +1,28 @@
-
-// Too convenient
-if (typeof(Date.now)!=='function') {
-	/**	@ignore */
-	Date.now = function() {
-		return new Date().getTime();
-	};
-}
-
-
-(function() {
+(function(window, global) {
 	/**	@exports self as puredom */
-	
+
+	// node:
+	if (typeof process==='object' && process.argv && process.argv[0]==='node') {
+		window = require('jsdom').jsdom().parentWindow;
+	}
+
+	var document = window.document,
+		navigator = window.navigator;
+
 	var previousSelf = window.puredom;
-	
+
+	if (typeof Date.now!=='function') {
+		/**	@ignore */
+		Date.now = function() {
+			return new Date().getTime();
+		};
+	}
+
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.1.7
-	 *	@namespace Top-level puredom namespace.
+	 *	@version 1.3.0
+	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
 	 *	@name puredom
@@ -25,10 +30,11 @@ if (typeof(Date.now)!=='function') {
 	 */
 	var self = function(){
 			return priv.puredom.apply(priv, arguments);
-		}, 
+		},
 		/**	@private */
 		baseSelf = {
-			version : '1.1.7',
+			version : '1.6.1',
+			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
 			easingMethods : {
@@ -53,7 +59,7 @@ if (typeof(Date.now)!=='function') {
 		objConstructor = baseSelf.constructor,
 		textContentProperty,
 		getSupportedTextContentProperty,
-		
+
 		/**	@private */
 		priv = {
 			oninit : [],
@@ -69,11 +75,10 @@ if (typeof(Date.now)!=='function') {
 				html5 : true,
 				querySelectorAll : !!('querySelectorAll' in document),
 				filters : false,
-				//filters : !!(document.all && document.documentElement && document.documentElement.filters),
-				webkitMultitouch : !!("createTouch" in document)
+				webkitMultitouch : ('createTouch' in document) && navigator.maxTouchPoints!==0
 			},
 			regex : {
-				css3AutoPrefix : /([\s\;\/\*])(box\-shadow|text\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,
+				css3AutoPrefix : /([\s\;\/\*])(transform|transition|perspective|box\-sizing|box\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,		// |text\-shadow
 				css3VendorPrefix : /\b\-(moz|webkit|ms|o|vendor)\-/gim,
 				templateFieldToken : /([^\\]?)\{([a-z0-9A-Z\$_\.]+)(\|[^\}]*?)?\}/gm,
 				parseObjectNameFromString : /^\[object ([^\s]+)\]$/gim,
@@ -86,15 +91,8 @@ if (typeof(Date.now)!=='function') {
 			},
 			noop : function(){}
 		};
-	
-	
-	if (navigator.userAgent.match(/\b(iOS|Android|WebOS|iPhone|iPod|iPad)\b/gim)) {
-		self.allowCssTransitions = false;		// not on mobile, just doesn't work well enough yet.
-		self.baseAnimationInterval = 50;
-		priv.animationTimeScale = 1.5;
-	}
-	
-	
+
+
 	if (navigator.userAgent.match(/\b(webkit|applewebkit|chrome|chromium|khtml)\b/gim)) {
 		vendorCssPrefix = '-webkit';
 		vendorCssPrefixJS = 'Webkit';
@@ -107,7 +105,6 @@ if (typeof(Date.now)!=='function') {
 		vendorCssPrefix = '-moz';
 		vendorCssPrefixJS = 'Moz';
 	}
-	//else if (navigator.userAgent.match(/\bmsie\b/gim) && parseFloat(navigator.versionNumber)>=9) {
 	else if (navigator.userAgent.match(/\bmsie\s*?(8|9|[1-9][0-9]+)\b/gim)) {
 		vendorCssPrefix = '-ms';
 		vendorCssPrefixJS = 'Ms';
@@ -116,8 +113,8 @@ if (typeof(Date.now)!=='function') {
 		priv.support.filters = true;
 		priv.support.filterProperty = 'filter';
 	}
-	
-	
+
+
 	/**	@ignore */
 	(function(div, i) {
 		div = document.createElement('div');
@@ -132,8 +129,8 @@ if (typeof(Date.now)!=='function') {
 			priv.html5frag.appendChild(priv.html5div);
 		}
 	}());
-	
-	
+
+
 	/**	Note: this function removes itself, and should only ever be run once.
 	 *	@ignore
 	 */
@@ -143,64 +140,73 @@ if (typeof(Date.now)!=='function') {
 		getSupportedTextContentProperty = null;
 		return textContentProperty;
 	};
-	
-	
-	
+
+
+
 	/** Extend/augment a base object with the properties of one or more additional objects.<br />
 	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
 	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
 	 *	@param {Object} props	An Object to copy properties from.
+	 *	@param {Object} [...]	Additional arguments also get copied onto base.
 	 *	@returns {Object} base
 	 *	@example
-	 * var clonedObj = puredom.extend({}, originalObj);
-	 * puredom.extend(MyClass.prototype, prototypeAsHash);
+	 *		var clonedObj = puredom.extend({}, originalObj);
+	 *		puredom.extend(MyClass.prototype, prototypeAsHash);
 	 */
 	self.extend = function(base) {
 		var i, j, ext;
 		base = base || {};
 		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						for (j in ext) {
-								if (ext.hasOwnProperty(j)) {
-										base[j] = ext[j];
-								}
-						}
-						// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
-						if (typeof(ext.toString)==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString && 
-							base.toString = ext.toString;
-						}
+			ext = arguments[i];
+			if (ext) {
+				for (j in ext) {
+					if (ext.hasOwnProperty(j)) {
+						base[j] = ext[j];
+					}
 				}
+				// IE never reports toString as an "own property", so manually check if it was copied and fix if required:
+				if (typeof ext.toString==='function' && ext.toString!==Object.prototype.toString) {		// ext.toString!==obj.toString &&
+					base.toString = ext.toString;
+				}
+			}
 		}
 		return base;
 	};
-	
-	
-	/** Mixins. Add functionality to an object without modifying it's prototype.<br />
-	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from.
+
+
+	/** Mix functionality from one object into another. <br />
+	 *	<strong>Note:</strong> all additional arguments are treated as additional Objects to copy properties from. <br />
+	 *	<strong>Alternative Signature:</strong> <code>mixin(true, [props, ...], base)</code>
 	 *	@param {Object} base	The object to extend. For cloning, use an object literal.
 	 *	@param {Object} props	An Object to copy properties from, unless base already has a property of the same name.
 	 *	@returns {Object} base
 	 *	@example
-	 * puredom.mixin(myObj, myDecoratorObj);
+	 *		// standard:
+	 *		puredom.mixin(myObj, decorator1, decorator2);
+	 *
+	 *		// alternative, decorator-first style:
+	 *		puredom.mixin(true, decorator1, decorator2, myObj);
 	 */
 	self.mixin = function(base) {
-		var i, j, ext;
+		var i, j, ext,
+			mix = Array.prototype.slice.call(arguments, 1);
+		if (base===true) {
+			base = mix.pop();
+		}
 		base = base || {};
-		for (i=1; i<arguments.length; i++) {
-				ext = arguments[i];
-				if (ext) {
-						for (j in ext) {
-								if (ext.hasOwnProperty(j) && !base.hasOwnProperty(j)) {
-										base[j] = ext[j];
-								}
-						}
+		for (i=0; i<mix.length; i++) {
+			if ( (ext=mix[i]) ) {
+				for (j in ext) {
+					if (ext.hasOwnProperty(j) && !base.hasOwnProperty(j)) {
+						base[j] = ext[j];
+					}
 				}
+			}
 		}
 		return base;
 	};
-	
-	
+
+
 	/**	Strip an object of all of its properties.<br />
 	 *	<strong>Note:</strong> Sets property values to null, doesn't actually delete them.
 	 *	@param {Object} obj					An object to strip all properties from
@@ -213,8 +219,8 @@ if (typeof(Date.now)!=='function') {
 			}
 		}
 	};
-	
-	
+
+
 	/** Get a value from within a nested object. "Deep keys" use dot notation.
 	 *	@param {Object} obj		The object to delve into.
 	 *	@param {String} path	A dot-notated key to find within <code>obj</code>
@@ -235,8 +241,8 @@ if (typeof(Date.now)!=='function') {
 			return obj;
 		}
 	};
-	
-	
+
+
 	/**	Flatten a nested Object using underscore-delimited keys. (<code>foo_bar_baz</code>)
 	 *	@param {Object} obj		The nested/deep object to flatten
 	 *	@returns {Object} flat
@@ -261,8 +267,8 @@ if (typeof(Date.now)!=='function') {
 			return flat;
 		}
 	};
-	
-	
+
+
 	/** Inject arbitrarily nested template fields into a string of text. <br />
 	 *	Fields are referenced like this:  {foo.bar.baz|truncate:300,byWord}<br />
 	 *	<em><strong>Note:</strong> keys are CaSe-SeNsItIvE.</em>
@@ -301,8 +307,8 @@ if (typeof(Date.now)!=='function') {
 		});
 		return templated;
 	};
-	
-	
+
+
 	/** Simple prototypal inheritance.
 	 *	@param {Function} baseClass		The base (child) class.
 	 *	@param {Function} superClass	A class to inherit from.
@@ -319,8 +325,8 @@ if (typeof(Date.now)!=='function') {
 		base.prototype.constructor = base;
 		base.prototype.__super = superClass;
 	};
-	
-	
+
+
 	/** Get the <strong>lowercase</strong> type (constructor name) of an object.<br />
 	 *	<em><strong>Important Note:</strong> Unlike many other typeOf implementations, this method returns the name of an Object's constructor, rather than just "object".</em>
 	 *	@param {Any} what		An object to analyze
@@ -345,11 +351,11 @@ if (typeof(Date.now)!=='function') {
 				return 'array';
 			}
 		}
-		//return (typeof(what)+"").toLowerCase();
+		//return String(typeof what).toLowerCase();
 		return Object.prototype.toString.call(what).replace(priv.regex.parseObjectNameFromString,'$1').toLowerCase();
 	};
-	
-	
+
+
 	/** Determines if the passed object is scalar.
 	 *	@param {Any} what		An object to analyze
 	 *	@returns {Boolean} isScalar
@@ -361,8 +367,8 @@ if (typeof(Date.now)!=='function') {
 		}
 		return false;
 	};
-	
-	
+
+
 	/* Index of an element within an array */
 	if (!Array.prototype.indexOf || ([self]).indexOf(self)!==0) {
 		try {
@@ -377,8 +383,8 @@ if (typeof(Date.now)!=='function') {
 			};
 		}catch(arrayIndexErr){}
 	}
-	
-	
+
+
 	/**	Convert an Array-like object (having a length and numeric properties) into an Array.
 	 *	@param {Any} obj		An Array-like object to convert
 	 *	@returns {Array} array	The converted <code>Array</code> on success, or the original object <code>obj</code> on failure.
@@ -409,8 +415,8 @@ if (typeof(Date.now)!=='function') {
 		}
 		return arr;
 	};
-	
-	
+
+
 	/** Determine if the argument is an Array
 	 *	@function
 	 *	@param {Any} what		An object to analyze
@@ -421,8 +427,8 @@ if (typeof(Date.now)!=='function') {
 	} : function(what) {
 		return Object.prototype.toString.call(what)==="[object Array]";
 	};
-	
-	
+
+
 	/** Determine if an object has a direct property with the given name.
 	 *	@param {Any} obj		An object to test
 	 *	@param {String} prop	A property name to test
@@ -431,8 +437,8 @@ if (typeof(Date.now)!=='function') {
 	self.hasOwnProp = function(obj, prop) {
 		return Object.prototype.hasOwnProperty.call(obj, prop);
 	};
-	
-	
+
+
 	/** Iterate over an object, calling an <code>iterator</code> function on each value.
 	 *	@name puredom.forEach
 	 *	@function
@@ -462,11 +468,11 @@ if (typeof(Date.now)!=='function') {
 		}
 		return obj;
 	};
-	
+
 	/**	@ignore */
 	self.foreach = self.forEach;
-	
-	
+
+
 	/**	Set the innerHTML of an element, with fixes for various browser bugs
 	 *	@private
 	 *	@param {HTMLElement} el			An element whose content should be set
@@ -487,8 +493,8 @@ if (typeof(Date.now)!=='function') {
 			el.appendChild(frag);
 		}
 	};
-	
-	
+
+
 	/** Create a DOM node from an Object description
 	 *	@private
 	 *	@param {Object} options			An object that describes how to construct the node
@@ -497,6 +503,19 @@ if (typeof(Date.now)!=='function') {
 	 */
 	self.createElement = function(options, parent) {
 		var el, x, i, childFrag, processProp, insertedBefore;
+		if (typeof options==='string') {
+			childFrag = document.createElement('div');
+			childFrag.innerHTML = options;
+			for (i=0; i<childFrag.childNodes.length; i++) {
+				el = childFrag.childNodes[i];
+				if (el.nodeType===1) {
+					if (parent) {
+						parent.appendChild(el);
+					}
+				}
+			}
+			return el;
+		}
 		options = options || {};
 		el = document.createElement(options.type || "div");
 		parent = parent || options.parent;
@@ -561,7 +580,7 @@ if (typeof(Date.now)!=='function') {
 				parent.appendChild(el);
 			}
 		}
-		
+
 		if (options.children && self.isArray(options.children)) {
 			childFrag = document.createDocumentFragment();
 			for (x=0; x<options.children.length; x++) {
@@ -571,10 +590,10 @@ if (typeof(Date.now)!=='function') {
 		}
 		return el;
 	};
-	
-	
+
+
 	/**	Creates a new selection containing the elements of <code>nodes</code>. <br />
-	 *	This class is not generally instantiated directly - instead, use the puredom() 
+	 *	This class is not generally instantiated directly - instead, use the puredom()
 	 *	function to query for elements or wrap an Array of elements with a selection.
 	 *	@class Represents a collection of DOM Elements. <br />
 	 *	Puredom methods that work with DOM elements generally return an instance of this.
@@ -584,39 +603,40 @@ if (typeof(Date.now)!=='function') {
 	self.NodeSelection = function NodeSelection(nodes) {
 		var x;
 		this._results = [];
-		this._nodes = [];
 		this._animations = [];
 		if (nodes) {
 			if (self.isArray(nodes)) {
-				for (x=0; x<nodes.length; x++) {
-					if (nodes[x]) {
-						if (nodes[x].constructor===NodeSelection && nodes[x]._nodes) {
-							this._nodes.push(nodes[x]._nodes[0]);
-						}
-						else {
-							this._nodes.push(nodes[x]);
-						}
+				this._nodes = nodes = nodes.slice();
+				for (x=nodes.length; x--; ) {
+					if (!nodes[x]) {
+						nodes.splice(x, 1);
+					}
+					else if (nodes[x] instanceof NodeSelection) {
+						nodes = nodes.concat(nodes.splice(x, 1)[0]._nodes);
 					}
 				}
 			}
 			else {
-				this._nodes.push(nodes);
+				this._nodes = [nodes];
 			}
+		}
+		else {
+			this._nodes = [];
 		}
 	};
 
 	self.extend(self.NodeSelection.prototype, /** @lends puredom.NodeSelection# */ {
-		
+
 		/**	@private */
 		_results : [],
-		
+
 		/**	@private */
 		_nodes : [],
-		
+
 		/**	@private */
 		_animations : [],
-		
-		
+
+
 		/**	Get an Array of String representations of each element in the selection. <br />
 		 *	For a more logging-friendly option, see {@link puredom.NodeSelection#describe}.
 		 */
@@ -645,19 +665,19 @@ if (typeof(Date.now)!=='function') {
 			});
 			return p;
 		},
-		
+
 		/**	Get a String representation of the selection's current contents. <br />
 		 *	For the raw Array description, see {@link puredom.NodeSelection#describe}.
 		 */
 		toString : function() {
 			return this.describe().join(', ');
 		},
-		
+
 		/**	@private */
 		toSource : function() {
 			return this._nodes;
 		},
-		
+
 		/**	Get the result of the previous operation. <br />
 		 *	Many puredom methods return the selection they were called on rather than a standard return value.
 		 *	This method gets the equivalent return value of the most recent selection method call.
@@ -668,13 +688,13 @@ if (typeof(Date.now)!=='function') {
 			reverseIndex = Math.round(reverseIndex) || 0;
 			return this._results[this._results.length - reverseIndex - 1];
 		},
-		
+
 		/**	@private */
 		pushResult : function(result) {
 			this._results.push(result);
 			return this;
 		},
-		
+
 		/**	Call an iterator function on each element in the selection, wrapping each in a new {@link puredom.NodeSelection}.<br />
 		 *	<strong>Note:</strong> Return <code>false</code> from within <code>iterator</code> to break out of the loop.
 		 *	@param {Function} iterator	Gets passed <code>(element, index)</code> for each element in the selection. The value of <code>this</code> is the selection itself.
@@ -683,7 +703,7 @@ if (typeof(Date.now)!=='function') {
 		each : function(action) {
 			return this._each(action, true);
 		},
-		
+
 		/**	Call an iterator function on each <strong>raw DOM node</strong> in the selection.<br />
 		 *	<strong>Note:</strong> Return <code>false</code> from within <code>iterator</code> to break out of the loop.
 		 *	@param {Function} iterator	Gets passed <code>(node, index)</code> for each element in the selection. The value of <code>this</code> is the selection itself.
@@ -708,7 +728,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
-		
+
 		/**	Call a function on the selection in the future.
 		 *	@param {Number} millis		The number of milliseconds to wait before calling <code>callback</code>.
 		 *	@param {Function} callback	The function to call in <code>millis</code> milliseconds. Gets called on the selection, so the value of <code>this</code> is the selection itself.
@@ -724,7 +744,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
-		
+
 		/**	Get the <strong>lower-case</strong> nodeName of an element.<br />
 		 *	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em> <br />
 		 *	<strong>Note:</strong> In puredom, the <code>window</code> Object is given a nodeName of "#window".
@@ -741,7 +761,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return null;
 		},
-		
+
 		/**	Get a globally unique identifier for an element. <br />
 		 *	<em><strong>Note:</strong> Only returns a UUID for the first element in a selection.</em>
 		 *	@returns {String} uuid
@@ -749,7 +769,7 @@ if (typeof(Date.now)!=='function') {
 		uuid : function() {
 			return this._nodes[0] && priv.nodeToId(this._nodes[0]) || null;
 		},
-		
+
 		/**	Get or set the textual content of elements. Omit <code>text</code> to retrieve the textual value instead of setting it.
 		 *	@param {String} [text]		If set, replaces the textual content of elements.
 		 *	@returns {String} text		The textual contents of the first element in the selection, or the selection itself if <code>text</code> was not set.
@@ -764,7 +784,7 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
-		
+
 		/**	Set the HTML contents of elements.
 		 *	@param {String} [content]			If set, updates the content of the elements. If not set, returns the HTML content of the first element.
 		 *	@param {Boolean} [asText=auto]		If <code>true</code>, content will be treated as textual, if <code>false</code> content will be treated as HTML. Defaults to auto-detection of HTML.
@@ -792,7 +812,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
-		
+
 		/**	Apply CSS to elements.
 		 *	@param {String|Object} css				CSS to apply to the elements in the selection. Either a CSS-string, or an Object where the keys are CSS properties and the values are the corresponding values to apply.
 		 *	@param {Object} [options]				Options
@@ -845,7 +865,7 @@ if (typeof(Date.now)!=='function') {
 				this._each(function(el) {
 					self.applyCss(el, css);
 				});
-				
+
 				if (callback) {
 					setTimeout(function(){
 						callback.call(selection, selection);
@@ -858,7 +878,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return this;
 		},
-		
+
 		/** Show elements.
 		 *	@returns {this}
 		 */
@@ -875,7 +895,7 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
-		
+
 		/** Hide elements.
 		 *	@param {Boolean} [andIgnore=true]		If <code>false</code>, triggers "visibility:hidden" CSS, instead of "display:none".
 		 *	@returns {this}
@@ -891,7 +911,7 @@ if (typeof(Date.now)!=='function') {
 				andIgnore===false ? {visibility:'hidden'} : {display:'none'}
 			);
 		},
-		
+
 		/**	This function tries quite hard to guess what particular fade effect is needed. <br />
 		 *	If the element that is already semi-transparent, it fades from the current opacity. <br />
 		 *	If the element that is hidden but not explicitly transparent, it fades from opacity=0 (hidden). <br />
@@ -937,7 +957,7 @@ if (typeof(Date.now)!=='function') {
 			}}).show();
 			return this;
 		},
-		
+
 		/**	The opposite of fadeIn(). Makes several guesses about the desired effect. */
 		fadeOut : function(tween, callback, andIgnore) {
 			var originalOpacity = parseFloat(this.getStyle('opacity') || '1') || 1;
@@ -972,21 +992,21 @@ if (typeof(Date.now)!=='function') {
 			}});
 			return this;
 		},
-		
+
 		/**	Automatically detects and uses CSS3 transitions.
 		 *	@private
 		 */
 		animateCSS : (function() {
 			var manual, cssTransition, supportsCssTransition, checkCssTransitionSupport;
-			
+
 			/**	@ignore */
 			manual = function(cssProp, targetValue, duration, easing, callback) {
 				var startValues = [],
 					perNodeProperties = [],
 					numericTargetValue, units, s;
-				
+
 				cssProp = cssProp.toLowerCase();
-				
+
 				if (targetValue!=='auto') {
 					numericTargetValue = parseFloat((targetValue + '').replace(priv.regex.getNumericCSSValue,'')) || 0;
 					s = self.typeOf(targetValue)==='string' && targetValue.match(priv.regex.getCSSValueUnits);
@@ -998,12 +1018,12 @@ if (typeof(Date.now)!=='function') {
 				else {
 					units = cssProp==='opacity' ? '' : 'px';
 				}
-				
+
 				this._each(function(node, i) {
 					var ts, tss, testCssObj={}, iprop, vis;
-					
+
 					startValues[i] = parseFloat((self.nodeStyle(node, cssProp) + '').replace(priv.regex.getNonIntegerCharsSigned,'')) || 0;
-					
+
 					if (targetValue==='auto' || targetValue==='') {
 						vis = node.style.visibility || '';
 						testCssObj[cssProp] = targetValue;
@@ -1033,7 +1053,7 @@ if (typeof(Date.now)!=='function') {
 						};
 					}
 				});
-				
+
 				return this.animate(function(fraction, anim) {
 					this._each(function(node, i) {
 						var cssObj = {},
@@ -1066,26 +1086,26 @@ if (typeof(Date.now)!=='function') {
 					callback.apply(sel, arguments);
 				});
 			};
-			
+
 			/**	@ignore */
 			cssTransition = function(cssProp, targetValue, duration, easing, callback) {
 				var anim = this._createAnimationObj(function(){}, duration, easing, callback),
 					me = this,
 					transition = {},
 					css = {};
-				
+
 				cssProp = self.getStyleAsProperty(cssProp);
 				if (self.typeOf(targetValue)==='number' && (cssProp+'').toLowerCase()!=='opacity') {
 					targetValue = targetValue + 'px';
 				}
-				
+
 				transition[self.getStyleAsCSS(cssProp)] = {
 					duration : anim.duration,
 					timingFunction : anim.easing
 				};
-				
+
 				css[cssProp] = targetValue;
-				
+
 				setTimeout(function() {
 					/**	@ignore */
 					me._each(function(node) {
@@ -1096,7 +1116,7 @@ if (typeof(Date.now)!=='function') {
 					/**	@ignore */
 					anim._cb = function() {
 						if (anim) {
-							
+
 							/** remove CSS transition definitions from the generated CSS:
 							 *	@ignore
 							 */
@@ -1106,7 +1126,7 @@ if (typeof(Date.now)!=='function') {
 								self.updateCssTransitions(node, nullTransition);
 								priv.decrementAnimationCount(node);
 							});
-							
+
 							if (anim.callback) {
 								anim.callback.call(me, me);
 							}
@@ -1121,13 +1141,13 @@ if (typeof(Date.now)!=='function') {
 					setTimeout(anim._cb, (parseInt(anim.duration,10) || 0)+20);
 				}, 10);
 			};
-			
+
 			/**	@ignore */
 			checkCssTransitionSupport = function() {
 				supportsCssTransition = document.body.style[vendorCssPrefixJS+'Transition']!==undefined || document.body.style.transition!==undefined;
 				return supportsCssTransition;
 			};
-			
+
 			return function(cssProp, targetValue, duration, easing, callback) {
 				var iosCompat=false, x;
 				if (self.typeOf(supportsCssTransition)!=='boolean') {
@@ -1142,17 +1162,17 @@ if (typeof(Date.now)!=='function') {
 				return this;
 			};
 		}()),
-		
+
 		animate : function(animator, duration, easing, callback) {
 			if (animator) {
 				var nodeSelection = this,
 					anim = this._createAnimationObj.apply(this, arguments),
 					frame;
-				
+
 				this._each(function(node) {
 					priv.incrementAnimationCount(node);
 				});
-				
+
 				frame = function(now) {
 					anim.frameTime = now;
 					anim.position = anim.frameTime - anim.start;
@@ -1164,9 +1184,9 @@ if (typeof(Date.now)!=='function') {
 					else if (anim.easingMethod) {
 						anim.fraction = anim.easingMethod.call(self.easingMethods, anim.fraction, anim);
 					}
-					
+
 					anim.animator.call(nodeSelection, anim.fraction, anim);
-					
+
 					if (anim.fraction===1) {
 						for (var x=nodeSelection._animations.length; x--; ) {
 							if (nodeSelection._animations[x]===anim) {
@@ -1188,9 +1208,9 @@ if (typeof(Date.now)!=='function') {
 						anim.timer = self.animationFrame.getTimer(frame, self.baseAnimationInterval || 10);
 					}
 				};
-				
+
 				self.animationFrame.getTimer(frame, self.baseAnimationInterval || 10);
-				
+
 				this._animations.push(anim);
 			}
 			return this;
@@ -1206,7 +1226,7 @@ if (typeof(Date.now)!=='function') {
 				start		: self.animationFrame.getStartTime(),
 				frameTime	: null
 			};
-			
+
 			if (self.typeOf(anim.duration)==='string') {
 				switch (anim.duration.toLowerCase()) {
 					case 'long':
@@ -1224,11 +1244,11 @@ if (typeof(Date.now)!=='function') {
 			else {
 				anim.duration = Math.round(anim.duration) || priv.animationTimes.medium;
 			}
-			
+
 			if (priv.animationTimeScale) {
 				anim.duration *= priv.animationTimeScale;
 			}
-			
+
 			if (anim.easing && self.easingMethods.hasOwnProperty(anim.easing)) {
 				anim.easingMethod = self.easingMethods[anim.easing];
 			}
@@ -1237,7 +1257,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return anim;
 		},
-		
+
 		/**	Add a CSS class to the selection. <br />
 		 *	Pass an Array and/or multiple arguments to add multiple classes.
 		 *	@param {String} className		A CSS class to add.
@@ -1262,7 +1282,7 @@ if (typeof(Date.now)!=='function') {
 			});
 			return this;
 		},
-		
+
 		/**	Remove a CSS class to the selection. <br />
 		 *	Pass an Array and/or multiple arguments to remove multiple classes.
 		 *	@param {String} className		A CSS class to remove.
@@ -1516,12 +1536,14 @@ if (typeof(Date.now)!=='function') {
 				this._each(function(node) {
 					var name = (node.nodeName+'').toLowerCase(),
 						type = (node.getAttribute('type') || '').toLowerCase();
-					
+
 					if (name==='input' && (type==='checkbox' || type==='radio')) {
 						node.checked = !!newValue;
 					}
-					node.value = newValue;
-					
+					else {
+						node.value = newValue;
+					}
+
 					if (options.fireChange!==false) {
 						self.fireEvent({
 							type : 'change',
@@ -1530,7 +1552,7 @@ if (typeof(Date.now)!=='function') {
 						});
 					}
 				});
-				
+
 				return this;
 			}
 			else {
@@ -1561,7 +1583,7 @@ if (typeof(Date.now)!=='function') {
 						values.push(node.value);
 					}
 				});
-				return values.length<2 ? (values[0] || null) : values;
+				return values.length<2 ? values[0] : values;
 			}
 		},
 		attr : function(key, value, returnValue) {
@@ -1580,7 +1602,7 @@ if (typeof(Date.now)!=='function') {
 			else if (arguments.length>1) {
 				if (self.typeOf(key)==='object') {
 					for (i in key) {
-						if (typeof(i)==='string' && key.hasOwnProperty(i)) {
+						if (typeof i==='string' && key.hasOwnProperty(i)) {
 							this.attr(attrs, key[i]);
 						}
 					}
@@ -1598,7 +1620,7 @@ if (typeof(Date.now)!=='function') {
 			else {
 				this._each(function(node) {
 					var a = node.getAttribute(key);
-					if (typeof(a)!=='string') {
+					if (typeof a!=='string') {
 						a = null;
 					}
 					attrs.push( a );
@@ -1659,30 +1681,32 @@ if (typeof(Date.now)!=='function') {
 
 		/**	Register an event handler. <br />
 		 *	When an event of the given type is triggered, the handler function is called.
-		 *	@param {String} eventType		An event type to listen for
+		 *	@param {String} type			An event type to listen for
+		 *	@param {String} [selector]		Optionally fire only if the event target matches a CSS selector
 		 *	@param {Function} handler		A handler to call in response to the event
 		 *	@example
 		 *		function clickHandler(e){ alert(e.button); }
 		 *		foo.addEvent("click", clickHandler);
 		 *	@returns {this}
 		 */
-		addEvent : function(eventType, handler, useCapture) {
+		on : function(type, selector, handler) {
 			this._each(function(el) {
-				self.addEvent(el, eventType, handler, useCapture);
+				self.addEvent(el, type, selector, handler);
 			});
 			return this;
 		},
 
 		/**	Un-register an event handler.
-		 *	@param {String} eventType		The event type
+		 *	@param {String} type			The event type
+		 *	@param {String} [selector]		Optionally fire only if the target matches a CSS selector
 		 *	@param {Function} handler		The handler to remove
 		 *	@example
 		 *		foo.removeEvent("click", clickHandler);
 		 *	@returns {this}
 		 */
-		removeEvent : function(eventType, handler, useCapture) {
+		off : function(type, selector, handler) {
 			this._each(function(el) {
-				self.removeEvent(el, eventType, handler, useCapture);
+				self.removeEvent(el, type, selector, handler);
 			});
 			return this;
 		},
@@ -1692,7 +1716,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@param {Object|Event} e		The event data
 		 *	@returns {this}
 		 */
-		fireEvent : function(type, e) {
+		trigger : function(type, e) {
 			this._each(function(node) {
 				self.fireEvent(self.extend({}, e || {}, {
 					type : type,
@@ -1776,15 +1800,11 @@ if (typeof(Date.now)!=='function') {
 					what.appendChild(this._nodes[0]);
 				}
 				else {
-					// TODO: Why was this added for IE? Was this a bug?
-					//frag = priv.support.filters===true ? what : document.createDocumentFragment();
 					frag = document.createDocumentFragment();
 					this._each(function(node) {
 						frag.appendChild(node);
-					}, null, true);							// reverse
-					if (priv.support.filters!==true) {
-						what.appendChild(frag);
-					}
+					}, null, true);
+					what.appendChild(frag);
 				}
 			}
 			return this;
@@ -1976,7 +1996,7 @@ if (typeof(Date.now)!=='function') {
 			var nodes=[], parent;
 			this._each(function(node) {
 				parent = node.parentNode;
-				// Note: all newly created elements are placed into a document fragment in IE. 
+				// Note: all newly created elements are placed into a document fragment in IE.
 				// Unfortunately, this means parentNodes that are #document-fragment's can't be considered valid (lowest-common).
 				if (parent && nodes.indexOf(parent)<0 && parent.nodeType!==11) {
 					nodes.push(parent);
@@ -1989,7 +2009,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@returns {puredom.NodeSelection} children
 		 */
 		children : function() {
-			var children = [], 
+			var children = [],
 				x, y;
 			if (this._nodes.length>0) {
 				for (x=0; x<this._nodes.length; x++) {
@@ -2031,11 +2051,11 @@ if (typeof(Date.now)!=='function') {
 		selection : function(start, end) {
 			var el = this._nodes[0],
 				value, sel, before, endMax, range;
-			if (start && typeof(start)!=='number' && start.start) {
+			if (start && typeof start!=='number' && start.start) {
 				end = start.end;
 				start = start.start;
 			}
-			if (typeof(start)==='number') {
+			if (typeof start==='number') {
 				if (start<0) {
 					start = 0;
 				}
@@ -2049,7 +2069,7 @@ if (typeof(Date.now)!=='function') {
 				else if (end<start) {
 					end = start;
 				}
-				
+
 				if(window.getSelection) {
 					el.selectionStart = start;
 					el.selectionEnd = end;
@@ -2068,7 +2088,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			else {
 				if (window.getSelection) {					// Stanadards
-					value = typeof(el.value)==='string' ? el.value : el.innerHTML;
+					value = typeof el.value==='string' ? el.value : el.innerHTML;
 					sel = window.getSelection();
 					return {
 						start	: el.selectionStart+0,
@@ -2109,40 +2129,43 @@ if (typeof(Date.now)!=='function') {
 		 *	@returns {this}
 		 */
 		template : function(templateFields) {
-			var getFilters;
+			var attrName = self.templateAttributeName,
+				getFilters;
 			templateFields = templateFields || {};
-			
-			getFilters = function(value, htmlEntities) {
-				var filters = value.split('|'),
-					i;
-				value = filters.splice(0, 1)[0];
-				for (i=filters.length; i--; ) {
+
+			getFilters = function(filters, htmlEntities) {
+				for (var i=filters.length; i--; ) {
 					if (filters[i]==='htmlEntities') {
 						filters.splice(i, 1);
 					}
 				}
 				return filters;
 			};
-			
-			this.query('[data-tpl-id]').each(function(node) {
+
+			this.query('['+attrName+']').each(function(node) {
 				var nodeName = node.nodeName(),
-					tplField = node.attr('data-tpl-id'),
+					tplField = node.attr(attrName),
 					tplValue = tplField,
 					tplFilters,
 					nType;
-				
-				tplFilters = getFilters(tplField);
-				tplField = tplField.split('|')[0];
-				
+
+				tplField = tplField.split('|');
+				tplFilters = getFilters(tplField.slice(1));
+				tplField = tplField[0];
+
 				tplValue = puredom.delve(templateFields, tplField);
-				
+
 				if (tplValue!==null && tplValue!==undefined) {
-					if (typeof(tplValue)==='date' || tplValue.constructor===Date) {
+					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
 						tplValue = tplValue.toLocaleString();
 					}
+					if (tplFilters && tplFilters.length) {
+						tplValue = self.text.filter(tplValue, tplFilters.join('|'));
+					}
+
 					nType = node.attr('data-tpl-prop');
 					if (nType) {
-						node.prop(nType, self.text.filter(tplValue, tplFilters.join('|')));
+						node.prop(nType, tplValue);
 					}
 					else {
 						switch (nodeName) {
@@ -2153,20 +2176,16 @@ if (typeof(Date.now)!=='function') {
 							case 'progress':
 								node.value(tplValue);
 								break;
-							
+
 							case 'img':
 							case 'video':
 							case 'audio':
 							case 'iframe':
-								tplFilters.splice(0, 0, 'htmlEntities');
-								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
 								node.attr('src', tplValue);
 								break;
-							
+
 							default:
-								tplFilters.splice(0, 0, 'htmlEntities');
-								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
-								node.html(tplValue);
+								node.html(self.text.htmlEntities(tplValue));
 								break;
 						}
 					}
@@ -2176,17 +2195,32 @@ if (typeof(Date.now)!=='function') {
 			return this;
 		}
 	});
-	
-	/**	Alias of {@link puredom.NodeSelection#addEvent}
+
+	/**	Alias of {@link puredom.NodeSelection#trigger}
 	 *	@function
 	 */
-	self.NodeSelection.prototype.on = self.NodeSelection.prototype.addEvent;
-	
+	self.NodeSelection.prototype.fireEvent = self.NodeSelection.prototype.trigger;
+
+	/**	Alias of {@link puredom.NodeSelection#trigger}
+	 *	@function
+	 */
+	self.NodeSelection.prototype.emit = self.NodeSelection.prototype.trigger;
+
+	/**	Alias of {@link puredom.NodeSelection#on}
+	 *	@function
+	 */
+	self.NodeSelection.prototype.addEvent = self.NodeSelection.prototype.on;
+
+	/**	Alias of {@link puredom.NodeSelection#off}
+	 *	@function
+	 */
+	self.NodeSelection.prototype.removeEvent = self.NodeSelection.prototype.off;
+
 	/**	@ignore */
 	self.NodeSelection.prototype.animateCss = self.NodeSelection.prototype.animateCSS;
-	
-	
-	
+
+
+
 	/**	@private */
 	priv.incrementAnimationCount = function(node) {
 		node._puredom_animationCount = priv.getAnimationCount(node) + 1;
@@ -2209,9 +2243,9 @@ if (typeof(Date.now)!=='function') {
 	priv.getAnimationCount = function(node) {
 		return parseInt(node._puredom_animationCount, 10) || 0;
 	};
-	
-	
-	
+
+
+
 	/**	Destroy and cleanup puredom.
 	 *	@private
 	 */
@@ -2223,54 +2257,66 @@ if (typeof(Date.now)!=='function') {
 			window.puredom = priv = objConstructor = getSupportedTextContentProperty = null;
 		}, 10);
 	};
-	
-	
+
+
 	/**	Create or retrieve one or more elements based on a query. <br />
 	 *	If query begins with "<" or is an object, a new element is contructed based on that information. <br />
 	 *	If the query is a CSS selector, DOM nodes matching that selector are returned.
 	 *	@param {String|Object} query	A CSS selector (retrieval), or a DOM description (creation).
+	 *	@param {Boolean} [log=false]	If true, query process will be logged to the console.
 	 *	@returns {puredom.NodeSelection} selection
 	 */
 	self.el = function(query, log) {
 		var results, type;
 		if (query) {
-			type = self.typeOf(query);
-			if (type==='array') {
+			type = typeof query;
+			if (type==='string' && query.charAt(0)!=='<') {
+				if (log===true) {
+					self.log('query is a CSS selector', query, type);
+				}
+				if (query==='body') {
+					results = document.body;
+				}
+				else if (query==='html') {
+					results = document.documentElement || document;
+				}
+				else {
+					results = self.getElement(query, arguments[1]);
+				}
+			}
+			else if (self.isArray(query)) {
 				results = [];
 				for (var x=0; x<query.length; x++) {
 					Array.prototype.splice.apply(results, [0,0].concat(self.el(query[x])._nodes) );
 				}
 			}
-			if (query.constructor===self.NodeSelection) {
-				if (log===true) {
-					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
-				}
-				return query;
-			}
-			else if ((type==='string' && query.charAt(0)==='<') || (type==='object' && !query.nodeName && query!==window)) {
+			else if (type==='string' || (type==='object' && !query.nodeName && query!==window)) {
 				if (log===true) {
 					self.log('query is an HTML fragment', query, type);
 				}
 				results = self.createElement.apply(self, arguments);
 			}
-			else if (type==='string') {
+			else if (query.constructor===self.NodeSelection) {
 				if (log===true) {
-					self.log('query is a CSS selector', query, type);
+					self.log('query is already a NodeSelection', query.constructor+'', query.constructor.name);
 				}
-				results = self.getElement(query, arguments[1]);
+				return query;
 			}
 			else if (query.nodeName || query===window) {
 				if (log===true) {
 					self.log('query is an HTML element', query, type);
+				}
+				if (query===window) {
+					query = document.documentElement || document;
 				}
 				results = query;
 			}
 		}
 		return new self.NodeSelection(results);
 	};
-	
-	
-	
+
+
+
 	/**	Get a selection ({@link puredom.NodeSelection}) containing the node with the given UUID. <br />
 	 *	UniqueIDs can be retrieved using {@link puredom.NodeSelection#uuid}.
 	 *	@param {String} uuid						Unique node ID, such as one derived from {@link puredom.NodeSelection#uuid}.
@@ -2279,9 +2325,9 @@ if (typeof(Date.now)!=='function') {
 	self.node = function(uuid) {
 		return new self.NodeSelection(priv.idToNode(uuid));
 	};
-	
-	
-	
+
+
+
 	/** Returns an {Array} of elements matching the passed CSS selector query.
 	 *	@function
 	 *	@param {String} search							A CSS selector, or multiple CSS selectors separated by a comma
@@ -2303,7 +2349,7 @@ if (typeof(Date.now)!=='function') {
 			removeCommaPaddingReg = /\s*?\,\s*?/gm,
 			enableSelectorStats = false,
 			selectors;
-		
+
 		/** CSS selectors implemented as filters
 		 *		@tests:
 		 *			// Should set all checkboxes to "checked" that are descendants of fieldsets having the given className:
@@ -2328,7 +2374,7 @@ if (typeof(Date.now)!=='function') {
 					return [b.getElementById(matches[0].substring(1))];
 				}
 			},
-			
+
 			/** .class
 			 *	@ignore
 			 */
@@ -2347,7 +2393,7 @@ if (typeof(Date.now)!=='function') {
 					}
 				}
 			},
-			
+
 			/** Attribute selectors
 			 *	[a=b]		absolute attribute match
 			 *	[a^=b]		left() match
@@ -2411,7 +2457,7 @@ if (typeof(Date.now)!=='function') {
 								default:
 									isMatch = !matches.attrValue && matches.attrPresent;
 							}
-							
+
 							// remove from the result set if not a match:
 							if (!isMatch) {
 								results.splice(i, 1);
@@ -2420,7 +2466,7 @@ if (typeof(Date.now)!=='function') {
 					}
 				}
 			},
-			
+
 			/** > Descendant selector
 			 *	@tests:
 			 *			// Should return <head> and <body>:
@@ -2459,7 +2505,7 @@ if (typeof(Date.now)!=='function') {
 					}
 				}
 			},
-			
+
 			/** :nth-child aliases, like :first-child
 			 *	@ignore
 			 */
@@ -2482,7 +2528,7 @@ if (typeof(Date.now)!=='function') {
 							break;
 						}
 					}
-					
+
 					if (map.hasOwnProperty(matches[1]+'-'+matches[2]) && selector) {
 						mappedSelector = map[matches[1]+'-'+matches[2]];
 						selector.regex.lastIndex = 0;
@@ -2494,7 +2540,7 @@ if (typeof(Date.now)!=='function') {
 					}
 				}
 			},
-			
+
 			/** :nth-child() selector
 			 *	@tests:
 			 *			// Should return third element in the body
@@ -2518,13 +2564,13 @@ if (typeof(Date.now)!=='function') {
 							odd : [2,1],
 							even : [2]
 						};
-					
+
 					originalResults = results.splice(0, results.length);
-					
+
 					if (matches[1].indexOf('-last')!==-1) {
 						originalResults.reverse();
 					}
-					
+
 					if (matches[2]) {		// explicit an+b
 						p = matches[2].split('n');
 						if (p[0].replace('-','').length===0) {
@@ -2547,15 +2593,15 @@ if (typeof(Date.now)!=='function') {
 							self.log('Unknown named nth-child expression "'+r[4]+'"');
 						}
 					}
-					
+
 					if (a+b<=0) {
 						return;
 					}
 					if (a===b) {
 						b = 0;
 					}
-					
-					
+
+
 					for (x=0; x<originalResults.length; x++) {
 						children = (originalResults[x].parentNode || {}).childNodes;
 						type = (originalResults[x].nodeName+'').toLowerCase();
@@ -2587,7 +2633,7 @@ if (typeof(Date.now)!=='function') {
 					}
 				}
 			},
-			
+
 			/** Nested element pseudo-pseudo-selector, with built-in nodeName filtering
 			 *	@ignore
 			 */
@@ -2606,16 +2652,33 @@ if (typeof(Date.now)!=='function') {
 				}
 			}
 		];
-		
-		
+
+
 		/** Resets a RegExp for repeated usage.
 		 *	@private
 		 */
 		resetRegex = function(regex) {
 			regex.lastIndex = 0;
 		};
-		
-		
+
+
+		/**	@ignore */
+		function nativeQuerySelectorAll(selector, within) {
+			var results;
+			within = within || getElement.baseNode;
+			selector = selector.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
+			try {
+				results = within.querySelectorAll(selector);
+				if (results) {
+					results = self.toArray(results);
+				}
+			} catch (err) {
+				self.log('Native querySelectorAll failed for selector: '+selector+', error:'+err.message);
+			}
+			return results || false;
+		}
+
+
 		/** The selector engine's interface. Returns an {Array} of elements matching the passed CSS selector query
 		 *	@param {String} search			A CSS selector, or multiple CSS selectors separated by a comma
 		 *	@param {Object} [options]		Optional hash of one-time triggers for the engine:
@@ -2627,7 +2690,7 @@ if (typeof(Date.now)!=='function') {
 		 *	@private
 		 */
 		getElement = function(search, options) {
-			var baseNode = document && document.documentElement || document,
+			var baseNode = getElement.baseNode || (getElement.baseNode = document && document.documentElement || document),
 				currentResults,
 				nodes,
 				nodeName,
@@ -2647,30 +2710,30 @@ if (typeof(Date.now)!=='function') {
 				perSelectorSearchTime,
 				perSelectorFilterTime,
 				i, x;
-			
+
 			// Sanitize input and options:
 			search = (search + '').replace(removePaddingReg, '$1');
 			options = puredom.extend({}, options || {});
 			if (options.logging===true) {
 				doLogging = true;
 			}
-			
+
 			// Check for cache enabled and return cached value if it exists:
 			if (cacheEnabled && options.useCache===true && cache[search]) {
 				return cache[search];
 			}
-			
+
 			// Allow queries to be constrained to a given base node:
 			if (options.within) {
 				baseNode = options.within;
 			}
-			
+
 			if (baseNode && baseNode.length && !baseNode.nodeName && baseNode.indexOf && baseNode[0]) {
 				baseNode = baseNode[0];
 			}
-			
-			
-			
+
+
+
 			// Comma-separated statements are dealt with in isolation, joined and returned:
 			if (search.indexOf(',')>-1) {
 				search = search.split(',');
@@ -2706,48 +2769,48 @@ if (typeof(Date.now)!=='function') {
 				}
 				return nodes;
 			}
-			
-			
+
+
 			/** -------------------------
 			 *	Selector engine internals
 			 */
-			
+
+			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById()
+			// functionality is preserved (only returns one element, the last with that ID).
+			if (search.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
+				currentResults = [
+					(baseNode.getElementById ? baseNode : document).getElementById(search.substring(1))
+				];
+				return currentResults;
+				// skip parse:
+				//useCustomImplementation = false;
+			}
+
+
 			nodeName = search.match(nodeNameReg);
 			nodeName = ((nodeName && nodeName[0]) || "").toLowerCase();
 			search = search.substring(nodeName.length);
-			// NOTE: trim() is intentionally NOT called on search here. We *want* to know if there 
+			// NOTE: trim() is intentionally NOT called on search here. We *want* to know if there
 			// is preceeding whitespace, because that consitutes a "within" pseudo-pseudo-selector!
 			// ^ does that make sense?
-			
+
 			searchParsed = search;
-			
+
 			// querySelectorAll doesn't support searches beginning with the child selector. For those, use the custom engine.
 			if (originalSearch.charAt(0)==='>') {
 				useCustomImplementation = true;
 			}
-			
-			// ID's bypass querySelectorAll and the custom engine so the expected document.getElementById() 
-			// functionality is preserved (only returns one element, the last with that ID).
-			if (searchParsed.match(/^#[^\s\[\]\(\)\:\*\.\,<>#]+$/gim)) {
-				currentResults = [
-					(baseNode.getElementById ? baseNode : document).getElementById(searchParsed.substring(1))
-				];
-				// skip parse:
-				useCustomImplementation = false;
-			}
-			else if (priv.support.querySelectorAll && useCustomImplementation!==true) {
-				nativeSearch = originalSearch.replace(/(\[[^\[\]= ]+=)([^\[\]"']+)(\])/gim,'$1"$2"$3');
-				try {
-					currentResults = self.toArray(baseNode.querySelectorAll(nativeSearch) || []);
-				} catch (querySelectorError) {
-					self.log('Native querySelectorAll failed for selector: ', nativeSearch, ', error:', querySelectorError.message);
+
+			if (priv.support.querySelectorAll && useCustomImplementation!==true) {
+				currentResults = nativeQuerySelectorAll(originalSearch, baseNode);
+				if (currentResults===false) {
 					currentResults = [];
 					useCustomImplementation = true;
 				}
 			}
-			
-			
-			
+
+
+
 			if (useCustomImplementation) {
 				if (search.substring(0,1)==='#') {
 					currentResults = [];
@@ -2760,7 +2823,7 @@ if (typeof(Date.now)!=='function') {
 					currentResults = self.toArray(baseNode.getElementsByTagName(nodeName || '*'));
 					constrainedToNode = true;
 				}
-				
+
 				// A pass-by-reference handlerConfig for filters will be needed for :not() support:
 				handlerConfig = {
 					searchBaseNode : baseNode,
@@ -2768,8 +2831,8 @@ if (typeof(Date.now)!=='function') {
 					first : true,
 					isFiltered : constrainedToNode || !!(nodeName && nodeName!=='*')
 				};
-				
-				
+
+
 				// Filter until there are no more selectors left in the statement:
 				while (searchParsed.length>0) {
 					parseIterations += 1;
@@ -2778,46 +2841,46 @@ if (typeof(Date.now)!=='function') {
 						if (enableSelectorStats===true) {
 							perSelectorSearchTime = Date.now();
 						}
-						
+
 						// Prepare and get matches from the selectorFilter's regular expression:
 						resetRegex(selectors[i].regex);
 						matches = selectors[i].regex.exec(searchParsed);
-						
+
 						if (enableSelectorStats===true) {
 							perSelectorSearchTime = Date.now() - perSelectorSearchTime;
 						}
-						
+
 						if (matches) {
 							// Match found, this must be the right selector filter:
 							hasMatch = true;
 							if (doLogging) {
 								self.log((selectors[i].title || selectors[i].regex) + ' ==>> matched:"'+ searchParsed.substring(0,matches[0].length) + '" ==>> remaining:"'+ searchParsed.substring(matches[0].length) + '" ||debug>> (submatches:'+ matches.slice(1).join(',') + ')');
 							}
-							
+
 							if (enableSelectorStats===true) {
 								perSelectorFilterTime = Date.now();
 							}
-							
+
 							// Allow the selector filter to filter the result set:
 							filterResponse = selectors[i].filter(matches, currentResults, handlerConfig);
 							if (filterResponse && self.isArray(filterResponse)) {
 								currentResults = filterResponse;
 							}
-							
+
 							if (enableSelectorStats===true) {
 								perSelectorFilterTime = Date.now() - perSelectorFilterTime;
 							}
-							
+
 							// Remove the matched selector from the front of the statement:
 							searchParsed = searchParsed.substring(matches[0].length);
-							
+
 							// We're no longer on the first match:
 							handlerConfig.first = false;
-							
+
 							// At least one filter has now been applied:
 							handlerConfig.isFiltered = true;
 						}
-						
+
 						// TODO: remove logging
 						if (enableSelectorStats===true) {
 							selectors[i].matchTimes.push(perSelectorSearchTime);
@@ -2825,21 +2888,21 @@ if (typeof(Date.now)!=='function') {
 								selectors[i].filterTimes.push(perSelectorFilterTime);
 							}
 						}
-						
+
 						// Drop out of the loop early if the selector is fully parsed (optimization):
 						if (searchParsed.length===0) {
 							break;
 						}
 					}
-					
+
 					// If no selector filters matched the statement, bail out. Otherwise causes an infinite loop.
 					if (!hasMatch) {
 						throw(new Error('puredom.getElement() :: Unknown CSS selector near: ' + searchParsed.substring(0,20), 'puredom.js', 2689));
 					}
 				}
 			}
-			
-			
+
+
 			if (options.includeInvisibles!==true) {
 				for (i=currentResults.length; i--; ) {
 					if (currentResults[i] && (currentResults[i].nodeName+'').charAt(0)==='#') {
@@ -2847,27 +2910,36 @@ if (typeof(Date.now)!=='function') {
 					}
 				}
 			}
-			
+
 			if (doLogging) {
 				self.log('query=',originalSearch, ', result=',currentResults);
 			}
-			
+
 			// Cache the results if enabled & requested:
 			if (cacheEnabled && options.cache===true) {
 				cache[search] = currentResults;
 			}
-			
+
 			if (options.internal!==true && doLogging===true) {
 				time = Date.now() - time;
 				if (time>10) {
 					self.log('Slow Selector Warning: "'+originalSearch+'" took ' + time + 'ms to complete. '+parseIterations+' parse iterations.');
 				}
 			}
-			
+
 			// Return the matched result set.  Can be empty, but is always an Array.
 			return currentResults;
 		};
-		
+
+
+		/** @public */
+		getElement.matchesSelector = function(base, el, selector) {
+			return getElement(selector, {
+				within : base
+			}).indexOf(el) > -1;
+		};
+
+
 		/**	@public */
 		getElement.enableCache = function(enabled) {
 			cacheEnabled = enabled!==false;
@@ -2875,18 +2947,18 @@ if (typeof(Date.now)!=='function') {
 				cache = {};
 			}
 		};
-		
+
 		/**	@public */
 		getElement.disableCache = function() {
 			cacheEnabled = false;
 			cache = {};
 		};
-		
+
 		/**	@public */
 		getElement.clearCache = function() {
 			cache = {};
 		};
-		
+
 		/**	@private */
 		getElement._normalizeSelectorFilter = function(selectorFilter) {
 			if (arguments.length===2) {
@@ -2900,7 +2972,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return false;
 		};
-		
+
 		/** Add a custom CSS selector filter.
 		 *	@public
 		 */
@@ -2912,7 +2984,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return false;
 		};
-		
+
 		/** Remove a custom CSS selector filter.
 		 *	@public
 		 */
@@ -2936,7 +3008,7 @@ if (typeof(Date.now)!=='function') {
 			}
 			return isMatch===true;
 		};
-		
+
 		if (enableSelectorStats===true) {
 			/**	@ignore */
 			(function() {
@@ -2945,7 +3017,7 @@ if (typeof(Date.now)!=='function') {
 					selectors[i].filterTimes = [];
 				}
 			}());
-			
+
 			/**	Get selector timing statistics.
 			 *	@public
 			 */
@@ -2989,61 +3061,61 @@ if (typeof(Date.now)!=='function') {
 				return "disabled";
 			};
 		}
-		
+
 		return getElement;
 	}());
-	
-	
-	
+
+
+
 	/**	@namespace CSS selector engine internals.
 	 *	@name puredom.selectorEngine
 	 */
 	self.selectorEngine = self.getElement;
-	
-	
-	
+
+
+
 	// Events
-	
-	
+
+
 	/**	@class Represents a DOM event.
 	 *	@name puredom.DOMEvent
 	 */
-	self.DOMEvent = function PureDOMEvent(type) {
+	self.DOMEvent = function DOMEvent(type) {
 		if (type) {
 			this.type = type.replace(/^on/gi,'');
 		}
 	};
 	self.DOMEvent.displayName = 'puredom.DOMEvent';
-	
+
 	self.extend(self.DOMEvent.prototype, /** @lends puredom.DOMEvent# */ {
-		
+
 		/**	Which mouse button or key generated the action (if applicable)
 		 *	@type Number
 		 */
 		which	: null,
-		
+
 		/**	The triggered event type (with no "on"-prefix)
 		 *	@type String
 		 */
 		type	: '',
-		
+
 		/**	The DOM node that originated the event.
 		 *	@type {Element}
 		 */
 		target	: null,
-		
+
 		/**	When available, refers to a DOM node that aided in originating the event (such as the DOM node the mouse was *previously* overtop of).
 		 *	@type {Element}
 		 */
 		relatedTarget : null,
-		
+
 		/**	Prevent the event's browser-default action from occurring.
 		 *	@function
 		 */
 		preventDefault : function() {
 			this.defaultPrevented = true;
 		},
-		
+
 		/**	Stop bubbling.
 		 *	@function
 		 */
@@ -3051,7 +3123,7 @@ if (typeof(Date.now)!=='function') {
 			this.propagationStopped = true;
 			this.bubblingCancelled = true;
 		},
-		
+
 		/**	Stop bubbling, prevent the browser-default action and set the event's returned value to false.
 		 *	@function
 		 */
@@ -3061,53 +3133,53 @@ if (typeof(Date.now)!=='function') {
 			this.returnValue = false;
 			return false;
 		},
-		
+
 		/**	Represents the handler's return value.
 		 *	@type Boolean
 		 */
 		returnValue : true,
-		
+
 		/**	The contained raw DOM Event.
 		 *	@type DOMEvent
 		 */
 		originalEvent : null,
-		
+
 		/**	The timestamp when the event was triggered.
 		 *	@type Number
 		 */
 		timeStamp : null
 	});
-	
+
 	/**	Alias of {@link puredom.DOMEvent#stopPropagation}, provided only for backward compatibility.
 	 *	@function
 	 */
 	self.DOMEvent.prototype.cancelBubble = self.DOMEvent.prototype.stopPropagation;
-	
+
 	/**	Alias of {@link puredom.DOMEvent#cancel}, provided only for compatibility with other notable DOM libraries.
 	 *	@function
 	 */
 	self.DOMEvent.prototype.stop = self.DOMEvent.prototype.cancel;
-	
-	/**	@deprecated 
+
+	/**	@deprecated
 	 *	@private
 	 */
 	self.DOMEvent.prototype.prevent = self.DOMEvent.prototype.cancel;
-	
-	
-	
-	
+
+
+
+
 	/**	@private */
 	priv.wrappedEventListener = {
 		list : [],
 		none : {},
-		
+
 		/**	@private */
 		summary : function() {
 			for (var x=0; x<this.list.length; x++) {
 				self.log( priv.idToNode(this.list[x].target), '.on', this.list[x].type, ' -> ', (this.list[x].handler.displayName || this.list[x].handler.name) );
 			}
 		},
-		
+
 		/**	@private */
 		reset : function(removeEvents) {
 			var i, evt;
@@ -3115,14 +3187,14 @@ if (typeof(Date.now)!=='function') {
 				for (i=this.list.length; i--; ) {
 					evt = this.list[i];
 					this.list[i] = this.none;
-					self.removeEvent(priv.idToNode(evt.target), evt.type, evt.wrappedHandler);
+					self.removeEvent(priv.idToNode(evt.target), evt.type, evt.selector, evt.wrappedHandler);
 					this.unsetRefs(evt);
 					window.killCount = (window.killCount || 0) + 1;
 				}
 			}
 			this.list.splice(0, this.list.length);
 		},
-		
+
 		/**	@private */
 		destroyObjHandlers : function(obj) {
 			var i, evt,
@@ -3132,19 +3204,20 @@ if (typeof(Date.now)!=='function') {
 				if (evt.target===objId) {
 					this.unsetRefs(evt);
 					this.list.splice(i, 1);
-					self.removeEvent(obj, evt.type, evt.wrappedHandler);
+					self.removeEvent(obj, evt.type, evt.selector, evt.wrappedHandler);
 					window.killCount = (window.killCount || 0) + 1;
 				}
 			}
 		},
-		
+
 		/**	@private */
-		get : function(type, handler, obj, andDestroy) {
+		get : function(type, handler, obj, selector, andDestroy) {
 			var i, evt;
+			selector = selector || null;
 			obj = priv.nodeToId(obj);
 			for (i=this.list.length; i--; ) {
 				evt = this.list[i];
-				if (evt.target===obj && evt.handler===handler && evt.type===type) {
+				if (evt.target===obj && evt.handler===handler && evt.selector===selector && evt.type===type) {
 					handler = evt.wrappedHandler;
 					if (andDestroy===true) {
 						this.list.splice(i, 1);
@@ -3157,14 +3230,14 @@ if (typeof(Date.now)!=='function') {
 			// fall back to the original handler
 			return handler;
 		},
-		
+
 		/**	@private */
 		unsetRefs : function(item) {
 			item.wrappedHandler.type = null;
 			item.wrappedHandler.handler = null;
 			item.wrappedHandler.target = null;
 		},
-		
+
 		/**	@private */
 		internalFireEvent : function(event) {
 			var target = priv.nodeToId(event.target),
@@ -3180,19 +3253,21 @@ if (typeof(Date.now)!=='function') {
 				}
 			}
 		},
-		
+
 		/**	@private */
-		create : function(type, handler, obj) {
+		create : function(type, handler, obj, selector) {
+			selector = selector || null;
 			var evt = {
 				type	: type,
 				target	: priv.nodeToId(obj),
+				selector : selector,
 				handler	: handler,
 				/**	@ignore */
-				wrappedHandler : function(e) {
-					var handler = arguments.callee.handler,
-						type = (arguments.callee.type || e.type).toLowerCase().replace(/^on/,''),
-						originalTarget = this!==window ? this : (priv && priv.idToNode(arguments.callee.target)),
-						event, i,
+				wrappedHandler : function wrappedHandler(e) {
+					var handler = wrappedHandler.handler,
+						type = (wrappedHandler.type || e.type).toLowerCase().replace(/^on/,''),
+						originalTarget = this!==window ? this : (priv && priv.idToNode(wrappedHandler.target)),
+						fireTarget, event, i,
 						d = {
 							isInSelf : false,
 							doPreventDefault : false,
@@ -3211,8 +3286,8 @@ if (typeof(Date.now)!=='function') {
 						self.log("target:<"+e.target.nodeName+' class="'+e.target.className+'" id="'+e.target.id+'"' + "> , type:"+type+"/"+e.type);
 					}
 					e = d.e;
-					
-					
+
+
 					event = self.extend(new self.DOMEvent(type), {
 						which	: e.which,
 						target	: e.target || e.srcElement || originalTarget || document.body,
@@ -3221,19 +3296,19 @@ if (typeof(Date.now)!=='function') {
 						originalEvent : e,
 						timeStamp : e.timeStamp || Date.now()
 					});
-					
-					// NOTE: For convenience, copy extra properties from the original event. 
+
+					// NOTE: For convenience, copy extra properties from the original event.
 					// This is mostly used for custom events to pass custom properties.
 					for (i in e) {
 						if (!event.hasOwnProperty(i) && typeof e[i]!=='function' && i!==i.toUpperCase() && i!=='layerX' && i!=='layerY') {
 							event[i] = e[i];
 						}
 					}
-					
+
 					if (!event.target) {
 						self.log('Event target doesn\'t exist for type "'+event.type+'": ',event.target,', srcElement=',e.srcElement);
 					}
-					
+
 					if (e.type==='touchend' && priv._lastTouchPos) {
 						event.pageX = priv._lastTouchPos.pageX;
 						event.pageY = priv._lastTouchPos.pageY;
@@ -3258,31 +3333,53 @@ if (typeof(Date.now)!=='function') {
 					if (type.indexOf('mouse')>-1 || type.indexOf('click')>-1 || (e.button!==null && e.button!==undefined)) {
 						event.button = typeof e.button=='number' ? e.button : e.which;
 					}
-					
+
 					// fix safari #textnode target bug
 					if (event.target && event.target.nodeType===3 && originalTarget.nodeType!==3) {
 						event.target = event.target.parentNode;
 					}
-					
+
+					// allow filtering by CSS selector
+					var sel = wrappedHandler.selector,
+						selEls, isInSelector;
+					if (sel && typeof sel==='string') {
+						selEls = self.getElement(sel, {
+							within : originalTarget
+						});
+					}
+
 					// is the capturing node within the original handler context?
-					d.searchNode = event.relatedTarget || event.target;
+					d.searchNode = !selEls && event.relatedTarget || event.target;
 					do {
+						if (selEls) {
+							if (selEls.indexOf(d.searchNode) !== -1 ) {
+								isInSelector = true;
+								fireTarget = d.searchNode;
+								break;
+							}
+							continue;
+						}
 						if (d.searchNode===originalTarget) {
 							d.isInSelf = true;
 							break;
 						}
 					} while(d.searchNode && (d.searchNode=d.searchNode.parentNode) && d.searchNode!==document);
-					
+
+					if (selEls && !isInSelector) {
+						return;
+					}
+
 					// Don't fire mouseout events when the mouse is moving in/out a child node of the handler context element
 					if ((type!=='mouseover' && type!=='mouseout') || !d.isInSelf) {
 						if (handler && handler.call) {
-							d.handlerResponse = handler.call(originalTarget, event);
+							event.currentTarget = fireTarget || originalTarget;
+							d.handlerResponse = handler.call(fireTarget || originalTarget, event);
 						}
 						else {
 							// NOTE: Turn this on and fix the IE bug.
 							//console.log('Handler not a function: ', self.typeOf(handler), ' handler=', handler, ' type=', type);
 						}
-						
+
 						event.returnValue = d.handlerResponse!==false && event.returnValue!==false;
 						if (event.defaultPrevented) {
 							event.returnValue = e.returnValue = false;
@@ -3315,16 +3412,17 @@ if (typeof(Date.now)!=='function') {
 			evt.wrappedHandler.handler = handler;
 			evt.wrappedHandler.type = type;
 			evt.wrappedHandler.target = evt.target;		// an ID, not the node itself
+			evt.wrappedHandler.selector = selector;
 			this.list.push(evt);
 			obj = type = handler = evt = null;
 			return this.list[this.list.length-1].wrappedHandler;
 		}
-		
+
 	};
-	
-	
-	
-	
+
+
+
+
 	/** Get a String description of the subject for an event operation
 	 *	@private
 	 *	@param {Any} subject		An object of any type.
@@ -3332,8 +3430,8 @@ if (typeof(Date.now)!=='function') {
 	priv.getSubjectDescription = function(obj) {
 		return (obj.nodeName ? (self.el(obj)+'') : (obj.constructor && obj.constructor.name || obj.name || obj)) + '';
 	};
-	
-	
+
+
 	/**	Automatically translate DOM event types from [key] to [value] when registering or removing listeners. <br />
 	 *	Also falsifies corresponding puredom-wrapped events' type fields.
 	 *	@object
@@ -3346,105 +3444,109 @@ if (typeof(Date.now)!=='function') {
 			'mouseup'	: 'touchend'
 		});
 	}
-	
+
 	/**	Add an event listener to a DOM node for the given event type.
 	 *	@private
 	 *	@param {HTMLElement} obj			An element to add the event listener to.
 	 *	@param {String} type				A type of event to register the listener for.
-	 *	@param {Function} listener			The listener function to register. Gets passed {Event} event.
-	 *	@param {Boolean} [useCapture=false]	If true, handler will be invoked during the capture phase instead of the bubbling phase.
+	 *	@param {String} [selector]			Optionally call handler only if the target matches a CSS selector.
+	 *	@param {Function} handler			The listener function to register. Gets passed <code>({Event} event)</code>.
 	 */
-	self.addEvent = function(obj, type, fn, useCapture) {
+	self.addEvent = function(obj, type, selector, fn) {
 		var x, origType;
+		if (typeof selector==='function') {
+			fn = selector;
+			selector = null;
+		}
 		if (obj) {
 			if (self.typeOf(type)==='string' && type.indexOf(',')>-1) {
 				type = type.replace(/\s/gm,'').split(',');
 			}
 			if (self.isArray(type)) {
 				for (x=0; x<type.length; x++) {
-					self.addEvent(obj, type[x], fn);
+					self.addEvent(obj, type[x], selector, fn);
 				}
 				return true;
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
-			
-			if (typeof(type)!=='string' || !fn || !fn.call) {
+
+			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to add event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
-					subject : priv.getSubjectDescription(obj),
-					useCapture : useCapture===true
+					subject : priv.getSubjectDescription(obj)
 				});
-				//throw('Attempted to add event with invalid type or handler: type='+type+', handler='+fn);
 				return;
 			}
-			
+
 			if (self.eventTypeMap.hasOwnProperty(type)) {
 				type = self.eventTypeMap[type];
 			}
-			
-			fn = priv.wrappedEventListener.create(origType, fn, obj);
+
+			fn = priv.wrappedEventListener.create(origType, fn, obj, selector);
 			if (obj.attachEvent) {
-				obj.attachEvent( 'on'+type, fn );
+				obj.attachEvent('on' + type, fn);
 			}
 			else if (obj.addEventListener) {
-				obj.addEventListener( type, fn, useCapture===true );
+				obj.addEventListener(type, fn, false);
 				self._eventCount = (self._eventCount || 0) + 1;
 			}
 		}
 	};
-	
-	
+
+
 	/**	Remove an event listener from a DOM node.
 	 *	@private
 	 *	@param {Element} obj				An element to remove the event listener from.
 	 *	@param {String} type				The event type of the listener to be removed.
-	 *	@param {Function} listener			The listener to remove.
-	 *	@param {Boolean} [useCapture=false]	The useCapture value of the listener to be removed (defaults to false).
+	 *	@param {String} [selector]			Optionally call handler only if the target matches a CSS selector.
+	 *	@param {Function} handler			The listener function to remove.
 	 */
-	self.removeEvent = function(obj, type, fn, useCapture) {
+	self.removeEvent = function(obj, type, selector, fn) {
 		var x, origType;
+		if (typeof selector==='function') {
+			fn = selector;
+			selector = null;
+		}
 		if (obj) {
 			if (self.typeOf(type)==='string' && type.indexOf(',')>-1) {
 				type = type.replace(/\s/gm,'').split(',');
 			}
 			if (self.isArray(type)) {
 				for (x=0; x<type.length; x++) {
-					self.removeEvent(obj, type[x], fn, useCapture);
+					self.removeEvent(obj, type[x], selector, fn);
 				}
 				return true;
 			}
 			origType = type = (type+'').toLowerCase().replace(/^\s*(on)?(.*?)\s*$/gim,'$2');
-			
-			if (typeof(type)!=='string' || !fn || !fn.call) {
+
+			if (typeof type!=='string' || !fn || !fn.call) {
 				self.log('Attempted to remove event with invalid type or handler:', {
 					type : type,
 					handler : fn+'',
-					subject : priv.getSubjectDescription(obj),
-					useCapture : useCapture===true
+					subject : priv.getSubjectDescription(obj)
 				});
-				//throw('Attempted to remove event with invalid type or handler: type='+type+', handler='+fn);
 				return;
 			}
-			
+
 			if (self.eventTypeMap.hasOwnProperty(type)) {
 				type = self.eventTypeMap[type];
 			}
-			
-			fn = priv.wrappedEventListener.get(origType, fn, obj, true);		// , useCapture===true ?
+
+			fn = priv.wrappedEventListener.get(origType, fn, obj, selector, true);
 			if (obj.detachEvent) {
-				obj.detachEvent( 'on'+type, fn );
+				obj.detachEvent('on' + type, fn);
 			}
 			else if (obj.removeEventListener) {
 				try {
-					obj.removeEventListener( type, fn, useCapture===true );
+					obj.removeEventListener(type, fn, false);
 					self._eventCount = (self._eventCount || 0) - 1;
 				} catch(err) {}
 			}
 		}
 	};
-	
-	
+
+
 	/**	When called from within an event handler and passed the DOM Event, cancels the event, prevents the event's default action, and returns false.<br />
 	 *	<strong>Note:</strong> puredom-wrapped Event objects have a cancel() method that does this for you.
 	 *	@private
@@ -3467,8 +3569,8 @@ if (typeof(Date.now)!=='function') {
 		}
 		return false;
 	};
-	
-	
+
+
 	/*
 	priv.checkEventTypeSupport = function(s, type) {
 		var da = !!('ondataavailable' in s),
@@ -3489,8 +3591,8 @@ if (typeof(Date.now)!=='function') {
 	};
 	priv.supportsCustomEventTypes = priv.checkEventTypeSupport(document.createElement('span'), 'custom:event_typetest');
 	*/
-	
-	
+
+
 	/**	Fire an event on a DOM node.
 	 *	@private
 	 *	@param {Object} options				An event options object, having at least a "type" and "target".
@@ -3505,7 +3607,7 @@ if (typeof(Date.now)!=='function') {
 			options = self.extend({}, options);
 			options.type = 'on'+options.type.toLowerCase().replace(/^on/,'');
 			//priv.checkEventTypeSupport(options.target, options.type);
-			
+
 			try {
 				evt = document.createEventObject();
 			}catch(err) {
@@ -3532,7 +3634,7 @@ if (typeof(Date.now)!=='function') {
 					priv.wrappedEventListener.internalFireEvent(options);
 				}
 			}
-			
+
 		}
 		else {                                  // Everything else
 			evt = document.createEvent("HTMLEvents");
@@ -3547,24 +3649,24 @@ if (typeof(Date.now)!=='function') {
 			rval = !options.target.dispatchEvent(evt);
 			preventDefault = evt.preventDefault===true;
 		}
-		
+
 		return {
 			evt             : evt,
 			preventDefault  : preventDefault,
 			rval            : rval
 		};
 	};
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**	@private */
 	priv._nodeToIdIndex = 0;
-	
+
 	/**	@private */
 	priv._nodeToIdList = {};
-	
+
 	/**	Get the UUID value for a given node. If the node does not yet have a UUID, it is assigned one.
 	 *	@private
 	 */
@@ -3573,11 +3675,11 @@ if (typeof(Date.now)!=='function') {
 		if (el===window) {
 			return '_td_autoid_window';
 		}
-		else if (el===document) {
-			return '_td_autoid_document';
+		else if (el===document.documentElement) {
+			return '_td_autoid_html';
 		}
 		else if (el===document.body) {
-			return '_td_autoid_documentbody';
+			return '_td_autoid_body';
 		}
 		search = (/\s_td_autoid_([0-9]+)\s/gm).exec(' ' + el.className + ' ');
 		if (search && search[1]) {
@@ -3591,7 +3693,7 @@ if (typeof(Date.now)!=='function') {
 		priv.ensureNodeIdListing(el, id);
 		return id;
 	};
-	
+
 	/**	Get the node with the given UUID.
 	 *	@private
 	 */
@@ -3602,10 +3704,10 @@ if (typeof(Date.now)!=='function') {
 		if (id==='_td_autoid_window') {
 			return window;
 		}
-		else if (id==='_td_autoid_document') {
-			return document;
+		else if (id==='_td_autoid_html') {
+			return document.documentElement;
 		}
-		else if (id==='_td_autoid_documentbody') {
+		else if (id==='_td_autoid_body') {
 			return document.body;
 		}
 		if (listed) {
@@ -3623,7 +3725,7 @@ if (typeof(Date.now)!=='function') {
 		}
 		return node || false;
 	};
-	
+
 	/**	@private */
 	priv.ensureNodeIdListing = function(node, id) {
 		var idAttr;
@@ -3636,7 +3738,7 @@ if (typeof(Date.now)!=='function') {
 			priv._nodeToIdList[id] = '#'+idAttr;
 		}
 	};
-	
+
 	/**	@private */
 	priv.removeNodeUID = function(node) {
 		var id = node.getAttribute('id');
@@ -3652,73 +3754,102 @@ if (typeof(Date.now)!=='function') {
 			node.className = node.className.replace(/(^|\b)_td_autoid_[0-9]+(\b|$)/gim,'');
 		}
 	};
-	
-	
-	
+
+
+
 	/**	@namespace Shim for HTML5's animationFrame feature.
-	 *	@private
+	 *	@name puredom.animationFrame
+	 *	@public
 	 */
-	self.animationFrame = (function(api) {
-		var self = {
-			manualFramerate : 11
-		};
-		if (window.mozRequestAnimationFrame) {
-			api = 'moz';
+	self.animationFrame = (function() {
+		/** @ignore */
+		var self = /** @lends puredom.animationFrame */ {
+				nativeSupport : true,
+				manualFramerate : 11
+			},
+			perf = window.performance,
+			prefix;
+
+		if (window.requestAnimationFrame) {
+			prefix = '';
+		}
+		else if (window.mozRequestAnimationFrame) {
+			prefix = 'moz';
 		}
 		else if (window.webkitRequestAnimationFrame) {
-			api = 'webkit';
-		}
-		self.nativeSupport = !!api;
-		if (self.nativeSupport) {
-			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
-			 *	@param {Function} f		A function to call during the next animation frame.
-			 *	@function
-			 *	@private
-			 */
-			self.getTimer = function(f) {
-				return window[api+'RequestAnimationFrame'](f);
-			};
-			/**	Unregister a deferred animation function.
-			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
-			 *	@function
-			 *	@private
-			 */
-			self.cancelTimer = function(t) {
-				window[api+'CancelRequestAnimationFrame'](t);
-			};
-			/**	Get the start time (timestamp, in milliseconds) of the current animation.
-			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
-			 *	@function
-			 *	@private
-			 */
-			self.getStartTime = function(t) {
-				return window[api+'AnimationStartTime'] || new Date().getTime();
-			};
+			prefix = 'webkit';
 		}
 		else {
+			self.nativeSupport = false;
+		}
+
+		/** @ignore */
+		function now() {
+			if (perf && perf.now) {
+				return perf.now();
+			}
+			return Date.now();
+		}
+
+		if (self.nativeSupport) {
+
+			/**	Defer execution of an animation function so it occurs during the next rendering cycle.
+			 *	@param {Function} f		A function to call during the next animation frame.
+			 *	@name puredom.animationFrame.getTimer
+			 *	@function
+			 */
+			self.getTimer = function(f) {
+				return window[ (prefix ? (prefix+'R') : 'r') + 'equestAnimationFrame'](f);
+			};
+
+			/**	Unregister a deferred animation function.
+			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
+			 *	@name puredom.animationFrame.cancelTimer
+			 *	@function
+			 */
+			self.cancelTimer = function(t) {
+				window[ (prefix ? (prefix+'C') : 'c') + 'ancelRequestAnimationFrame'](t);
+			};
+
+			/**	Get the start time (timestamp, in milliseconds) of the current animation.
+			 *	@param {String} identifier		A timer identifier, such as one obtained from {@link puredom.animationFrame.getTimer}.
+			 *	@name puredom.animationFrame.getStartTime
+			 *	@function
+			 */
+			self.getStartTime = function(t) {
+				return window[ (prefix ? (prefix+'A') : 'a') + 'nimationStartTime'] || now();
+			};
+
+		}
+		else {
+
 			/**	@ignore */
 			self.getTimer = function(f) {
 				return setTimeout(function() {
-					f(new Date().getTime());
+					f( now() );
 					f = null;
 				}, self.manualFramerate);
 			};
+
 			/**	@ignore */
 			self.cancelTimer = function(t) {
 				clearTimeout(t);
 			};
+
 			/**	@ignore */
 			self.getStartTime = function(t) {
-				return new Date().getTime();
+				return now();
 			};
+
 		}
+
 		return self;
 	}());
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**	Set the opacity of an element.
 	 *	@private
 	 *	@param {HTMLElement} el		A DOM node to which an opacity value should be applied.
@@ -3738,9 +3869,9 @@ if (typeof(Date.now)!=='function') {
 			el.style.filter = null;
 		}
 	};
-	
-	
-	
+
+
+
 	/**	Apply a Microsoft filter value to an element, retaining existing applied filters. <br />
 	 *	See: {@link http://msdn.microsoft.com/en-us/library/ms532853(v=vs.85).aspx}
 	 *	@private
@@ -3754,7 +3885,7 @@ if (typeof(Date.now)!=='function') {
 			ch = priv.support.filterProperty==='MsFilter' ? '"' : '',
 			p, a, i;
 		type = type.charAt(0).toUpperCase() + type.substring(1);
-		if (typeof(value)==='string') {
+		if (typeof value==='string') {
 			valueStr = value;
 			value = {};
 			a = valueStr.replace(/\s*(,|=)\s*      /gm,'$1').split(',');
@@ -3795,25 +3926,49 @@ if (typeof(Date.now)!=='function') {
 			el.style.zoom = 1;
 		}
 	};
-	
-	
-	
-	
+
+
+
+
+	/**	@private */
+	var cssPropCache = {};
+	/**	@private */
+	function getPrefixedCssProperty(prop) {
+		var ret = prop,
+			p = cssPropCache[prop];
+		if (p) {
+			return p;
+		}
+		if (vendorCssPrefixJS && prop.substring(0, vendorCssPrefixJS.length)!==vendorCssPrefixJS) {
+			p = vendorCssPrefixJS + prop.charAt(0).toUpperCase() + prop.substring(1);
+			if (p in document.body.style) {
+				ret = p;
+			}
+		}
+		cssPropCache[prop] = ret;
+		return ret;
+	}
+
+
 	/**	Apply key-value CSS styles to an element.
 	 *	@param {HTMLElement} el		An element whose style should be updated.
 	 *	@param {Object} properties	An Object where keys are CSS properties and values are the corresponding CSS values to apply.
 	 *	@private
 	 */
 	self.applyCss = function(el, properties) {
-		var x, cx, d, p, ieOpac;
+		var x, cx, d, p, ieOpac, vp;
 		properties = properties || {};
 		for (x in properties) {
 			if (properties.hasOwnProperty(x)) {
-				try {
-					cx = self.getStyleAsCSS(x);
-					cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
-					cx = self.getStyleAsProperty(cx);
-					if (cx==='opacity' && priv.support.filters) {
+				cx = self.getStyleAsCSS(x);
+				cx = cx.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
+				cx = self.getStyleAsProperty(cx);
+				cx = getPrefixedCssProperty(cx);
+				if (!priv.support.filters) {
+					el.style[cx] = properties[x];
+				}
+				else {
+					if (cx==='opacity') {
 						ieOpac = Math.round( parseFloat(properties[x])*100 );
 						if (ieOpac<100) {
 							self.applyMsFilter(el, 'alpha', {
@@ -3827,7 +3982,7 @@ if (typeof(Date.now)!=='function') {
 							});
 						}
 					}
-					else if (cx==='--box-shadow' && priv.support.filters) {
+					else if (cx==='--box-shadow') {
 						d = properties[x].match(/\b(\#[0-9af]{3}[0-9af]{3}?|rgba?\([0-9\,\s]+\))\b/gim);
 						d = d && d[0] || '';
 						p = (' '+properties[x]+' ').replace(d,'').replace(/\s+/m,' ').split(' ').slice(1,4);
@@ -3836,19 +3991,11 @@ if (typeof(Date.now)!=='function') {
 							Strength : Math.round(p[3].replace(/[^0-9\-\.]/gim,''))
 						});
 					}
-					else {
-						el.style[cx] = properties[x];
-						if (cx==="boxShadow" || cx==="textShadow" || cx==="borderRadius") {
-							if (vendorCssPrefixJS) {
-								el.style[vendorCssPrefixJS + cx] = properties[x];
-							}
-						}
-					}
-				}catch(err){}
+				}
 			}
 		}
 	};
-	
+
 	/**	Convert a CSS property name to it's CamelCase equivalent.
 	 *	@private
 	 */
@@ -3869,15 +4016,17 @@ if (typeof(Date.now)!=='function') {
 	priv.styleAsPropVendorPrefixReplacer = function(s) {
 		return s.charAt(0).toUpperCase()+s.substring(1);
 	};
-	
+
 	/**	Convert a CSS property name to it's css-dash-separated equivalent.
 	 *	@private
 	 */
 	self.getStyleAsCSS = function(style) {
 		return typeof style==='string' && style.replace(/\-*([A-Z])/gm, '-$1').toLowerCase() || null;
 	};
-	
-	/**	Parse a CSS String and return an Object representation. */
+
+	/**	Parse a CSS String and return an Object representation.
+	 *	@private
+	 */
 	priv.parseCSS = function(css) {
 		var tokenizer = /\s*([a-z\-]+)\s*:\s*([^;]*?)\s*(?:;|$)/gi,
 			obj, token;
@@ -3890,7 +4039,9 @@ if (typeof(Date.now)!=='function') {
 		}
 		return obj;
 	};
-	
+
+	self._parseCss = priv.parseCSS;
+
 	/** Some intense CSS3 transitions wrapping, needed in order to support animating multiple
 	 *	properties asynchronously with interjected transition modifications
 	 *	@private
@@ -3921,10 +4072,10 @@ if (typeof(Date.now)!=='function') {
 				};
 			}
 		}
-		
+
 		return transitions;
 	};
-	
+
 	/** @private */
 	self.setCssTransitions = function(el, transitions) {
 		var css = {
@@ -3933,7 +4084,7 @@ if (typeof(Date.now)!=='function') {
 				'-vendor-transition-timing-function'	: []
 			},
 			p;
-		
+
 		for (p in transitions) {
 			if (transitions.hasOwnProperty(p) && transitions[p]) {
 				css['-vendor-transition-property'].push(p.toLowerCase());
@@ -3941,16 +4092,16 @@ if (typeof(Date.now)!=='function') {
 				css['-vendor-transition-timing-function'].push(transitions[p].timingFunction || 'ease');
 			}
 		}
-		
+
 		for (p in css) {
 			if (css.hasOwnProperty(p)) {
 				css[p] = css[p].join(', ');
 			}
 		}
-		
+
 		self.applyCss(el, css);
 	};
-	
+
 	/** @private */
 	self.updateCssTransitions = function(el, transitionsToUpdate) {
 		var transitions, p;
@@ -3969,51 +4120,40 @@ if (typeof(Date.now)!=='function') {
 			self.setCssTransitions(el, transitions);
 		}
 	};
-	
-	
+
+
 	/** @private */
-	self.addClass = function(el, classes) {
-		var prev, i;
+	self.addClass = function(el, classes, remove) {
+		var modified = false,
+			list, index, i;
 		if (classes) {
 			if (!self.isArray(classes)) {
 				classes = [classes];
 			}
-			prev = el.className || '';
-			if (prev.length>0) {
-				prev = ' ' + prev + ' ';
-				for (i=0; i<classes.length; i++) {
-					while (prev.indexOf(' '+classes[i]+' ')>-1) {
-						prev = prev.replace(' ' + classes[i] + ' ', ' ');
-					}
+			list = (el.className || '').split(/\s+/);
+			for (i=0; i<classes.length; i++) {
+				index = list.indexOf(classes[i]);
+				if (remove!==true && index===-1) {
+					modified = true;
+					list.push( classes[i] );
 				}
-				prev = prev.substring(1);
+				else if (remove===true && index>-1) {
+					modified = true;
+					list.splice(index, 1);
+				}
 			}
-			el.className = (prev + classes.join(' ')).replace(/\s+/gim,' ');
+			if (modified) {
+				el.className = list.join(' ');
+			}
 		}
 	};
-	
+
 	/** @private */
 	self.removeClass = function(el, classes) {
-		var prev, i;
-		if (classes) {
-			if (!self.isArray(classes)) {
-				classes = [classes];
-			}
-			prev = el.className || '';
-			if (prev.length>0) {
-				prev = ' ' + prev + ' ';
-				for (i=0; i<classes.length; i++) {
-					while (prev.indexOf(' '+classes[i]+' ')>-1) {
-						prev = prev.replace(' ' + classes[i] + ' ', ' ');
-					}
-				}
-				prev = prev.substring(1);
-			}
-			el.className = prev.replace(/\s+/gim,' ');
-		}
+		return self.addClass(el, classes, true);
 	};
-	
-	/** Get the current value of a CSS property from the given node. 
+
+	/** Get the current value of a CSS property from the given node.
 	 *	@private
 	 */
 	self.nodeStyle = function(node, property) {
@@ -4022,36 +4162,36 @@ if (typeof(Date.now)!=='function') {
 			filter,
 			s,
 			style;
-		
+
 		dashed = dashed.replace(/^\-(moz|webkit|ms|o|vendor)\-/gim, vendorCssPrefix+'-');
 		camelized = dashed.replace(/\-[a-z]/gim, function (s) {return s.substring(1).toUpperCase();});
-		
+
 		if (dashed==='opacity' && priv.support.filters) {
 			return node.filters.alpha && node.filters.alpha.enabled!==false && Math.round(node.filters.alpha.opacity)/100;
 		}
-		
+
 		if (node.style && node.style[camelized]) {
 			style = node.style[camelized] || '';
 		}
-	
+
 		else if (node.currentStyle && node.currentStyle[camelized]) {
 			style = node.currentStyle[camelized] || node.currentStyle[dashed] || '';
 		}
-	
+
 		else if (document.defaultView && document.defaultView.getComputedStyle) {
 			s = document.defaultView.getComputedStyle(node, null);
 			style = s && (s.getPropertyValue(dashed) || s.getPropertyValue(camelized)) || '';
 		}
-	
+
 		else if (window.getComputedStyle) {
 			s = window.getComputedStyle(node, null);
 			style = s && (s.getPropertyValue(dashed) || s.getPropertyValue(camelized)) || '';
 		}
-		
+
 		return style;
 	};
-	
-	
+
+
 	/**	Old alias of puredom.text.html()
 	 *	@private
 	 */
@@ -4062,18 +4202,19 @@ if (typeof(Date.now)!=='function') {
 		}
 		return self.text.filter(str, filters);
 	};
-	
-	
+
+
 	/**	Log to the browser console, if it exists.
 	 */
 	self.log = function() {
-		if (window.console && window.console.log) {
-			window.console.log.apply(window.console, arguments);
+		var c = global.console;
+		if (c && c.log) {
+			c.log.apply(c, arguments);
 		}
 	};
-	
-	
-	
+
+
+
 	/**	Add a new plugin method to {puredom.NodeSelection}. <br />
 	 *	When called, a plugin function gets passed the arguments supplied by the caller. <br />
 	 *	The value of <code>this</code> within the function is the selection ({@link puredom.NodeSelection}) it was called on.
@@ -4091,19 +4232,19 @@ if (typeof(Date.now)!=='function') {
 			};
 		}
 	};
-	
-	
+
+
 	/**	Called on DOM ready.
 	 *	@private
 	 */
 	self.init = function() {
 		if (!initialized) {
 			initialized = true;
-			
+
 			self.forEach(priv.oninit, function(i) {
 				i.call(self, self);
 			});
-			
+
 			self.fireEvent({
 				target : document.body,
 				type : "puredomready",
@@ -4114,8 +4255,8 @@ if (typeof(Date.now)!=='function') {
 	self.addEvent(document, "DOMContentLoaded", self.init);
 	self.addEvent(window, "load", self.init);
 	self.addEvent(window, "unload", priv.unload);
-	
-	
+
+
 	/**	Allows extensions to be included before the core.
 	 *	@ignore
 	 */
@@ -4129,7 +4270,7 @@ if (typeof(Date.now)!=='function') {
 			previousSelf = null;
 		}
 	}());
-	
+
 	/**	@private */
 	priv.puredom = function(i) {
 		if (self.typeOf(i)==='function') {
@@ -4145,15 +4286,20 @@ if (typeof(Date.now)!=='function') {
 			return self.el.apply(self, arguments);
 		}
 	};
-	
+
 	self.extend(self, baseSelf);
 	self.toString = function(){return 'function puredom(){}';};
-	
-	window.puredom = self;
-	if (typeof window.define==='function') {
-		window.define('puredom', self);
+
+	this.puredom = global.puredom = self;
+
+	if (typeof define==='function' && define.amd) {
+		define('puredom', function(){ return self; });
 	}
-}());
+	if (typeof module==='object') {
+		module.exports = self;
+	}
+}(this, typeof global==='object' ? global : this));
+
 /**	@fileOverview Utilities that just get grafted onto the puredom namespace. */
 
 puredom.extend(puredom, /** @lends puredom */ {
@@ -4527,7 +4673,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 				var expires = '',
 					cookie = '',
 					date;
-				path = typeof(path)==='string' ? path : '';
+				path = typeof path==='string' ? path : '';
 				if (days) {
 					date = new Date();
 					date.setTime(date.getTime() + days*24*60*60*1000);
@@ -4537,7 +4683,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 					expires = "; expires="+cache[key].expires.toGMTString();
 				}
 				cookie = key + "=" + encodeURIComponent(value) + expires + "; path=/"+path.replace(/^\//,'');
-				if (typeof(domain)==='string' && domain.length>0) {
+				if (typeof domain==='string' && domain.length>0) {
 					cookie += '; domain=' + domain.replace(/[\;\,]/,'');
 				}
 				if (secure===true) {
@@ -4744,7 +4890,7 @@ puredom.extend(puredom, /** @lends puredom */ {
 		 */
 		json.parse = function(what) {
 			var result;
-			if (typeof(what)==='string' && what.length>0) {
+			if (typeof what==='string' && what.length>0) {
 				try {
 					result = JSON.parse(what);
 				}catch(err) {
@@ -4800,123 +4946,187 @@ puredom.extend(puredom, /** @lends puredom */ {
 	}
 	
 });
-/**	Fire events and listen for fired events. <br />
- *	Let's just assume every framework provides one of these now.
- *	@constructor Creates a new EventEmitter instance.
- */
-puredom.EventEmitter = function EventEmitter() {
-	this._eventRegistry = [];
-};
+(function($) {
+	/** @exports $ as puredom */
 
+	/**	Creates a new EventEmitter instance.
+	 *	@class Fire events and listen for fired events.
+	 */
+	$.EventEmitter = function EventEmitter() {
+		this._eventRegistry = [];
+	};
 
-/** Register an event listener on the instance.
- *	@param {String} type		An event type, or a comma-seprated list of event types.
- *	@param {Function} handler	A function to call in response to events of the given type.
- *	@returns {this}
- */
-puredom.EventEmitter.prototype.addEventListener = function(type, handler) {
-	var t, i;
-	type = (type + '').toLowerCase().replace(/\s+/gim,'');
-	if (type.indexOf(',')>-1) {
-		t = type.split(',');
-		for (i=0; i<t.length; i++) {
-			this.addEventListener(t[i],handler);
+	var proto = $.EventEmitter.prototype;
+
+	function multi(inst, func, type, handler, collector) {
+		var o = typeof type,
+			t, i, ret;
+		if (o==='object' && type) {
+			for (i in type) {
+				if (type.hasOwnProperty(i)) {
+					ret = inst[func](i, type[i]);
+					if (collector) {
+						collector.push(ret);
+					}
+				}
+			}
+			return true;
 		}
-		return this;
+		if (o==='string' && type.indexOf(',')>-1) {
+			t = type.split(',');
+			for (i=0; i<t.length; i++) {
+				ret = inst[func](t[i], handler);
+				if (collector) {
+					collector.push(ret);
+				}
+			}
+			return true;
+		}
+		return false;
 	}
-	type = type.replace(/^on/,'');
-	this._eventRegistry.push({
-		type : type,
-		handler : handler
+
+	function normalizeType(type) {
+		return String(type).toLowerCase().replace(/(^on|\s+)/gim,'');
+	}
+
+	$.extend(proto, /** @lends puredom.EventEmitter# */ {
+
+		/** Register an event listener on the instance.
+		 *	@param {String} type		An event type, or a comma-seprated list of event types.
+		 *	@param {Function} handler	A function to call in response to events of the given type.
+		 *	@returns {this}
+		 */
+		on : function(type, handler) {
+			type = normalizeType(type);
+			if (!multi(this, 'on', type, handler)) {
+				this._eventRegistry.push({
+					type : type,
+					handler : handler
+				});
+			}
+			return this;
+		},
+
+
+		/**	A version of {@link puredom.EventEmitter#on .on()} that removes handlers once they are called.
+		 *	@see puredom.EventEmitter#on
+		 *	@param {String} type		An event type, or a comma-seprated list of event types.
+		 *	@param {Function} handler	A function to call in response to events of the given type.  Will only be called once.
+		 *	@returns {this}
+		 */
+		once : function(type, handler) {
+			type = normalizeType(type);
+			if (!multi(this, 'once', type, handler)) {
+				this.on(type, function onceProxy() {
+					this.removeListener(type, onceProxy);
+					return handler.apply(this, arguments);
+				});
+			}
+			return this;
+		},
+
+
+		/** Remove an event listener from the instance.
+		 *	@param {String} type		An event type, or a comma-seprated list of event types.
+		 *	@param {Function} handler	A reference to the handler, as was originally passed to {puredom.EventEmitter#addEventListener}.
+		 *	@returns {this}
+		 */
+		removeListener : function(type, handler) {
+			var x, r;
+			type = normalizeType(type);
+			if (!multi(this, 'removeListener', type, handler)) {
+				for (x=this._eventRegistry.length; x--; ) {
+					r = this._eventRegistry[x];
+					if (r.type===type && r.handler===handler) {
+						this._eventRegistry.splice(x, 1);
+						break;
+					}
+				}
+			}
+			return this;
+		},
+
+
+		/** Fire an event of a given type. <br />
+		 *	Pass a comma-separated list for <code>type</code> to fire multiple events at once.
+		 *	@param {String} type	Event type, or a comma-seprated list of event types.
+		 *	@param {Array} [args]	Arguments to pass to each handler. Non-Array values get auto-boxed into an Array.
+		 *	@returns {Array} an Array of handler return values. The Array also has "truthy" and "falsey" properties indicating if any handlers returned <code>true</code> or <code>false</code>, respectively.
+		 */
+		emit : function(type, args) {
+			var returns = [],
+				x, r, rval;
+			type = normalizeType(type);
+			args = Array.prototype.slice.call(arguments, 1);
+			if (multi(this, 'emit', type, args, returns)) {
+				return Array.prototype.concat.apply([], returns);
+			}
+			for (x=this._eventRegistry.length; x--; ) {
+				r = this._eventRegistry[x];
+				if (r.type===type) {
+					if (returns.length===0) {
+						returns.falsy = returns.falsey = returns.truthy = true;
+					}
+					rval = r.handler.apply(this, args);
+					returns.push(rval);
+					if (rval===true) {
+						returns.falsy = returns.falsey = false;
+					}
+					else if (rval===false) {
+						returns.truthy = false;
+					}
+					if (rval===false) {
+						break;
+					}
+				}
+			}
+			return returns;
+		},
+
+		/**	Deprecated alternative version of {@link puredom.EventEmitter#emit emit()} that
+		 *	accepts an Array of event parameters as the second argument.
+		 *	@function
+		 *	@private
+		 *	@deprecated
+		 */
+		fireEvent : function(type, args) {
+			return this.emit.apply(this, ([type]).concat(args));
+		}
+
 	});
-	return this;
-};
-
-/**	Alias of {@link puredom.EventEmitter#addEventListener}
- *	@function
- *	@private
- */
-puredom.EventEmitter.prototype.addListener = puredom.EventEmitter.prototype.addEventListener;
-
-/**	Alias of {@link puredom.EventEmitter#addEventListener}
- *	@function
- */
-puredom.EventEmitter.prototype.on = puredom.EventEmitter.prototype.addEventListener;
 
 
-/** Remove an event listener from the instance.
- *	@param {String} type		An event type, or a comma-seprated list of event types.
- *	@param {Function} handler	A reference to the handler, as was originally passed to {puredom.EventEmitter#addEventListener}.
- *	@returns {this}
- */
-puredom.EventEmitter.prototype.removeEventListener = function(type, handler) {
-	var x, r, t, i;
-	type = (type + '').toLowerCase().replace(/\s+/gim,'');
-	if (type.indexOf(',')>-1) {
-		t = type.split(',');
-		for (i=0; i<t.length; i++) {
-			this.removeEventListener(t[i],handler);
-		}
-		return this;
-	}
-	type = type.replace(/^on/,'');
-	for (x=this._eventRegistry.length; x--; ) {
-		r = this._eventRegistry[x];
-		if (r.type===type && r.handler===handler) {
-			this._eventRegistry.splice(x, 1);
-			break;
-		}
-	}
-	return this;
-};
+	$.forEach(/** @lends puredom.EventEmitter# */{
 
-/**	Alias of {@link puredom.EventEmitter#removeEventListener}
- *	@function
- *	@private
- */
-puredom.EventEmitter.prototype.removeListener = puredom.EventEmitter.prototype.removeEventListener;
+		/**	Alias of {@link puredom.EventEmitter#on on()}
+		 *	@function
+		 *	@private
+		 */
+		addListener : 'on',
 
+		/**	Alias of {@link puredom.EventEmitter#on on()}
+		 *	@function
+		 *	@private
+		 */
+		addEventListener : 'on',
 
-/** Fire an event of a given type. <br />
- *	Pass a comma-separated list for <code>type</code> to fire multiple events at once.
- *	@param {String} type	An event type, or a comma-seprated list of event types.
- *	@param {Array} args		An Array of arguments to pass to each handler. Non-Array values get auto-boxed into an Array.
- *	@returns {Array} an Array of handler return values. The Array also has "truthy" and "falsey" properties indicating if any handlers returned <code>true</code> or <code>false</code>, respectively.
- */
-puredom.EventEmitter.prototype.fireEvent = function(type, args) {
-	var x, r, errors=[], rval, returns=[];
-	type = (type+'').toLowerCase().replace(/^on/,'');
-	if (!puredom.isArray(args)) {
-		args = [args];
-	}
-	for (x=this._eventRegistry.length; x--; ) {
-		r = this._eventRegistry[x];
-		if (r.type===type) {
-			if (returns.length===0) {
-				returns.falsy = returns.falsey = returns.truthy = true;
-			}
-			rval = r.handler.apply(this, args);
-			returns.push(rval);
-			if (rval===true) {
-				returns.falsy = returns.falsey = false;
-			}
-			else if (rval===false) {
-				returns.truthy = false;
-			}
-			if (rval===false) {
-				break;
-			}
-		}
-	}
-	errors = null;
-	return returns;
-};
+		/**	Alias of {@link puredom.EventEmitter#removeListener removeListener()}
+		 *	@function
+		 *	@private
+		 */
+		removeEventListener : 'removeListener',
 
-/**	Alias of {@link puredom.EventEmitter#fireEvent}
- *	@deprecated
- *	@private
- */
-puredom.EventEmitter.prototype._fireEvent = puredom.EventEmitter.prototype.fireEvent;
+		/**	Alias of {@link puredom.EventEmitter#emit emit()}
+		 *	@function
+		 *	@private
+		 */
+		trigger : 'emit'
+
+	}, function(alias, key) {
+		proto[key] = proto[alias];
+	});
+
+}(puredom));
 
 /**	@namespace Functions for working with dates <br />
  *	See {@link http://php.net/strftime} for formatting options.
@@ -5133,7 +5343,7 @@ puredom.date = /** @lends puredom.date */ {
 	
 };
 /** @namespace Networking functionality. */
-puredom.net = /** @lends puredom.net */ {
+puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net */ {
 	
 	/**	@class Represents an HTTP request.
 	 *	The raw XMLHttpRequest object is accessible through a *request* property.
@@ -5143,489 +5353,423 @@ puredom.net = /** @lends puredom.net */ {
 	},
 	
 	
-	/**	Make an HTTP GET request. This is a convenience wrapper around {@link puredom.net.request}.
-	 *	@param {String} url				The URL to which a request should be sent.
-	 *	@param {Function} callback		A function to be called when the request has completed, with signature: function({Boolean} success, {Object|String|Document} data)
-	 *	@param {Object} [options]		Additional configuration. See {@link puredom.net.request}.
-	 *	@example
-	 *	puredom.net.get("/ajax?f=1", function(success, response) {
-	 *		console.log(success===true, response);
-	 *	});
+	/**	Make a GET request. <br />
+	 *	This is a convenience wrapper around {@link puredom.net.request}.
+	 *	@param {String} url				URL to request
+	 *	@param {Function} callback		Called on completion. Gets passed <code>(success, response, request)</code>.
+	 *	@param {Object} [options]		Additional configuration. See options for {@link puredom.net.request}.
 	 *	@returns {puredom.net.HttpRequest} An HTTP request object
+	 *	@example
+	 *		puredom.net.get("/ajax?f=1", function(success, response) {
+	 *			console.log(success===true, response);
+	 *		});
 	 */
 	get : function(url, callback, options) {
 		return this.request(puredom.extend({
 			url : url,
-			type : "GET",
-			callback : callback
-		}, options || {}));
+			method : 'GET'
+		}, options || {}), callback);
 	},
 	
 	
-	/**	Make an HTTP POST request. This is a convenience wrapper around {@link puredom.net.request}. <br />
-	 *	<strong>Post value type conversion:</strong> <br />
-	 *		Object: Objects get automatically converted to a querystring-encoded Strings through {@link puredom.querystring.stringify}.<br />
-	 *		String: Strings are used as the POST body, without any conversion.
-	 *	@param {String} url				The URL to which a request should be sent.
-	 *	@param {Object|String} post		POST body (see description). If this value is set, the request type will be POST unless overridden via <code>options.type</code>.
-	 *	@param {Function} callback		A function to be called when the request has completed, with signature: function({Boolean} success, {Object|String|Document} data)
-	 *	@param {Object} [options]		Additional configuration. See {@link puredom.net.request}.
-	 *	@example
-	 *	puredom.net.get("/ajax?f=2", { foo:'bar' }, function(s, data) {
-	 *		console.log(s===true, data);
-	 *	});
+	/**	Make a POST request. <br />
+	 *	This is a convenience wrapper around {@link puredom.net.request}.
+	 *	@param {String} url				URL to request
+	 *	@param {Object|String} body		Request body.  If an <code>Object</code>, will be serialized based on the request's Content-Type (defaulting to form-encoded)
+	 *	@param {Function} callback		Called on completion. Gets passed <code>(success, response, request)</code>.
+	 *	@param {Object} [options]		Additional configuration. See options for {@link puredom.net.request}.
 	 *	@returns {puredom.net.HttpRequest} An HTTP request object
+	 *	@example
+	 *		puredom.net.get("/ajax?f=2", { foo:'bar' }, function(success, res, req) {
+	 *			console.log(success===true, res, req.status, req.responseHeaders);
+	 *		});
 	 */
-	post : function(url, post, callback, options) {
+	post : function(url, body, callback, options) {
 		return this.request(puredom.extend({
 			url : url,
-			type : "POST",
-			post : post,
-			callback : callback
-		}, options || {}));
+			method : 'POST',
+			body : body
+		}, options || {}), callback);
 	},
 	
 	
-	/**	Make multiple HTTP requests in order, firing the callback only when all have completed.
-	 *	<br /><b>Callback Format:</b><br />
-	 *	@example
-	 *	callback(
-	 *		success   // {Boolean} - did *any* requests succeed?
-	 *		responses // {Array}   - responses corresponding to the provided resources.
-	 *		successes // {Number}  - how many requests succeeded (status<400)
-	 *		failures  // {Number}  - how many requests failed (status>=400)
-	 *	);
-	 *	@param {Object[]} resources		An array of resource objects, with format as described in {@link puredom.net.request} options.
-	 *	@param {Function} [callback]	A function to call once all requests have completed, with signature <code>function(success, responses, successes, failures)</code>. [See description]
-	 *	@returns {Boolean} returns false if no resources were provided.
-	 */
-	multiLoad : function(resources, callback) {
-		if (!resources) {
-			return false;
-		}
-		var cur = -1,
-			max = resources.length,
-			allData = [],
-			trues = 0,
-			falses = 0,
-			loaded, loadNext;
-		
-		/** @inner */
-		loaded = function(result, data) {
-			if (result && data) {
-				var res = resources[cur],
-					d = data;
-				if (res.process && res.process.call) {
-					d = res.process(d);
-					if (d===undefined) {
-						d = data;
-					}
-				}
-				allData.push(d);
-				if (callback) {
-					callback(trues>0, allData, trues, falses);
-				}
-				loaded = loadNext = resources = allData = callback = null;
-			}
-			else {
-				loadNext();
-			}
-		};
-		
-		/** @inner */
-		loadNext = function() {
-			cur += 1;
-			var res = resources[cur],
-				d = typeof(res)==='string' ? {url:res} : res;
-			if (d) {
-				http.request(d, loaded);
-			}
-			else {
-				if (cur<max) {
-					loadNext();
-				}
-				else {
-					callback(false, null, null, "No resources were available.");
-				}
-			}
-		};
-		
-		loadNext();
-		
-		return true;
-	},
-	
-	
-	/**	Construct and send an HTTP request based on a configuration object (options). <br />
-	 *	<strong>Options:</strong> <br />
-	 *		<table class="options"><tbody>
-	 *		<tr><td>{String}</td><td><b>url</b></td><td>Required. A URL to which the request should be sent.</td></tr>
-	 *		<tr><td>{String}</td><td><b>type</b></td><td>An explicit request type (HTTP verb). Generally "GET" or "POST". Overrides other methods of setting request type.</td></tr>
-	 *		<tr><td>{Object|String}</td><td><b>post</b></td><td>Post body. {Object}s are converted to a form-encoded body using {@link puredom.parameterize}. {String}s are used as the POST body with no manipulation. If this value is set, the request type will be POST unless overridden by *type*.</td></tr>
-	 *		<tr><td>{Function}</td><td><b>callback</b></td><td>A function to be called when the request has completed, with signature: <code>function({Boolean} success, {Object|String|Document} data)</code></td></tr>
-	 *		<tr><td>{Object}</td><td><b>headers</b></td><td>Hashmap of request headers. (key-value)</td></tr>
-	 *		<tr><td>{String}</td><td><b>contentTypeOverride</b></td><td>If set, overrides the *Content-Type* header returned by the server.</td></tr>
-	 *		</tbody></table>
-	 *	@param {Object} options			Define request options
-	 *	@param {Function} [callback]	A callback function, used if options.callback is not set.
+	/**	Construct and send an HTTP request based on the specified options.
+	 *	@param {Object} options			Request options.
+	 *	@param {String} options.url						URL to request
+	 *	@param {String} [options.method="GET"]			HTTP method to use
+	 *	@param {String|Object} [options.body]			Request body. If a <code>String</code> is passed, it is considered pre-serialized.  
+	 *													If an <code>Object</code> is passed, it will be serialized based on the request's 
+	 *													<code>Content-Type</code> header.
+	 *	@param {Any} [options.bodySerialized]			If set, gets assigned unmodified as the request body.  If you're sending something like Blob data, this is for you.
+	 *	@param {Object} [options.headers]				A key-value list of request headers to send.
+	 *	@param {Object} [options.contentTypeOverride]	If set, overrides the response's <code>Content-Type</code> header with the given value.
+	 *	@param {Object} [options.callback]				Alias of <code>callback</code>, a function to call on completion. Gets passed <code>(success, response, request)</code>.
+	 *	@param {Function} [callback]	Called on completion. Gets passed <code>(success, response, request)</code>.  If set, takes precidence over <code>options.callback</code>.
 	 *	@returns {puredom.net.HttpRequest} An HTTP request object
 	 */
-	request : function(options) {
-		var opt, self;
+	request : function(options, callback) {
+		var self = this,
+			req;
+		options = options || {};
+
 		if (!options.url) {
 			return false;
 		}
-		self = this;
-		options = options || {};
-		opt = new puredom.net.HttpRequest({
-			url			: options.url,
-			type		: options.type || (options.post ? "POST" : "GET"),
-			callback	: options.callback || arguments[1] || function(){},
-			post		: options.post,
-			headers		: options.headers
-		});
-		if (options.contentTypeOverride) {
-			opt.contentTypeOverride = options.contentTypeOverride;
-			delete options.contentTypeOverride;
+
+		if (!options.method && options.type) {
+			options.method = options.type;
+			console.warn('puredom.net.request: The `type` option is deprecated. Use `method`.');
 		}
-		
-		this.createXHR(opt.url, function(xhrCarrier) {
-			opt.request = xhrCarrier.xhr;
-			opt._xdrFrame = xhrCarrier.frame;
-			xhrCarrier = null;
-			
-			if (opt.post && puredom.typeOf(opt.post)==='object') {
-				opt.post = puredom.parameterize(opt.post);
-				if (opt.post.substring(0,1)==='?') {
-					opt.post = opt.post.substring(1);
-				}
+
+		if (!options.body && options.post) {
+			options.body = options.post;
+			console.warn('puredom.net.request: The `post` option is deprecated. Use `body`.');
+		}
+
+		req = new puredom.net.HttpRequest({
+			url			: options.url,
+			type		: options.method || (options.body ? "POST" : "GET"),
+			callback	: callback || options.callback,
+			body		: options.body,
+			headers		: {
+				'content-type' : 'application/x-www-form-urlencoded',
+				'x-requested-with' : 'XMLHttpRequest'
 			}
-			/** @private */
-			opt.request.onreadystatechange = function() {
-				var contentType, data, i;
-				
-				// for proxied XHR only:
-				if (opt.request._orig) {
-					opt.request.readyState = opt.request._orig.readyState;
-					opt.request.status = opt.request._orig.status;
-					opt.request.responseText = opt.request._orig.responseText;
-					opt.request.responseXML = opt.request._orig.responseXML;
-				}
-				
-				if (opt.request.readyState===4) {
-					// The cross-domain frame can now be re-used.
-					if (opt._xdrFrame) {
-						setTimeout(function() {
-							self._freeIframes.push(opt._xdrFrame);
-							self = null;
-						}, 100);
-					}
-					
-					opt.status = opt.request.status;
-					if (opt.contentTypeOverride) {
-						contentType = opt.contentTypeOverride.toLowerCase();
-					}
-					else {
-						try {
-							contentType = (opt.request.getResponseHeader("Content-Type")).toLowerCase();
-						} catch(err) {}
-						contentType = contentType || "";
-					}
-					opt.responseText = opt.request.responseText;
-					
-					if (contentType.match(/\/(json|javascript)$/gm) || contentType==="json") {
-						opt.responseType = "json";
-						data = opt.responseJSON = null;
-						try {
-							data = opt.responseJSON = JSON.parse(opt.request.responseText.replace(/^[^\[\{]*(.*)[^\[\{]*$/g,'$1'));
-						}catch(jsonParseError){
-							opt.jsonParseError = true;
-						}
-					}
-					else if (contentType==="application/xml" || contentType==="xml") {
-						opt.responseType = "xml";
-						data = opt.responseXML = opt.request.responseXML;
-					}
-					else {
-						opt.responseType = "text";
-						data = opt.responseText;
-					}
-					
-					if (opt.callback) {
-						opt.callback(opt.request.status<400, data);
-					}
-				}
-			};
-			opt.request.open(opt.type, opt.url, opt.async!==false);
-			opt.request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-			opt.request.setRequestHeader('x-requested-with', 'XMLHttpRequest');
-			if (opt.headers) {
-				for (var h in opt.headers) {
-					if (opt.headers.hasOwnProperty(h)) {
-						try {
-							opt.request.setRequestHeader(h, opt.headers[h]);
-						} catch(err) {}
-					}
-				}
-			}
-			opt.request.send(opt.post || null);
 		});
-		return opt;
-	},
-	
-	
-	/**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
-	 *	@namespace JSONp Implementation. JSONp is GET-only and works across domains, but the server must support the JSONp pattern.
-	 *	@function
-	 *	@returns {puredom.net.jsonp.Request} jsonpRequest
-	 */
-	jsonp : (function() {
-		/** @namespace JSONp-related functionality.
-		 *	@name puredom.net.jsonp
-		 *	@private
-		 */
-		var jsonp = function() {
-				return jsonp.get.apply(jsonp, arguments);
-			},
-			reqIndex = 0;
-		
-		/**	Initiate a JSONp request.
-		 *	@name puredom.net.jsonp.get
-		 *	@function
-		 *	@param {String} url			The service URL, including querystring parameters.
-		 *	@param {Object} [options]		A hash of available options.
-		 *	@param {String} [options.url=url]		The service URL
-		 *	@param {Object} [options.params]		GET parameters as an object.
-		 *	@param {Function} [options.callback]	A function to handle the data once received.
-		 *	@param {Number} [options.timeout=10]	A number of seconds to wait before triggering failure.
-		 *	@param {Function} callback	A function that gets called when the request returns.
-		 *	@returns {puredom.net.jsonp.Request} jsonpRequest
-		 */
-		jsonp.get = function(url, options, callback) {
-			var script, requestObj, callbackId, tmp;
-			
-			if (puredom.typeOf(options)==='function') {
-				if (callback && puredom.typeOf(callback)==='object') {
-					tmp = callback;
-				}
-				callback = options;
-				if (tmp) {
-					options = tmp;
-				}
-			}
-			options = options || {};
-			if (options.callback && !callback) {
-				callback = options.callback;
-			}
-			if (!options.timeout) {
-				options.timeout = 10;
-			}
-			url = url || options.url;
-			
-			if (!url) {
-				return false;
-			}
-			
-			if (options.params && puredom.parameterize) {
-				url += (url.indexOf('?')>-1?'&':'?') + puredom.querystring.stringify(options.params);
-			}
-			
-			reqIndex += 1;
-			
-			options.callback = callbackId = "puredom_net_jsonp_"+reqIndex;
-			(function(jsonp, reqIndex) {
-				/**	@ignore */
-				window[options.callback] = function(data) {
-					var e;
-					if (callback) {
-						try {
-							callback(data);
-						} catch(err) {
-							e = err;
-						}
-						callback = null;
-					}
-					if (requestObj) {
-						requestObj.stop();
-						requestObj = null;
-					}
-					if (e) {
-						throw(e);
-					}
-				};
-			}());
-			
-			if (url.indexOf('{!callback}')>-1) {
-				url = url.replace('{!callback}', callbackId);
-			}
-			else {
-				url += (url.indexOf('?')<0?'?':'&') + encodeURIComponent(options.callbackParam || 'callback') + '=' + encodeURIComponent(callbackId);
-			}
-			
-			if (!this._head) {
-				tmp = document.getElementsByTagName('head');
-				this._head = tmp && tmp[0];
-			}
-			
-			script = puredom.el({
-				type : 'script',
-				attributes : {
-					src		: url,
-					async	: 'async',
-					type	: 'text/javascript'
-				},
-				parent : this._head || document.body
-			});
-			
-			/**	@class Represents a JSONp request.
-			 *	@name puredom.net.jsonp.Request
-			 */
-			requestObj = /** @lends puredom.net.jsonp.Request# */ {
-				/**	The request's callback ID */
-				id : callbackId,
-				
-				/**	Attempt to stop the request. */
-				stop : function() {
-					if (requestObj._timer) {
-						clearTimeout(requestObj._timer);
-					}
-					window[callbackId] = null;
-					try {
-						delete window[callbackId];
-					}catch(err){}
-					callback = null;
-					script.attr('src', 'about:blank').remove();
-					callbackId = requestObj = script = null;
-				}
-			};
-			
-			if (options.timeout && options.timeout>0) {
-				requestObj._timer = setTimeout(function() {
-					if (callback) {
-						callback({
-							_requestTimedOut : true,
-							_jsonpTimedout : true,
-							success : false,
-							result : false
-						});
-					}
-					if (requestObj) {
-						requestObj.stop();
-					}
-				}, Math.round(options.timeout*1000));
-			}
-			
-			url = options = tmp = null;
-			
-			return requestObj;
-		};
-		
-		return jsonp;
-	}()),
-	
-	
-	/** @private */
-	_freeIframes : [],
-	
-	
-	/** @private */
-	_xhrIndex : 0,
-	
-	
-	/** Asynchronously create an XMLHttpRequest object, automatically instantiating it from within an iframe if the TLD matches the page's TLD.
-	 *	@private
-	 */
-	createXHR : function(url, callback) {
-		var isCrossDomain = false,
-			self = this,
-			domain, frame, xhr, _loadHandler, timer, i;
-		this._xhrIndex += 1;
-		if (url) {
-			domain = (/^[a-z]{3,9}\:\/\/([^\/\?#]+)/gim).exec(url);
-			domain = domain && domain[1];
-			if (domain && domain!==location.hostname) {
-				isCrossDomain = true;
-				document.domain = location.hostname.match(/[^.]+\.[^.]+$/gim)[0];
-				for (i=0; i<this._freeIframes.length; i++) {
-					if (this._freeIframes[i].getAttribute('data-xhr-domain')===domain) {
-						frame = this._freeIframes.splice(i,1)[0];
-						break;
-					}
-				}
-				if (frame) {
-					callback(self._createXHRObj(frame.contentWindow, frame));
+
+		if (options.headers) {
+			puredom.forEach(options.headers, function(value, key) {
+				var h = req.headers;
+				key = String(key).toLowerCase();
+				if (value===undefined || value===null) {
+					delete h[key];
 				}
 				else {
-					frame = document.createElement('iframe');
-					frame.style.cssText = "position:absolute; left:0; top:-1000px; width:1px; height:1px; border:none; overflow:hidden;";
-					/** @inner */
-					_loadHandler = function() {
-						var win, body;
-						try {
-							win = frame.contentWindow;
-							body = win && win.document && win.document.domain===document.domain && win.document.body;
-						}catch(err){
-							body = null;
-						}
-						if (body && body.innerHTML) {
-							clearInterval(timer);
-							frame.onload = frame.onerror = null;
-							callback(self._createXHRObj(win, frame));
-							self = callback = xhr = frame = domain = _loadHandler = timer = null;
-						}
-					};
-					frame.onload = frame.onerror = _loadHandler;
-					frame.setAttribute('src', location.protocol+'//'+domain+'/xd_receiver.html');
-					frame.setAttribute('role', 'presentation');
-					frame.setAttribute('tabindex', '-1');
-					frame.setAttribute('data-xhr-domain', domain);
-					document.body.appendChild(frame);
-					timer = setInterval(_loadHandler, 50);
+					h[key] = String(value);
+				}
+			});
+		}
+
+		if (options.contentTypeOverride) {
+			req.contentTypeOverride = options.contentTypeOverride;
+			// @todo: fixme
+			delete options.contentTypeOverride;
+		}
+
+		if (options.responseType) {
+			req.responseType = options.responseType;
+		}
+
+		options = callback = null;
+
+		/** @ignore */
+		function handleReadyState() {
+			var xhr = req.request,
+				typeMap = {
+					json : 'JSON',
+					document : 'XML'
+				},
+				headerReg = /^([a-z\-\.\_])\s*?\:/gim,
+				head, contentType, resType, key;
+			
+			if (xhr.readyState!==4) {
+				return;
+			}
+			self.fireEvent('before:response', req);
+			
+			req.status = xhr.status;
+			req.responseType = 'text';
+			if (!xhr.responseType || xhr.responseType==='text') {
+				req.responseText = req.response = xhr.responseText;
+			}
+			
+			req.responseHeaders = {};
+			headerReg.lastIndex = 0;
+			head = xhr.getAllResponseHeaders();
+			while ( (key=headerReg.exec(head)) ) {
+				req.responseHeaders[key[1].toLowerCase()] = xhr.getResponseHeader(key[1]);
+			}
+
+			if (req.contentTypeOverride) {
+				contentType = req.contentTypeOverride.toLowerCase();
+			}
+			else {
+				try {
+					contentType = (xhr.getResponseHeader("Content-Type")).toLowerCase().split(';')[0];
+				} catch(err) {}
+				contentType = contentType || "";
+			}
+			
+			resType = xhr.responseType;
+			if (resType) {
+				req.responseType = resType;
+				req.response = xhr.response;
+				key = 'response' + (typeMap[resType] || resType.charAt(0).toUpperCase()+resType.substring(1));
+				req[key] = req.response;
+			}
+			else if (contentType.match(/(^|\/)(json|javascript)$/gm)) {
+				req.responseType = 'json';
+				try {
+					req.response = req.responseJSON = JSON.parse(xhr.responseText.replace(/^[^\[\{]*(.*)[^\[\{]*$/g,'$1'));
+				} catch(parseError) {
+					req.jsonParseError = parseError;
 				}
 			}
-		}
-		if (!isCrossDomain) {
-			xhr = this._createXHRObj();
-			callback(xhr);
-			return xhr;
-		}
-	},
-	
-	
-	/** @private */
-	_createXHRObj : function(win, frame) {
-		var xmlHttp;
-		win = win || window;
-		
-		try {
-			xmlHttp = new win.XMLHttpRequest();
-		} catch(err) {
-			try {
-				xmlHttp = new win.ActiveXObject("Msxml2.XMLHTTP");
-			} catch(err2) {
-				xmlHttp = new win.ActiveXObject("Microsoft.XMLHTTP");
+			else if (contentType==='application/xml' || contentType==='xml') {
+				req.responseType = 'document';
+				req.response = req.responseXML = xhr.responseXML;
+			}
+			
+			if (typeof req.callback==='function') {
+				req.callback(req.status!==0 && req.status<400, req.response, req);
 			}
 		}
-		return {
-			xhr : xmlHttp,
-			frame : frame
-		};
+		
+		/**	@ignore */
+		this.createXHR(req, function(xhr) {
+
+			/**	A reference to the request's underlying XMLHttpRequest instance
+			 *	@name puredom.net.HttpRequest#xhr
+			 *	@object
+			 */
+			req.xhr = xhr;
+
+			req.request = xhr;
+			
+			xhr.onreadystatechange = handleReadyState;
+
+			xhr.open(req.type, req.url, req.async!==false);
+
+			if (req.responseType) {
+				xhr.responseType = req.responseType;
+			}
+
+			puredom.forEach(req.headers, function(value, key) {
+				xhr.setRequestHeader(key, value);
+			});
+
+			if (!req.bodySerialized && req.body && puredom.typeOf(req.body)==='object') {
+				self.serializeRequestBody(req);
+			}
+
+			xhr.send(req.bodySerialized || req.body || null);
+		});
+
+		return req;
+	},
+
+
+	/**	Lookup for request serialization methods. 
+	 *	Each must expose a stringify() or encode() method. 
+	 *	Keys are strings to find within a request's content-type header (lowercase'd).
+	 *	@private
+	 */
+	requestSerializers : {
+		json : puredom.json,
+
+		xml : puredom.xml,
+
+		'form-encoded' : puredom.querystring
+	},
+
+
+	/**	Serialize a request body. Adds a <code>bodySerialized</code> property to <code>req</code>.
+	 *	@param {puredom.net.HttpRequest} req
+	 *	@private
+	 */
+	serializeRequestBody : function(req) {
+		var contentType = (req.headers['content-type'] || 'application/x-www-form-urlencoded').toLowerCase();
+		puredom.forEach(this.serializers, function(api, type) {
+			if (contentType.indexOf(type)>-1) {
+				req.bodySerialized = (api.stringify || api.encode || api)(req.body);
+				return false;
+			}
+		});
+	},
+
+
+	/** Asynchronously create an XMLHttpRequest object.
+	 *	@private
+	 */
+	createXHR : function(req, callback, context) {
+		var xhr;
+		context = context || window;
+		
+		if (context.XMLHttpRequest) {
+			xhr = new context.XMLHttpRequest();
+		}
+		else {
+			try {
+				xhr = new context.ActiveXObject("Msxml2.XMLHTTP");
+			} catch(err2) {
+				xhr = new context.ActiveXObject("Microsoft.XMLHTTP");
+			}
+		}
+
+		callback(xhr);
+		return xhr;
 	}
 	
-};
+	
+});
+/**	When called as a function, <code>puredom.net.jsonp()</code> is an alias of {@link puredom.net.jsonp.get}.
+ *	@namespace JSONP Implementation. <br />
+ *		JSONP only supports GET requests, but works across domains. <br />
+ *		The server must support sending {@link http://en.wikipedia.org/wiki/JSONP JSONP} callbacks.
+ *	@function
+ *	@returns {puredom.net.jsonp.Request} jsonpRequest
+ */
+puredom.net.jsonp = (function() {
 
+	/** @namespace JSONp-related functionality.
+	 *	@name puredom.net.jsonp
+	 *	@private
+	 */
+	var jsonp = function() {
+			return jsonp.get.apply(jsonp, arguments);
+		},
+		reqIndex = 0;
+	
+	/**	Initiate a JSONP request.
+	 *	@name puredom.net.jsonp.get
+	 *	@function
+	 *	@param {String} url			The service URL, including querystring parameters.
+	 *	@param {Object} [options]		A hash of available options.
+	 *	@param {String} [options.url=url]		The service URL
+	 *	@param {Object} [options.params]		GET parameters as an object.
+	 *	@param {Function} [options.callback]	A function to handle the data once received.
+	 *	@param {Number} [options.timeout=10]	A number of seconds to wait before triggering failure.
+	 *	@param {Function} callback	A function that gets called when the request returns.
+	 *	@returns {puredom.net.jsonp.Request} jsonpRequest
+	 */
+	jsonp.get = function(url, options, callback) {
+		var script, requestObj, callbackId, tmp;
+		
+		if (puredom.typeOf(options)==='function') {
+			if (callback && puredom.typeOf(callback)==='object') {
+				tmp = callback;
+			}
+			callback = options;
+			if (tmp) {
+				options = tmp;
+			}
+		}
+		options = options || {};
+		if (options.callback && !callback) {
+			callback = options.callback;
+		}
+		if (!options.timeout) {
+			options.timeout = 10;
+		}
+		url = url || options.url;
+		
+		if (!url) {
+			return false;
+		}
+		
+		if (options.params && puredom.parameterize) {
+			url += (url.indexOf('?')>-1?'&':'?') + puredom.querystring.stringify(options.params);
+		}
+		
+		reqIndex += 1;
+		
+		options.callback = callbackId = "puredom_net_jsonp_"+reqIndex;
+		(function(jsonp, reqIndex) {
+			/**	@ignore */
+			window[options.callback] = function(data) {
+				var e;
+				if (callback) {
+					try {
+						callback(data);
+					} catch(err) {
+						e = err;
+					}
+					callback = null;
+				}
+				if (requestObj) {
+					requestObj.stop();
+					requestObj = null;
+				}
+				if (e) {
+					throw(e);
+				}
+			};
+		}());
+		
+		if (url.indexOf('{!callback}')>-1) {
+			url = url.replace('{!callback}', callbackId);
+		}
+		else {
+			url += (url.indexOf('?')<0?'?':'&') + encodeURIComponent(options.callbackParam || 'callback') + '=' + encodeURIComponent(callbackId);
+		}
+		
+		if (!this._head) {
+			tmp = document.getElementsByTagName('head');
+			this._head = tmp && tmp[0];
+		}
+		
+		script = puredom.el({
+			type : 'script',
+			attributes : {
+				src		: url,
+				async	: 'async',
+				type	: 'text/javascript'
+			},
+			parent : this._head || document.body
+		});
+		
+		/**	@class Represents a JSONp request.
+		 *	@name puredom.net.jsonp.Request
+		 */
+		requestObj = /** @lends puredom.net.jsonp.Request# */ {
+			/**	The request's callback ID */
+			id : callbackId,
+			
+			/**	Attempt to stop the request. */
+			stop : function() {
+				if (requestObj._timer) {
+					clearTimeout(requestObj._timer);
+				}
+				window[callbackId] = null;
+				try {
+					delete window[callbackId];
+				}catch(err){}
+				callback = null;
+				script.attr('src', 'about:blank').remove();
+				callbackId = requestObj = script = null;
+			}
+		};
+		
+		if (options.timeout && options.timeout>0) {
+			requestObj._timer = setTimeout(function() {
+				if (callback) {
+					callback({
+						_requestTimedOut : true,
+						_jsonpTimedout : true,
+						success : false,
+						result : false
+					});
+				}
+				if (requestObj) {
+					requestObj.stop();
+				}
+			}, Math.round(options.timeout*1000));
+		}
+		
+		url = options = tmp = null;
+		
+		return requestObj;
+	};
+	
+	return jsonp;
+}());
 /**	Provides a cross-browser persisted storage layer using various storage adapters.
- *	@constructor Asynchronously creates an instance of LocalStorage.<br />
- *	<strong>Available Options:</strong><br />
- *	<table class="options"><thead>
- *		<tr><td>Option</td><td>Type</td><td>Default Value</td><td>Description</td></tr>
- *	</thead><tbody>
- *		<tr><td>adapter</td><td>String</td><td><em>auto-detect</em></td><td>Attempt to use a specific adapter. If unset, the best adapter is automatically used (useBest=true).</td></tr>
- *		<tr><td>useBest</td><td>Boolean</td><td>true</td><td>Attempt to use the best adapter available, unless an adapter is manually specified and loads successfully.</td></tr>
- *		<tr><td>restore</td><td>Boolean</td><td>true</td><td>Attempt to restore the data immediately.</td></tr>
- *	</tbody></table>
+ *	@constructor Asynchronously creates an instance of LocalStorage.
  *	@param {String} id				Required identifier for the specific storage instance.
  *	@param {Object} [options]		Hashmap of available config options (see description)
+ *	@param {Object} [options.adapter=auto]		Attempt to use a specific adapter. If unset, the best adapter is automatically used (useBest=true).
+ *	@param {Object} [options.useBest=true]		Attempt to use the best adapter available, unless an adapter is manually specified and loads successfully.
+ *	@param {Object} [options.restore=true]		Attempt to restore the data immediately.
  *	@param {Function} [callback]	Gets passed a reference to the instance after the initial restore() has completed.
  */
 puredom.LocalStorage = function LocalStorage(id, callback, options) {
@@ -5682,12 +5826,12 @@ puredom.LocalStorage.prototype.data = {};
  */
 puredom.LocalStorage.prototype.setAdapter = function(type) {
 	var list = this.constructor.adapters,
-		lcType = (type+'').toLowerCase(),
+		lcType = (type+'').toLowerCase().replace(/adapt[eo]r$/g,''),
 		found = false,
 		foundWorking = false,
 		i;
 	for (i in list) {
-		if (list.hasOwnProperty(i) && (i+'').toLowerCase()===lcType) {
+		if (list.hasOwnProperty(i) && (i+'').toLowerCase().replace(/adapt[eo]r$/g,'')===lcType) {
 			found = true;
 			if (list[i].test(this)===true) {
 				foundWorking = true;
@@ -6045,9 +6189,9 @@ puredom.extend(puredom.LocalStorage.adapters.none.prototype, /** @lends puredom.
 
 
 /**	@class Storage adapter that persists data into browser cookies.
- *	@name puredom.LocalStorage.adapters.cookie
+ *	@name puredom.LocalStorage.adapters.CookieAdapter
  */
-puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapters.cookie */ {
+puredom.LocalStorage.addAdapter('CookieAdapter', /** @lends puredom.LocalStorage.adapters.CookieAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
@@ -6093,9 +6237,9 @@ puredom.LocalStorage.addAdapter('cookie', /** @lends puredom.LocalStorage.adapte
 	
 });
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.LocalStorage
+ *	@name puredom.LocalStorage.adapters.LocalStorageAdapter
  */
-puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.adapters.LocalStorage */ {
+puredom.LocalStorage.addAdapter('LocalStorageAdapter', /** @lends puredom.LocalStorage.adapters.LocalStorageAdapter */ {
 	
 	/**	The default root key ID to use for accessing localStorage */
 	defaultName : 'db',
@@ -6167,9 +6311,9 @@ puredom.LocalStorage.addAdapter('LocalStorage', /** @lends puredom.LocalStorage.
 	
 });
 /**	@class Storage adapter that persists data into HTML5 LocalStorage.
- *	@name puredom.LocalStorage.adapters.UserData
+ *	@name puredom.LocalStorage.adapters.UserDataAdapter
  */
-puredom.LocalStorage.addAdapter('UserData', /** @lends puredom.LocalStorage.adapters.UserData */ {
+puredom.LocalStorage.addAdapter('UserDataAdapter', /** @lends puredom.LocalStorage.adapters.UserDataAdapter */ {
 	
 	/** The default cookie ID to use for database storage */
 	defaultName : 'db',
