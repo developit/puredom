@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.3.0',
+			version : '1.6.1',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
