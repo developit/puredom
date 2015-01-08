@@ -1,6 +1,6 @@
 {
   "name": "puredom",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "homepage": "http://puredom.org/",
   "authors": [
     "Jason Miller <jason@developit.ca>"
@@ -35,6 +35,7 @@
     "Gruntfile.js",
     "server.js",
     "changelog",
+    "README.md",
     "package.json"
   ]
 }
