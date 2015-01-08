@@ -2133,11 +2133,8 @@
 				getFilters;
 			templateFields = templateFields || {};
 
-			getFilters = function(value, htmlEntities) {
-				var filters = value.split('|'),
-					i;
-				value = filters.splice(0, 1)[0];
-				for (i=filters.length; i--; ) {
+			getFilters = function(filters, htmlEntities) {
+				for (var i=filters.length; i--; ) {
 					if (filters[i]==='htmlEntities') {
 						filters.splice(i, 1);
 					}
@@ -2152,8 +2149,9 @@
 					tplFilters,
 					nType;
 
-				tplFilters = getFilters(tplField);
-				tplField = tplField.split('|')[0];
+				tplField = tplField.split('|');
+				tplFilters = getFilters(tplField.slice(1));
+				tplField = tplField[0];
 
 				tplValue = puredom.delve(templateFields, tplField);
 
@@ -2161,9 +2159,13 @@
 					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
 						tplValue = tplValue.toLocaleString();
 					}
+					if (tplFilters && tplFilters.length) {
+						tplValue = self.text.filter(tplValue, tplFilters.join('|'));
+					}
+
 					nType = node.attr('data-tpl-prop');
 					if (nType) {
-						node.prop(nType, self.text.filter(tplValue, tplFilters.join('|')));
+						node.prop(nType, tplValue);
 					}
 					else {
 						switch (nodeName) {
@@ -2179,15 +2181,11 @@
 							case 'video':
 							case 'audio':
 							case 'iframe':
-								tplFilters.splice(0, 0, 'htmlEntities');
-								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
 								node.attr('src', tplValue);
 								break;
 
 							default:
-								tplFilters.splice(0, 0, 'htmlEntities');
-								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
-								node.html(tplValue);
+								node.html(self.text.htmlEntities(tplValue));
 								break;
 						}
 					}
