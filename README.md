@@ -204,6 +204,9 @@ License
 Changelog
 =========
 
+**Version 1.7.0** *(Jan 10, 2015)*  
+- Update touch screen detection to account for IE10+ and recent Webkit updates  
+
 **Version 1.6.1** *(Jan 8, 2015)*  
 - Fix incorrect encoding of attributes when templated through NodeSelection#template()  
 - Remove try/catch from applyCss() that was causing a de-opt  

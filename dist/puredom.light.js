@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.6.1',
+			version : '1.7.0',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -73,9 +73,9 @@
 			html5elements : 'abbr article aside audio canvas datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video'.split(' '),
 			support : {
 				html5 : true,
-				querySelectorAll : !!('querySelectorAll' in document),
+				querySelectorAll : 'querySelectorAll' in document,
 				filters : false,
-				webkitMultitouch : ('createTouch' in document) && navigator.maxTouchPoints!==0
+				webkitMultitouch : 'ontouchstart' in window && (navigator.maxTouchPoints || navigator.msMaxTouchPoints)!==0
 			},
 			regex : {
 				css3AutoPrefix : /([\s\;\/\*])(transform|transition|perspective|box\-sizing|box\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,		// |text\-shadow
