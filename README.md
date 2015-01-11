@@ -204,6 +204,9 @@ License
 Changelog
 =========
 
+**Version 1.7.1** *(Jan 11, 2015)*  
+- Fix touch screen detection bug  
+
 **Version 1.7.0** *(Jan 10, 2015)*  
 - Update touch screen detection to account for IE10+ and recent Webkit updates  
 
