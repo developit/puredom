@@ -2,7 +2,7 @@
   "name": "puredom",
   "repository": "developit/puredom",
   "description": "puredom is a fast, chainable, exstensible JavaScript library for web applications. It makes building developing rich apps using JavaScript, HTML and CSS much easier.",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "keywords": [
     "puredom",
     "selector",
