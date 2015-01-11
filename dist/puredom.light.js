@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.7.0',
+			version : '1.7.1',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -75,7 +75,7 @@
 				html5 : true,
 				querySelectorAll : 'querySelectorAll' in document,
 				filters : false,
-				webkitMultitouch : 'ontouchstart' in window && (navigator.maxTouchPoints || navigator.msMaxTouchPoints)!==0
+				webkitMultitouch : 'ontouchstart' in window && navigator.maxTouchPoints!==0 && navigator.msMaxTouchPoints!==0
 			},
 			regex : {
 				css3AutoPrefix : /([\s\;\/\*])(transform|transition|perspective|box\-sizing|box\-shadow|border\-radius)\:([^\;]*)(\;|$)/gim,		// |text\-shadow
