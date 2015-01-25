@@ -31,9 +31,8 @@ module.exports = function(grunt) {
 					'src/puredom/net.js',
 					'src/puredom/net/jsonp.js',
 					'src/puredom/LocalStorage.js',
-					'src/puredom/LocalStorage/CookieAdapter.js',
-					'src/puredom/LocalStorage/LocalStorageAdapter.js',
-					'src/puredom/LocalStorage/UserDataAdapter.js'
+					'src/puredom/LocalStorage/*.js',
+					'!src/puredom/LocalStorage/WebSQLAdapter.js'
 				],
 				dest: 'dist/<%= pkg.name %>.light.js'
 			}
@@ -43,7 +42,7 @@ module.exports = function(grunt) {
 		uglify: {
 			full : {
 				options: {
-					banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+					banner: '/*! <%= pkg.name %> <%= pkg.version %> */\n'
 				},
 				files: {
 					'dist/<%= pkg.name %>.min.js': ['<%= concat.full.dest %>']
@@ -51,7 +50,7 @@ module.exports = function(grunt) {
 			},
 			light : {
 				options: {
-					banner: '/*! <%= pkg.name %> light <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+					banner: '/*! <%= pkg.name %> light <%= pkg.version %> */\n'
 				},
 				files: {
 					'dist/<%= pkg.name %>.light.min.js': ['<%= concat.light.dest %>']
