@@ -15,6 +15,7 @@ module.exports = function(grunt) {
 					'src/puredom/ControllerManager.js',
 					'src/puredom/LocalStorage.js',
 					'src/puredom/*.js',
+					'!src/puredom/NativeAPI.js',
 					'src/puredom/LocalStorage/*.js',
 					'src/puredom/net/jsonp.js'
 				],
