@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.7.1',
+			version : '1.8.0',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -5495,7 +5495,7 @@ puredom.net = puredom.extend(new puredom.EventEmitter(), /** @lends puredom.net 
 			}
 			else {
 				try {
-					contentType = (xhr.getResponseHeader("Content-Type")).toLowerCase().split(';')[0];
+					contentType = (xhr.getResponseHeader("Content-Type") || '').toLowerCase().split(';')[0];
 				} catch(err) {}
 				contentType = contentType || "";
 			}
