@@ -135,13 +135,6 @@ Includes everything from the light version, plus:
 >
 >	**Notifier**  
 >	*Show stylized notifications within the browser window*  
->
->	**NativeAPI** *(deprecated)*  
->	*Dynamically create models for APIs using a simple JSON structure*  
->	*For an alternative, try [puredom.model](http://github.com/developit/puredom.model) or [puredom.rest](http://github.com/developit/puredom.rest)*  
->
->	**TestSuite** *(deprecated)*  
->	*Run & automate asynchronous tests*  
 
 **Download:** [puredom.js](http://puredom.org/download/latest/puredom.js)
 
@@ -203,6 +196,12 @@ License
 
 Changelog
 =========
+
+**Version 1.8.0** *(Jan 25, 2015)*
+- Remove (silent/caught) exception that was being thrown for empty `Content-Type` response headers  
+- `TestSuite` is no longer included in builds  
+- `NativeAPI` is no longer included in builds  
+- Drop support for component  
 
 **Version 1.7.1** *(Jan 11, 2015)*  
 - Fix touch screen detection bug  

@@ -1,3 +1,9 @@
+Version 1.8.0 (Jan 25, 2015)
+- Remove (silent/caught) exception that was being thrown for empty Content-Type response headers
+- TestSuite is no longer included in builds
+- NativeAPI is no longer included in builds
+- Drop support for component
+
 Version 1.7.1 (Jan 11, 2015)
 - Fix touch screen detection bug
 
