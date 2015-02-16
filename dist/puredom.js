@@ -21,7 +21,7 @@
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.9.0
+	 *	@version 1.9.1
 	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.9.0',
+			version : '1.9.1',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
@@ -1264,21 +1264,9 @@
 		 *	@returns {this}
 		 */
 		classify : function(className) {
-			var classes = [],
-				method = arguments[0]==='{*^de^*}' ? 'removeClass' : 'addClass',
-				x, y;
-			for (x=0; x<arguments.length; x++) {
-				if (self.isArray(arguments[x])) {
-					for (y=0; y<arguments[x].length; y++) {
-						classes.push(arguments[x][y]);
-					}
-				}
-				else {
-					classes.push(arguments[x]);
-				}
-			}
+			var classes = self.isArray(className) ? className : self.toArray(arguments);
 			this._each(function(el) {
-				self[method](el, classes);
+				self.addClass(el, classes);
 			});
 			return this;
 		},
@@ -1289,8 +1277,11 @@
 		 *	@returns {this}
 		 */
 		declassify : function(className) {
-			var args = ['{*^de^*}'].concat(Array.prototype.slice.call(arguments, 0));
-			return this.classify.apply(this, args);
+			var classes = self.isArray(className) ? className : self.toArray(arguments);
+			this._each(function(el) {
+				self.removeClass(el, classes);
+			});
+			return this;
 		},
 
 		/** Check if the selection contains only nodes with the given CSS class.
