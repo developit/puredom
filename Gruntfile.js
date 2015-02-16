@@ -10,6 +10,7 @@ module.exports = function(grunt) {
 			full : {
 				src: [
 					'src/puredom.js',
+					'src/puredom/selector-engine.js',
 					'src/puredom/utils.js',
 					'src/puredom/EventEmitter.js',
 					'src/puredom/ControllerManager.js',
@@ -25,6 +26,7 @@ module.exports = function(grunt) {
 			light : {
 				src: [
 					'src/puredom.js',
+					'src/puredom/selector-engine.js',
 					'src/puredom/utils.js',
 					'src/puredom/EventEmitter.js',
 					'src/puredom/date.js',
