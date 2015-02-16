@@ -3416,8 +3416,11 @@
 		var modified = false,
 			list, index, i;
 		if (classes) {
-			if (!self.isArray(classes)) {
-				classes = [classes];
+			if (classes.length===1) {
+				classes = classes[0].split(' ');
+			}
+			else if (!self.isArray(classes)) {
+				classes = classes.split(' ');
 			}
 			if (el.classList) {
 				el.classList[remove ? 'remove' : 'add'].apply(el.classList, classes);
