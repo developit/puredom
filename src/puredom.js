@@ -2159,49 +2159,62 @@
 
 			this.query('['+attrName+']').each(function(node) {
 				var nodeName = node.nodeName(),
-					tplField = node.attr(attrName),
-					tplValue = tplField,
-					tplFilters,
-					nType;
+					tpl = node.attr(attrName),
+					key, tplField, tplValue, tplFilters, nType, keyMatches;
 
-				tplField = tplField.split('|');
-				tplFilters = getFilters(tplField.slice(1));
-				tplField = tplField[0];
+				tpl = ~tpl.indexOf(':') ? priv.parseCSS(tpl, false) : { 'set':tpl };
 
-				tplValue = puredom.delve(templateFields, tplField);
+				for (key in tpl) {
+					if (tpl.hasOwnProperty(key)) {
 
-				if (tplValue!==null && tplValue!==undefined) {
-					if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
-						tplValue = tplValue.toLocaleString();
-					}
-					if (tplFilters && tplFilters.length) {
-						tplValue = self.text.filter(tplValue, tplFilters.join('|'));
-					}
+						tplField = tpl[key].split('|');
+						tplFilters = getFilters(tplField.slice(1));
+						tplField = tplField[0];
 
-					nType = node.attr('data-tpl-prop');
-					if (nType) {
-						node.prop(nType, tplValue);
-					}
-					else {
-						switch (nodeName) {
-							case 'select':
-							case 'input':
-							case 'textarea':
-							case 'meter':
-							case 'progress':
-								node.value(tplValue);
-								break;
+						tplValue = puredom.delve(templateFields, tplField);
 
-							case 'img':
-							case 'video':
-							case 'audio':
-							case 'iframe':
-								node.attr('src', tplValue);
-								break;
+						if (tplValue!==null && tplValue!==undefined) {
+							if ((tplValue instanceof Date || tplValue.constructor.name==='Date') && tplValue.toLocaleString) {
+								tplValue = tplValue.toLocaleString();
+							}
+							if (tplFilters && tplFilters.length) {
+								tplValue = self.text.filter(tplValue, tplFilters.join('|'));
+							}
 
-							default:
-								node.html(self.text.htmlEntities(tplValue));
-								break;
+							keyMatches = key.match(/^([a-z]+)\-(.+)$/i);
+
+							if (keyMatches && typeof node[keyMatches[1]]==='function') {
+								node[keyMatches[1]](keyMatches[2], tplValue);
+							}
+							else if (typeof node[key]==='function') {
+								node[key](tplValue);
+							}
+							else if ( (nType = node.attr('data-tpl-prop')) ) {
+								node.prop(nType, tplValue);
+							}
+							else {
+								switch (nodeName) {
+									case 'select':
+									case 'input':
+									case 'textarea':
+									case 'meter':
+									case 'progress':
+										node.value(tplValue);
+										break;
+
+									case 'img':
+									case 'video':
+									case 'audio':
+									case 'iframe':
+										node.attr('src', tplValue);
+										break;
+
+									default:
+										//node.html(self.text.htmlEntities(tplValue));
+										node.text(tplValue);
+										break;
+								}
+							}
 						}
 					}
 				}
@@ -3294,17 +3307,23 @@
 		return typeof style==='string' && style.replace(/\-*([A-Z])/gm, '-$1').toLowerCase() || null;
 	};
 
-	/**	Parse a CSS String and return an Object representation.
+	/**	Parse a CSS String and return an Object representation, converting `-css-keys` to `jsKeys`.
+	 *	@param {String} css
+	 *	@param {Boolean} [camelKeys=true]	If `false`, keys will be left untouched.
 	 *	@private
 	 */
-	priv.parseCSS = function(css) {
+	priv.parseCSS = function(css, camelKeys) {
 		var tokenizer = /\s*([a-z\-]+)\s*:\s*([^;]*?)\s*(?:;|$)/gi,
-			obj, token;
+			obj, token, key;
 		if (css) {
 			obj = {};
 			tokenizer.lastIndex = 0;
 			while ((token=tokenizer.exec(css))) {
-				obj[self.getStyleAsProperty(token[1])] = token[2];
+				key = token[1];
+				if (camelKeys!==false) {
+					key = self.getStyleAsProperty(key);
+				}
+				obj[key] = token[2];
 			}
 		}
 		return obj;
