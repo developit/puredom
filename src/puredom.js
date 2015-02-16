@@ -21,7 +21,7 @@
 	/**	When called as a function, acts as an alias of {@link puredom.el}.<br />
 	 *	If a <code>Function</code> is passed, it is registered as a DOMReady handler. <br />
 	 *	Otherwise, all arguments are passed on to {@link puredom.el}.
-	 *	@version 1.3.0
+	 *	@version 1.9.0
 	 *	@namespace Core functionality
 	 *	@function
 	 *	@param {Function|Any} arg	If a <code>Function</code> is passed, it is registered as a DOMReady handler. Otherwise, all arguments are passed on to {@link puredom.el}
@@ -33,7 +33,7 @@
 		},
 		/**	@private */
 		baseSelf = {
-			version : '1.8.0',
+			version : '1.9.0',
 			templateAttributeName : 'data-tpl-id',
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
