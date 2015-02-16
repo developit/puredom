@@ -38,18 +38,11 @@
 			baseAnimationInterval : 20,
 			allowCssTransitions : true,
 			easingMethods : {
-				'ease' : function(f) {
+				ease : function(f) {
 					return (Math.sin(f*Math.PI - Math.PI/2) + 1) / 2;
 				},
 				'ease-in-out' : function(f) {
-					// note, this is not the correct easing function for ease-in-out
-					return (Math.sin(f*Math.PI - Math.PI/2) + 1) / 2;
-				},
-				'ease-in-out-2' : function(f) {
-					return this['ease-in-out'](this['ease-in-out'](f));
-				},
-				'ease-in-out-3' : function(f) {
-					return this['ease-in-out'](this['ease-in-out'](this['ease-in-out'](f)));
+					return this.ease(f);
 				}
 			}
 		},
@@ -1311,12 +1304,21 @@
 			});
 			return result;
 		},
+
+		/** Set the opacity of each node in the selection.
+		 *	@param {Number} opacity		A value from 0 to 1
+		 *	@returns {this}
+		 */
 		setOpacity : function(opacity) {
 			this._each(function(el) {
 				self.setOpacity(el, opacity);
 			});
 			return this;
 		},
+
+		/** Call a method on each node in the selection and sum the results.
+		 *	@returns {Number}
+		 */
 		sumOf : function(method) {
 			var total = 0,
 				args = Array.prototype.slice.call(arguments, 1);
@@ -1328,6 +1330,7 @@
 			}
 			return total;
 		},
+
 		height : function(height, options) {
 			var units,
 				node,
@@ -1665,12 +1668,10 @@
 		},
 		enable : function() {
 			this.attr('disabled', null);
-			this.declassify('_puredom_disabled');
 			return this;
 		},
 		disable : function() {
 			this.attr('disabled', 'disabled');
-			this.classify('_puredom_disabled');
 			return this;
 		},
 		enabled : function(newValue) {
@@ -1679,7 +1680,7 @@
 				return this;
 			}
 			else {
-				return this.attr('disabled')!=='disabled' && this.prop('disabled')!==true && !this.hasClass('_puredom_disabled');
+				return this.attr('disabled')!=='disabled' && this.prop('disabled')!==true;
 			}
 		},
 
