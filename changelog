@@ -1,8 +1,8 @@
-Version 1.9.0 (Feb 16, 2015)
+Version 1.9.1 (Feb 16, 2015)
 - Rewrite #template() to support a new CSS notation for declaring multiple fields per node, and assignment strategies for those fields: <div tpl="text:foo; classify:type; attr-id:__key;>
 - 'this' and '.' should return the original object when passed as keys to puredom.delve() (for templates: prop-obj:this;)
 - Move event cancellation path into its own method to get rid of a try/catch de-opt
-- Use classList when available
+- Use classList when available (+fixes)
 - Remove old easing methods and update docs
 - Factor selector-engine out into its own module
 
