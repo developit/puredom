@@ -226,6 +226,9 @@
 	 */
 	self.delve = function(obj, path, discardFirst, allowIncompleteMatch) {
 		var i = 0;
+		if (path==='.' || (path==='this' && !obj.hasOwnProperty('this'))) {
+			return obj;
+		}
 		path = path.split('.');
 		if (discardFirst===true) {
 			path.splice(0, 1);
