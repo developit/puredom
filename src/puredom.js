@@ -2665,17 +2665,7 @@
 							}
 						}
 						if (event.bubblingCancelled===true || event.propagationStopped===true || event.cancelBubble===true) {
-							if (e.stopPropagation) {
-								e.stopPropagation();
-							}
-							try {
-								if (e.cancelBubble && e.cancelBubble.call) {
-									e.cancelBubble();
-								}
-								else {
-									e.cancelBubble = true;
-								}
-							} catch(err3) {}
+							cancelEvent(e);
 						}
 						d.ret = event.returnValue;
 					}
