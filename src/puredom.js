@@ -1289,13 +1289,20 @@
 			var args = ['{*^de^*}'].concat(Array.prototype.slice.call(arguments, 0));
 			return this.classify.apply(this, args);
 		},
+
+		/** Check if the selection contains only nodes with the given CSS class.
+		 *	@param {String} className		The CSS class to check for
+		 *	@param {Boolean} [ifAny=false]	If `true`, returns `true` only if *and* nodes have the given CSS class
+		 *	@returns {Boolean}
+		 */
 		hasClass : function(className, ifAny) {
 			var result = ifAny!==true;
 			this._each(function(node) {
-				var exists = (' '+node.className+' ').indexOf(' '+className+' ')>-1;
+				var exists = node.classList ? node.classList.contains(className) : (' '+node.className+' ').indexOf(' '+className+' ')>-1;
 				if (ifAny===true) {
 					if (exists) {
 						result = true;
+						return false;
 					}
 				}
 				else if (!exists) {
@@ -3400,6 +3407,11 @@
 			if (!self.isArray(classes)) {
 				classes = [classes];
 			}
+			if (el.classList) {
+				el.classList[remove ? 'remove' : 'add'].apply(el.classList, classes);
+				return;
+			}
+
 			list = (el.className || '').split(/\s+/);
 			for (i=0; i<classes.length; i++) {
 				index = list.indexOf(classes[i]);
