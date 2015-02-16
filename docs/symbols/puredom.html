@@ -91,8 +91,6 @@
 				
 					<li><a href="../symbols/puredom.RouteManager.html">puredom<span class='break'> </span>.<span class='break'> </span>RouteManager</a></li>
 				
-					<li><a href="../symbols/puredom.selectorEngine.html">puredom<span class='break'> </span>.<span class='break'> </span>selectorEngine</a></li>
-				
 					<li><a href="../symbols/puredom.TestSuite.html">puredom<span class='break'> </span>.<span class='break'> </span>TestSuite</a></li>
 				
 					<li><a href="../symbols/puredom.text.html">puredom<span class='break'> </span>.<span class='break'> </span>text</a></li>
@@ -108,7 +106,7 @@
 		&copy;2015<br />
 		Documentation generator: <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0<br />
 		Template: <a href="http://www.thebrightlines.com/2010/05/06/new-template-for-jsdoctoolkit-codeview/" target="_blank">Codeview</a> 1.2<br />
-		Generated on: 2015-0-25 12:51
+		Generated on: 2015-1-16 15:50
 	</div>
 </div>
 
@@ -133,7 +131,7 @@
 					
 					
 					
-						<li>Version 1.3.0</li>
+						<li>Version 1.9.0</li>
 					
 					
 					
@@ -314,20 +312,6 @@
 									<td class="nameDescription">
 										<div class="fixedFont">
 											<span class="methodMemberOf">puredom.</span>
-											<b><a href="../symbols/puredom.html#.getElement">getElement</a></b>
-											(search, options)
-										</div>
-										<div class="description">Returns an {Array} of elements matching the passed CSS selector query.</div>
-									</td>
-								</tr>
-							
-								<tr
-									 class='item7'
-								>
-									<td class="attributes">&lt;static&gt; &nbsp;</td>
-									<td class="nameDescription">
-										<div class="fixedFont">
-											<span class="methodMemberOf">puredom.</span>
 											<b><a href="../symbols/puredom.html#.hasOwnProp">hasOwnProp</a></b>
 											(obj, prop)
 										</div>
@@ -336,7 +320,7 @@
 								</tr>
 							
 								<tr
-									 class='item8'
+									 class='item7'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -350,7 +334,7 @@
 								</tr>
 							
 								<tr
-									 class='item9'
+									 class='item8'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -364,7 +348,7 @@
 								</tr>
 							
 								<tr
-									 class='item10'
+									 class='item9'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -378,7 +362,7 @@
 								</tr>
 							
 								<tr
-									 class='item11'
+									 class='item10'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -392,7 +376,7 @@
 								</tr>
 							
 								<tr
-									 class='item12'
+									 class='item11'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -406,7 +390,7 @@
 								</tr>
 							
 								<tr
-									 class='item13'
+									 class='item12'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -420,7 +404,7 @@
 								</tr>
 							
 								<tr
-									 class='item14'
+									 class='item13'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -434,7 +418,7 @@
 								</tr>
 							
 								<tr
-									 class='item15'
+									 class='item14'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -448,7 +432,7 @@
 								</tr>
 							
 								<tr
-									 class='item16'
+									 class='item15'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -462,7 +446,7 @@
 								</tr>
 							
 								<tr
-									 class='item17'
+									 class='item16'
 								>
 									<td class="attributes">&lt;static&gt; &nbsp;</td>
 									<td class="nameDescription">
@@ -980,97 +964,6 @@
 							<li 
 								 class='item6'
 							>
-								<div class="fixedFont heading nomultiline" id=".getElement">
-									<span class='lighter methodModifier'>
-									&lt;static&gt; 
-									</span>
-									
-									<span class="light methodPropertyType">{Array(HTMLElement)}</span>
-									
-									<span class="light methodNamespacePrefix">puredom.</span><b>getElement</b>(search, options)
-								</div>
-								
-								<div class="description">
-									Returns an {Array} of elements matching the passed CSS selector query.
-									
-									
-									
-									
-								</div>
-								
-								
-								
-								
-									<dl class="detailList params">
-										<dt class="heading">Parameters:</dt>
-										
-											<dt>
-												<span class="light fixedFont paramType">{String}</span> <b>search</b>
-												
-											</dt>
-											<dd>A CSS selector, or multiple CSS selectors separated by a comma</dd>
-										
-											<dt>
-												<span class="light fixedFont paramType">{Object}</span> <b>options</b>
-												<i>Optional</i>
-											</dt>
-											<dd>Hashmap of one-time triggers for the engine (see detailed parameter listing)</dd>
-										
-											<dt>
-												<span class="light fixedFont paramType">{HTMLElement}</span> <b>options.within</b>
-												<i>Optional, Default: document</i>
-											</dt>
-											<dd>Look for matches within the given element only</dd>
-										
-											<dt>
-												<span class="light fixedFont paramType">{Boolean}</span> <b>options.logging</b>
-												<i>Optional, Default: false</i>
-											</dt>
-											<dd>Enable logging for this query</dd>
-										
-											<dt>
-												<span class="light fixedFont paramType">{Boolean}</span> <b>options.useCached</b>
-												<i>Optional, Default: false</i>
-											</dt>
-											<dd>Return a cached result if available</dd>
-										
-											<dt>
-												<span class="light fixedFont paramType">{Boolean}</span> <b>options.cache</b>
-												<i>Optional, Default: false</i>
-											</dt>
-											<dd>Cache the result</dd>
-										
-									</dl>
-								
-								
-								
-									<dl class="detailList nomargin">
-									
-										
-										
-										
-										
-										
-										
-										
-											<dt class="heading">Returns:</dt>
-											
-												<dd><span class="light fixedFont">{Array(HTMLElement)}</span> An Array of matched HTML elements.</dd>
-											
-										
-										
-										
-										
-										
-									
-									</dl>
-								
-								<div class="hr"></div>
-							</li>
-						
-							<li 
-								 class='item7'
-							>
 								<div class="fixedFont heading nomultiline" id=".hasOwnProp">
 									<span class='lighter methodModifier'>
 									&lt;static&gt; 
@@ -1136,7 +1029,7 @@
 							</li>
 						
 							<li 
-								 class='item8'
+								 class='item7'
 							>
 								<div class="fixedFont heading nomultiline" id=".inherits">
 									<span class='lighter methodModifier'>
@@ -1207,7 +1100,7 @@
 							</li>
 						
 							<li 
-								 class='item9'
+								 class='item8'
 							>
 								<div class="fixedFont heading nomultiline" id=".isArray">
 									<span class='lighter methodModifier'>
@@ -1268,7 +1161,7 @@
 							</li>
 						
 							<li 
-								 class='item10'
+								 class='item9'
 							>
 								<div class="fixedFont heading nomultiline" id=".isScalar">
 									<span class='lighter methodModifier'>
@@ -1329,7 +1222,7 @@
 							</li>
 						
 							<li 
-								 class='item11'
+								 class='item10'
 							>
 								<div class="fixedFont heading nomultiline" id=".log">
 									<span class='lighter methodModifier'>
@@ -1358,7 +1251,7 @@
 							</li>
 						
 							<li 
-								 class='item12'
+								 class='item11'
 							>
 								<div class="fixedFont heading nomultiline" id=".mixin">
 									<span class='lighter methodModifier'>
@@ -1435,7 +1328,7 @@
 							</li>
 						
 							<li 
-								 class='item13'
+								 class='item12'
 							>
 								<div class="fixedFont heading nomultiline" id=".node">
 									<span class='lighter methodModifier'>
@@ -1497,7 +1390,7 @@
 							</li>
 						
 							<li 
-								 class='item14'
+								 class='item13'
 							>
 								<div class="fixedFont heading nomultiline" id=".strip">
 									<span class='lighter methodModifier'>
@@ -1544,7 +1437,7 @@
 							</li>
 						
 							<li 
-								 class='item15'
+								 class='item14'
 							>
 								<div class="fixedFont heading nomultiline" id=".template">
 									<span class='lighter methodModifier'>
@@ -1619,7 +1512,7 @@
 							</li>
 						
 							<li 
-								 class='item16'
+								 class='item15'
 							>
 								<div class="fixedFont heading nomultiline" id=".toArray">
 									<span class='lighter methodModifier'>
@@ -1680,7 +1573,7 @@
 							</li>
 						
 							<li 
-								 class='item17'
+								 class='item16'
 							>
 								<div class="fixedFont heading nomultiline" id=".typeOf">
 									<span class='lighter methodModifier'>
