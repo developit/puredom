@@ -1,6 +1,8 @@
 puredom [![NPM Version](http://img.shields.io/npm/v/puredom.svg?style=flat)](https://www.npmjs.org/package/puredom)
 =======
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/developit/puredom.svg)](https://greenkeeper.io/)
+
 ⤹ `stable` ⥃ `develop` ⤵︎  
 [![Master Build Status](http://img.shields.io/travis/developit/puredom.svg?style=flat&branch=master)](https://travis-ci.org/developit/puredom)
 [![Develop Build Status](http://img.shields.io/travis/developit/puredom.svg?style=flat&branch=develop&title=dev)](https://travis-ci.org/developit/puredom)
